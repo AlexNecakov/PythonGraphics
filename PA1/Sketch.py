@@ -70,7 +70,7 @@ class Sketch(CanvasBase):
         
     """
 
-    debug = 0
+    debug = 2
     texture_file_path = "./pattern.jpg"
     texture = None
 
@@ -124,6 +124,16 @@ class Sketch(CanvasBase):
         else:
             p = Point((x, y), ColorType(1, 0, 0))
         pointlist.append(p)
+    
+    def coordsToPoint(self, x, y):
+        if self.randomColor:
+            p = Point((x, y), ColorType(random.random(), random.random(), random.random()))
+        else:
+            p = Point((x, y), ColorType(1, 0, 0))
+        return p
+    def coordsToPoint(self, x, y, c):
+        p = Point((x, y), c)
+        return p
 
     # Deal with Mouse Left Button Pressed Interruption
     def Interrupt_MouseL(self, x, y):
@@ -137,6 +147,7 @@ class Sketch(CanvasBase):
             if self.debug > 0:
                 print("draw a line from ", self.points_l[-1], " -> ", self.points_l[-2])
             self.drawPoint(self.buff, self.points_l[-1])
+            self.drawRectangle(self.buff, self.points_l[-1], self.points_l[-2])
             self.points_l.clear()
 
     # Deal with Mouse Right Button Pressed Interruption
@@ -243,6 +254,32 @@ class Sketch(CanvasBase):
         buff.buff[x, y, 1] = c.g * 255
         buff.buff[x, y, 2] = c.b * 255
 
+    def drawRectangle(self, buff, p1, p2):
+        """
+        Draw a line between p1 and p2 on buff
+
+        :param buff: The buff to edit
+        :type buff: Buff
+        :param p1: One vertex of the rectangle
+        :type p1: Point
+        :param p2: Another vertex of the line
+        :type p2: Point
+        :rtype: None
+        """
+        x1, y1 = p1.coords
+        x2, y2 = p2.coords
+        xmin = min(x1, x2)
+        xmax = max(x1, x2)
+        ymin = min(y1, y2)
+        ymax = max(y1, y2)
+
+        c = p1.color
+
+        for x in range(xmin,xmax+1):
+            for y in range(ymin,ymax+1):
+                self.drawPoint(buff, self.coordsToPoint(x,y,c))
+        return
+
     def drawLine(self, buff, p1, p2, doSmooth=True, doAA=False, doAAlevel=4):
         """
         Draw a line between p1 and p2 on buff
@@ -265,7 +302,7 @@ class Sketch(CanvasBase):
         # Requirements:
         #   1. Only integer is allowed in interpolate point coordinates between p1 and p2
         #   2. Float number is allowed in interpolate point color
-        #   test commit
+        
         return
 
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
