@@ -147,7 +147,7 @@ class Sketch(CanvasBase):
             if self.debug > 0:
                 print("draw a line from ", self.points_l[-1], " -> ", self.points_l[-2])
             self.drawPoint(self.buff, self.points_l[-1])
-            self.drawRectangle(self.buff, self.points_l[-1], self.points_l[-2])
+            self.drawLine(self.buff, self.points_l[-1], self.points_l[-2])
             self.points_l.clear()
 
     # Deal with Mouse Right Button Pressed Interruption
@@ -302,7 +302,37 @@ class Sketch(CanvasBase):
         # Requirements:
         #   1. Only integer is allowed in interpolate point coordinates between p1 and p2
         #   2. Float number is allowed in interpolate point color
-        
+        #   Assume slope 0<=m<=1
+        #   Alg: Dk+1 = Dk + 2dely - 2delx*(yk+1 - yk)
+        x1, y1 = p1.coords
+        x2, y2 = p2.coords
+        c = p1.color
+        delX = x1 - x2
+        delY = y1 - y2
+
+        # init y to the first y
+        yk = y2
+        print("x1 = " + str(x1))
+        print("y1 = " + str(y1))
+        print("x2 = " + str(x2))
+        print("y2 = " + str(y2))
+        # we also need y k+1
+        yk1 = yk + 1
+
+        # init decision param
+        dec = (2 * delY) - (2 * delX * (yk1 - yk))
+
+        for x in range(x2, x1):
+            print("yk = " + str(yk))
+            self.drawPoint(buff, self.coordsToPoint(x,yk,c))
+            if dec >= 0:
+                dec = dec + (2 * delY) - (2 * delX)
+                yk = yk1
+                yk1 = yk + 1
+            else:
+                dec = dec + (2 * delY)
+
+
         return
 
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
