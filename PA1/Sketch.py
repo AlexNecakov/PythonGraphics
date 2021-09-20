@@ -312,18 +312,13 @@ class Sketch(CanvasBase):
 
         # init y to the first y
         yk = y2
-        print("x1 = " + str(x1))
-        print("y1 = " + str(y1))
-        print("x2 = " + str(x2))
-        print("y2 = " + str(y2))
         # we also need y k+1
         yk1 = yk + 1
 
         # init decision param
-        dec = (2 * delY) - (2 * delX * (yk1 - yk))
+        dec = (2 * delY) - delX
 
         for x in range(x2, x1):
-            print("yk = " + str(yk))
             self.drawPoint(buff, self.coordsToPoint(x,yk,c))
             if dec >= 0:
                 dec = dec + (2 * delY) - (2 * delX)
@@ -365,6 +360,10 @@ class Sketch(CanvasBase):
         #   2. Polygon scan fill algorithm and the use of barycentric coordinate are not allowed in this function
         #   3. You should be able to support both flat shading and smooth shading, which is controlled by doSmooth
         #   4. For texture-mapped fill of triangles, it should be controlled by doTexture flag.
+        x1, y1 = p1.coords
+        x2, y2 = p2.coords
+        x3, y3 = p3.coords
+        c = p1.color
         return
 
     # test for lines lines in all directions
