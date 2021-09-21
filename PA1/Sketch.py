@@ -1,10 +1,10 @@
 """
-This is the main entry of your program. Almost all things you need to implement is in this file.
-The main class Sketch inherit from CanvasBase. For the parts you need to implement, they all marked TODO.
-First version Created on 09/28/2018
-
-:author: micou(Zezhou Sun)
-:version: 2021.2.1
+:author: Alex Necakov
+:course: CS480
+:assignment: PA1
+:due date: 9/21/21
+:description: implements bresenham line alg with linear interpolation, reuse code from line alg
+with scan line alg for draw triangle. also basic draw rectangle
 
 """
 
