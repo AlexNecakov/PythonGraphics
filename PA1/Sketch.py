@@ -305,38 +305,50 @@ class Sketch(CanvasBase):
         #   Alg: Dk+1 = Dk + 2dely - 2delx*(yk+1 - yk)
         x1, y1 = p1.coords
         x2, y2 = p2.coords
-        c = p1.color
-        delX = x1 - x2
-        delY = y1 - y2
+        c = p2.color
+
+        vertexList = [(y1,x1), (y2,x2)]
+        vertexList = sorted(vertexList)
+
+        #give these descriptive names
+        ytop = vertexList[1][0]
+        xtop = vertexList[1][1]
+        ybot = vertexList[0][0]
+        xbot = vertexList[0][1]
+        delX = xtop - xbot
+        delY = ytop - ybot
+        print("1: " + str(x1) + "," + str(y1))
+        print("2: " + str(x2) + "," + str(y2))
+        print("top: " + str(xtop) + "," + str(ytop))
+        print("bot: " + str(xbot) + "," + str(ybot))
+        print("slope: " + str(delY/delX))
 
         # special cases
         if delX == 0:
-            for y in range(y2, y1):
-                self.drawPoint(buff, self.coordsToPointCol(x1,y,c))
+            for y in range(ybot, ytop):
+                self.drawPoint(buff, self.coordsToPointCol(xtop,y,c))
         elif delY == 0:
             for x in range(x2, x1):
-                self.drawPoint(buff, self.coordsToPointCol(x,y1,c))
+                self.drawPoint(buff, self.coordsToPointCol(x,ytop,c))
         else:
             # choose var to step by
             if 0<= abs(delY/delX) <= 1:
                 delStep = delY
                 delNot = delX
 
-                stepK = y2
-                stepK1 = stepK + 1
-                not1 = x1
-                not2 = x2
+                stepK = ybot
+                not1 = xtop
+                not2 = xbot
             else:
                 delStep = delX
                 delNot = delY
 
-                stepK = x2
-                stepK1 = stepK + 1
-                not1 = y1
-                not2 = y2
-            print(str(delY/delX))
+                stepK = xbot
+                not1 = ytop
+                not2 = ybot
+                
             if delY/delX >=0:
-                # init decision param
+                stepK1 = stepK + 1
                 dec = (2 * delStep) - delNot
                 for notStep in range(not2, not1):
                     if delY/delX <= 1:
@@ -350,22 +362,27 @@ class Sketch(CanvasBase):
                     else:
                         dec = dec + (2 * delStep)
             else:
-                # init decision param
                 dec = (2 * delStep) + delNot
-                for notStep in range(not2, not1):
-                    print(str(delY/delX))
-                    if delY/delX >= -1:
-                        print("small neg")
+                if delY/delX >= -1:
+                    stepK1 = stepK - 1
+                    for notStep in range(not1, not2):
                         self.drawPoint(buff, self.coordsToPointCol(notStep,stepK,c))
-                    elif delY/delX < -1:
-                        print("big neg")
+                        if dec < 0:
+                            dec = dec + (2 * delStep) + (2 * delNot)
+                            stepK = stepK1
+                            stepK1 = stepK - 1
+                        else:
+                            dec = dec + (2 * delStep)
+                else:
+                    stepK1 = stepK + 1
+                    for notStep in range(not1, not2, 1):
                         self.drawPoint(buff, self.coordsToPointCol(stepK,notStep,c)) 
-                    if dec < 0:
-                        dec = dec + (2 * delStep) + (2 * delNot)
-                        stepK = stepK1
-                        stepK1 = stepK - 1
-                    else:
-                        dec = dec + (2 * delStep)
+                        if dec < 0:
+                            dec = dec - (2 * delStep) - (2 * delNot)
+                            stepK = stepK1
+                            stepK1 = stepK + 1
+                        else:
+                            dec = dec - (2 * delStep)
 
         return
 
