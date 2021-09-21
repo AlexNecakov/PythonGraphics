@@ -324,9 +324,9 @@ class Sketch(CanvasBase):
         # special cases
         if delX == 0:
             if doSmooth:
-                color = cBot
+                color = ColorType(cBot.r,cBot.g,cBot.b)
             else:
-                color = c2
+                color = ColorType(c2.r,c2.g,c2.b)
             for y in range(yBot, yTop):
                 self.drawPoint(buff, self.coordsToPointCol(xTop,y,color))
                 if doSmooth:
@@ -336,9 +336,9 @@ class Sketch(CanvasBase):
                     color.b = cBot.b*(1-alpha) + alpha*cTop.b
         elif delY == 0:
             if doSmooth:
-                color = cBot
+                color = ColorType(cBot.r,cBot.g,cBot.b)
             else:
-                color = c2
+                color = ColorType(c2.r,c2.g,c2.b)
             for x in range(xBot, xTop):
                 self.drawPoint(buff, self.coordsToPointCol(x,yTop,color))
                 if doSmooth:
@@ -348,9 +348,9 @@ class Sketch(CanvasBase):
                     color.b = cBot.b*(1-alpha) + alpha*cTop.b
         else:
             if doSmooth:
-                color = cBot
+                color = ColorType(cBot.r,cBot.g,cBot.b)
             else:
-                color = c2
+                color = ColorType(c2.r,c2.g,c2.b)
             # choose var to step by
             if 0<= abs(delY/delX) <= 1:
                 delDecide = delY
@@ -387,7 +387,7 @@ class Sketch(CanvasBase):
                         color.g = cBot.g*(1-alpha) + alpha*cTop.g
                         color.b = cBot.b*(1-alpha) + alpha*cTop.b
             else:
-                color = cTop
+                color = ColorType(cTop.r,cTop.g,cTop.b)
                 dec = (2 * delDecide) + delStep
                 if delY/delX >= -1:
                     decideK = yTop
@@ -487,7 +487,7 @@ class Sketch(CanvasBase):
                        ColorType(0, 0, (1 - step / n_steps)))
             v2 = Point([center_x - int(math.sin(theta) * radius), center_y - int(math.cos(theta) * radius)],
                        ColorType(0, (1 - step / n_steps), 0))
-            self.drawLine(self.buff, v2, v0, doSmooth=True)
+            self.drawLine(self.buff, v0, v2, doSmooth=True)
             self.drawLine(self.buff, v0, v1, doSmooth=True)
 
     # test for lines: drawing circle and petal 
