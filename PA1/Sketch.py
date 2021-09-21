@@ -309,48 +309,63 @@ class Sketch(CanvasBase):
         delX = x1 - x2
         delY = y1 - y2
 
-        # vertical case
+        # special cases
         if delX == 0:
             for y in range(y2, y1):
                 self.drawPoint(buff, self.coordsToPointCol(x1,y,c))
         elif delY == 0:
             for x in range(x2, x1):
                 self.drawPoint(buff, self.coordsToPointCol(x,y1,c))
-        elif 0<= delY/delX <= 1:
-            # init y to the first y
-            yk = y2
-            # we also need y k+1
-            yk1 = yk + 1
+        else:
+            # choose var to step by
+            if 0<= abs(delY/delX) <= 1:
+                delStep = delY
+                delNot = delX
 
-            # init decision param
-            dec = (2 * delY) - delX
+                stepK = y2
+                stepK1 = stepK + 1
+                not1 = x1
+                not2 = x2
+            else:
+                delStep = delX
+                delNot = delY
 
-            for x in range(x2, x1):
-                self.drawPoint(buff, self.coordsToPointCol(x,yk,c))
-                if dec >= 0:
-                    dec = dec + (2 * delY) - (2 * delX)
-                    yk = yk1
-                    yk1 = yk + 1
-                else:
-                    dec = dec + (2 * delY)
-        elif 1 < delY/delX:
-            # init x to the first x
-            xk = x2
-            # we also need x k+1
-            xk1 = xk + 1
-
-            # init decision param
-            dec = (2 * delX) - delY
-
-            for y in range(y2, y1):
-                self.drawPoint(buff, self.coordsToPointCol(xk,y,c))
-                if dec >= 0:
-                    dec = dec + (2 * delX) - (2 * delY)
-                    xk = xk1
-                    xk1 = xk + 1
-                else:
-                    dec = dec + (2 * delX)
-
+                stepK = x2
+                stepK1 = stepK + 1
+                not1 = y1
+                not2 = y2
+            print(str(delY/delX))
+            if delY/delX >=0:
+                # init decision param
+                dec = (2 * delStep) - delNot
+                for notStep in range(not2, not1):
+                    if delY/delX <= 1:
+                        self.drawPoint(buff, self.coordsToPointCol(notStep,stepK,c))
+                    else:
+                        self.drawPoint(buff, self.coordsToPointCol(stepK,notStep,c)) 
+                    if dec >= 0:
+                        dec = dec + (2 * delStep) - (2 * delNot)
+                        stepK = stepK1
+                        stepK1 = stepK + 1
+                    else:
+                        dec = dec + (2 * delStep)
+            else:
+                # init decision param
+                dec = (2 * delStep) + delNot
+                for notStep in range(not2, not1):
+                    print(str(delY/delX))
+                    if delY/delX >= -1:
+                        print("small neg")
+                        self.drawPoint(buff, self.coordsToPointCol(notStep,stepK,c))
+                    elif delY/delX < -1:
+                        print("big neg")
+                        self.drawPoint(buff, self.coordsToPointCol(stepK,notStep,c)) 
+                    if dec < 0:
+                        dec = dec + (2 * delStep) + (2 * delNot)
+                        stepK = stepK1
+                        stepK1 = stepK - 1
+                    else:
+                        dec = dec + (2 * delStep)
 
         return
 
