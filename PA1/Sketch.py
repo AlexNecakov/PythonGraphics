@@ -84,7 +84,7 @@ class Sketch(CanvasBase):
     # test case status
     MIN_N_STEPS = 6
     MAX_N_STEPS = 192
-    n_steps = 12  # For test case only
+    n_steps = 192  # For test case only
     test_case_index = 0
     test_case_list = []  # If you need more test case, write them as a method and add it to list
 
@@ -147,7 +147,7 @@ class Sketch(CanvasBase):
             if self.debug > 0:
                 print("draw a line from ", self.points_l[-1], " -> ", self.points_l[-2])
             self.drawPoint(self.buff, self.points_l[-1])
-            self.drawLine(self.buff, self.points_l[-1], self.points_l[-2])
+            self.drawLine(self.buff, self.points_l[-1], self.points_l[-2], self.doSmooth)
             self.points_l.clear()
 
     # Deal with Mouse Right Button Pressed Interruption
@@ -305,54 +305,58 @@ class Sketch(CanvasBase):
         #   Alg: Dk+1 = Dk + 2dely - 2delx*(yk+1 - yk)
         x1, y1 = p1.coords
         x2, y2 = p2.coords
-        cStart = p2.color
-        cEnd = p1.color
+        c2 = p2.color
+        c1 = p1.color
 
-        vertexList = [(y1,x1), (y2,x2)]
+        vertexList = [(y1,x1,c1), (y2,x2,c2)]
         vertexList = sorted(vertexList)
 
         #give these descriptive names
-        ytop = vertexList[1][0]
-        xtop = vertexList[1][1]
-        ybot = vertexList[0][0]
-        xbot = vertexList[0][1]
-        delX = xtop - xbot
-        delY = ytop - ybot
+        yTop = vertexList[1][0]
+        xTop = vertexList[1][1]
+        cTop = vertexList[1][2]
+        yBot = vertexList[0][0]
+        xBot = vertexList[0][1]
+        cBot = vertexList[0][2]
+        delX = xTop - xBot
+        delY = yTop - yBot
 
         # special cases
         if delX == 0:
-            color = cStart
-            for y in range(ybot, ytop):
-                self.drawPoint(buff, self.coordsToPointCol(xtop,y,color))
+            color = c2
+            for y in range(yBot, yTop):
+                self.drawPoint(buff, self.coordsToPointCol(xTop,y,color))
                 if doSmooth:
-                    color.r = cStart.r*(1-((y-ybot)/(delY))) + (y-ybot)/(delY)*cEnd.r
-                    color.g = cStart.g*(1-((y-ybot)/(delY))) + (y-ybot)/(delY)*cEnd.g
-                    color.b = cStart.b*(1-((y-ybot)/(delY))) + (y-ybot)/(delY)*cEnd.b
+                    alpha = (y-yBot)/(delY)
+                    color.r = cBot.r*(1-alpha) + alpha*cTop.r
+                    color.g = cBot.g*(1-alpha) + alpha*cTop.g
+                    color.b = cBot.b*(1-alpha) + alpha*cTop.b
         elif delY == 0:
-            color = cStart
-            for x in range(x2, x1):
-                self.drawPoint(buff, self.coordsToPointCol(x,ytop,color))
+            color = c2
+            for x in range(xBot, xTop):
+                self.drawPoint(buff, self.coordsToPointCol(x,yTop,color))
                 if doSmooth:
-                    color.r = cStart.r*(1-((x-xbot)/(delX))) + (x-xbot)/(delX)*cEnd.r
-                    color.g = cStart.g*(1-((x-xbot)/(delX))) + (x-xbot)/(delX)*cEnd.g
-                    color.b = cStart.b*(1-((x-xbot)/(delX))) + (x-xbot)/(delX)*cEnd.b
+                    alpha = (x-xBot)/(delX)
+                    color.r = cBot.r*(1-alpha) + alpha*cTop.r
+                    color.g = cBot.g*(1-alpha) + alpha*cTop.g
+                    color.b = cBot.b*(1-alpha) + alpha*cTop.b
         else:
-            color = cStart
+            color = c2
             # choose var to step by
             if 0<= abs(delY/delX) <= 1:
                 delDecide = delY
                 delStep = delX
 
-                decideK = ybot
-                stepMax = xtop
-                stepMin = xbot
+                decideK = yBot
+                stepMax = xTop
+                stepMin = xBot
             else:
                 delDecide = delX
                 delStep = delY
 
-                decideK = xbot
-                stepMax = ytop
-                stepMin = ybot
+                decideK = xBot
+                stepMax = yTop
+                stepMin = yBot
                 
             if delY/delX >=0:
                 decideK1 = decideK + 1
@@ -369,13 +373,14 @@ class Sketch(CanvasBase):
                     else:
                         dec = dec + (2 * delDecide)
                     if doSmooth:
-                        color.r = cStart.r*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.r
-                        color.g = cStart.g*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.g
-                        color.b = cStart.b*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.b
+                        alpha = (step-stepMin)/(delStep)
+                        color.r = cBot.r*(1-alpha) + alpha*cTop.r
+                        color.g = cBot.g*(1-alpha) + alpha*cTop.g
+                        color.b = cBot.b*(1-alpha) + alpha*cTop.b
             else:
                 dec = (2 * delDecide) + delStep
                 if delY/delX >= -1:
-                    decideK = ytop
+                    decideK = yTop
                     decideK1 = decideK - 1
                     for step in range(stepMax, stepMin):
                         self.drawPoint(buff, self.coordsToPointCol(step,decideK,color))
@@ -386,11 +391,12 @@ class Sketch(CanvasBase):
                         else:
                             dec = dec - (2 * delDecide)
                         if doSmooth:
-                            color.r = cStart.r*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.r
-                            color.g = cStart.g*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.g
-                            color.b = cStart.b*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.b
+                            alpha = (stepMax-step)/(delStep)
+                            color.r = cTop.r*(1-alpha) + alpha*cBot.r
+                            color.g = cTop.g*(1-alpha) + alpha*cBot.g
+                            color.b = cTop.b*(1-alpha) + alpha*cBot.b
                 else:
-                    decideK = xtop
+                    decideK = xTop
                     decideK1 = decideK + 1
                     # this is a separate case due to python for loops not counting backwards
                     for step in range(stepMax, stepMin, -1):
@@ -402,10 +408,10 @@ class Sketch(CanvasBase):
                         else:
                             dec = dec + (2 * delDecide)
                         if doSmooth:
-                            color.r = cStart.r*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.r
-                            color.g = cStart.g*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.g
-                            color.b = cStart.b*(1-((step-stepMin)/(delStep))) + (step-stepMin)/(delStep)*cEnd.b
-
+                            alpha = (stepMax-step)/(delStep)
+                            color.r = cTop.r*(1-alpha) + alpha*cBot.r
+                            color.g = cTop.g*(1-alpha) + alpha*cBot.g
+                            color.b = cTop.b*(1-alpha) + alpha*cBot.b
         return
 
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
@@ -448,12 +454,12 @@ class Sketch(CanvasBase):
         vertexList = sorted(vertexList)
 
         #give these descriptive names
-        ytop = vertexList[2][0]
-        xtop = vertexList[2][1]
+        yTop = vertexList[2][0]
+        xTop = vertexList[2][1]
         ymid = vertexList[1][0]
         xmid = vertexList[1][1]
-        ybot = vertexList[0][0]
-        xbot = vertexList[0][1]
+        yBot = vertexList[0][0]
+        xBot = vertexList[0][1]
 
 
         return
