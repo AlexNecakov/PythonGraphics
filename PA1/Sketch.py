@@ -132,7 +132,7 @@ class Sketch(CanvasBase):
             p = Point((x, y), ColorType(1, 0, 0))
         return p
     def coordsToPointCol(self, x, y, c):
-        p = Point((x, y), c)
+        p = Point((x, y), ColorType(c.r,c.g,c.b))
         return p
 
     # Deal with Mouse Left Button Pressed Interruption
@@ -320,10 +320,13 @@ class Sketch(CanvasBase):
         cBot = vertexList[0][2]
         delX = xTop - xBot
         delY = yTop - yBot
-
+        
         # special cases
         if delX == 0:
-            color = c2
+            if doSmooth:
+                color = cBot
+            else:
+                color = c2
             for y in range(yBot, yTop):
                 self.drawPoint(buff, self.coordsToPointCol(xTop,y,color))
                 if doSmooth:
@@ -332,7 +335,10 @@ class Sketch(CanvasBase):
                     color.g = cBot.g*(1-alpha) + alpha*cTop.g
                     color.b = cBot.b*(1-alpha) + alpha*cTop.b
         elif delY == 0:
-            color = c2
+            if doSmooth:
+                color = cBot
+            else:
+                color = c2
             for x in range(xBot, xTop):
                 self.drawPoint(buff, self.coordsToPointCol(x,yTop,color))
                 if doSmooth:
@@ -341,7 +347,10 @@ class Sketch(CanvasBase):
                     color.g = cBot.g*(1-alpha) + alpha*cTop.g
                     color.b = cBot.b*(1-alpha) + alpha*cTop.b
         else:
-            color = c2
+            if doSmooth:
+                color = cBot
+            else:
+                color = c2
             # choose var to step by
             if 0<= abs(delY/delX) <= 1:
                 delDecide = delY
@@ -378,6 +387,7 @@ class Sketch(CanvasBase):
                         color.g = cBot.g*(1-alpha) + alpha*cTop.g
                         color.b = cBot.b*(1-alpha) + alpha*cTop.b
             else:
+                color = cTop
                 dec = (2 * delDecide) + delStep
                 if delY/delX >= -1:
                     decideK = yTop
