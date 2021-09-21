@@ -487,7 +487,7 @@ class Sketch(CanvasBase):
         delY[0] = yTop - yBot[0]
         delX[1] = xTop - xBot[1]
         delY[1] = yTop - yBot[1]
-        
+
         # choose var to step by
         delDecide = [0]*2
         delStep = [0]*2
@@ -498,20 +498,34 @@ class Sketch(CanvasBase):
         dec = [0]*2
         color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
         alpha = [0]*2
-        for i in delY:
-            if 0<= abs(delY[i]/delX[i]) <= 1:
+        for i in range(2):
+            if delX[i] == 0:
                 delDecide[i] = delY[i]
                 delStep[i] = delX[i]
 
                 decideK[i] = yBot[i]
-                stepMax[i] = xTop[i]
+                stepMax[i] = xTop
+                stepMin[i] = xBot[i]
+            elif delY[i] == 0:
+                delDecide[i] = delX[i]
+                delStep[i] = delY[i]
+
+                decideK[i] = xBot[i]
+                stepMax[i] = yTop
+                stepMin[i] = yBot[i]
+            elif abs(delY[i]/delX[i]) <= 1:
+                delDecide[i] = delY[i]
+                delStep[i] = delX[i]
+
+                decideK[i] = yBot[i]
+                stepMax[i] = xTop
                 stepMin[i] = xBot[i]
             else:
                 delDecide[i] = delX[i]
                 delStep[i] = delY[i]
 
                 decideK[i] = xBot[i]
-                stepMax[i] = yTop[i]
+                stepMax[i] = yTop
                 stepMin[i] = yBot[i]
             if delX[i] <= 0:
                 decideK1[i] = decideK[i] + 1
@@ -525,13 +539,27 @@ class Sketch(CanvasBase):
             else:
                 color[i] = ColorType(c3.r,c3.g,c3.b)
 
-        for step in range(stepMin, stepMax):
-            if abs(delY/delX) <= 1:
-                self.drawPoint(buff, self.coordsToPointCol(step,decideK,color))
-            else:
-                self.drawPoint(buff, self.coordsToPointCol(decideK,step,color)) 
-            for i in dec:
-                if delY/delX > 0:
+        for step in range(stepMin[0], stepMax[0]):
+            xCor = [0]*2
+            yCor = [0]*2
+            for i in range(2):
+                if delX[i] == 0:
+                    xCor[i] = step
+                    yCor[i] = decideK[i]
+                elif delY[i] == 0:
+                    yCor[i] = step
+                    xCor[i] = decideK[i]
+                elif abs(delY[i]/delX[i]) <= 1:
+                    xCor[i] = step
+                    yCor[i] = decideK[i]
+                else:
+                    yCor[i] = step
+                    xCor[i] = decideK[i]
+                self.drawPoint(buff, self.coordsToPointCol(xCor[i],yCor[i],color[i]))  
+                if delX[i] == 0:
+                    decideK[i] = decideK1[i]
+                    decideK1[i] = decideK[i] + 1
+                elif delY[i]/delX[i] > 0:
                     if dec[i] >= 0:
                         dec[i] = dec[i] + (2 * delDecide[i]) - (2 * delStep[i])
                         decideK[i] = decideK1[i]
@@ -539,17 +567,18 @@ class Sketch(CanvasBase):
                     else:
                         dec[i] = dec[i] + (2 * delDecide[i])
                 else:
-                    if dec[i] < 0:
-                            dec[i] = dec[i] - (2 * delDecide[i]) - (2 * delStep[i])
-                            decideK[i] = decideK1[i]
-                            decideK1[i] = decideK[i] - 1
+                    if dec[i] >= 0:
+                        dec[i] = dec[i] - (2 * delDecide[i]) + (2 * delStep[i])
+                        decideK[i] = decideK1[i]
+                        decideK1[i] = decideK[i] - 1
                     else:
-                        dec = dec - (2 * delDecide)
+                        dec[i] = dec[i] - (2 * delDecide[i])
                 if doSmooth:
                     alpha[i] = (step-stepMin[i])/(delStep[i])
                     color[i].r = cBot[i].r*(1-alpha[i]) + alpha[i]*cTop.r
                     color[i].g = cBot[i].g*(1-alpha[i]) + alpha[i]*cTop.g
                     color[i].b = cBot[i].b*(1-alpha[i]) + alpha[i]*cTop.b
+            self.drawLine(buff, self.coordsToPointCol(xCor[0],yCor[0],color[0]), self.coordsToPointCol(xCor[1],yCor[1],color[1]), self.doSmooth)
         
         return
 
