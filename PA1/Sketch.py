@@ -460,6 +460,11 @@ class Sketch(CanvasBase):
         #   2. Polygon scan fill algorithm and the use of barycentric coordinate are not allowed in this function
         #   3. You should be able to support both flat shading and smooth shading, which is controlled by doSmooth
         #   4. For texture-mapped fill of triangles, it should be controlled by doTexture flag.
+
+        # flags to keep track of if top and/or bot triangle needs to be filled
+        isTopTri = True
+        isBotTri = True
+
         x1, y1 = p1.coords
         x2, y2 = p2.coords
         x3, y3 = p3.coords
@@ -495,6 +500,14 @@ class Sketch(CanvasBase):
         delX[1] = xTop - xBot[1]
         delY[1] = yTop - yBot[1]
 
+        # flat bottom edge
+        if delY[0] == delY[1]:
+            isBotTri = False
+        # flat top edge
+        elif (delY[0] == 0) ^ (delY[1] == 0):
+            isTopTri = False
+        
+
         # step up both dec vars
         delDecide = [0]*2
         decideK = [0]*2
@@ -502,52 +515,54 @@ class Sketch(CanvasBase):
         dec = [0]*2
         color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
         alpha = [0]*2
-        for i in range(2):
-            delDecide[i] = delX[i]
-            delStep = delY[i]
-
-            decideK[i] = xBot[i]
-            if delX[i] <= 0:
-                decideK1[i] = decideK[i] + 1
-                dec[i] = (2 * delDecide[i]) - delStep
-            else:
-                decideK1[i] = decideK[i] - 1
-                dec[i] = (2 * delDecide[i]) + delStep
-            if doSmooth:
-
-                color[i] = ColorType(cBot[i].r,cBot[i].g,cBot[i].b)
-            else:
-                color[i] = ColorType(c3.r,c3.g,c3.b)
-
-        # always step this direction, can't be stepping by different vars at same time
-        for step in range(yBot[0], yTop):
+        if isTopTri:
             for i in range(2):
-                self.drawPoint(buff, self.coordsToPointCol(decideK[i],step,color[i]))  
-                if delX[i] == 0:
-                    decideK[i] = decideK1[i]
-                    decideK1[i] = decideK[i] + 1
-                elif delY[i]/delX[i] > 0:
-                    if dec[i] >= 0:
-                        dec[i] = dec[i] + (2 * delDecide[i]) - (2 * delStep)
-                        decideK[i] = decideK1[i]
-                        decideK1[i] = decideK[i] + 1
-                    else:
-                        dec[i] = dec[i] + (2 * delDecide[i])
+                delDecide[i] = delX[i]
+                delStep = delY[i]
+
+                decideK[i] = xTop
+                if delX[i] <= 0:
+                    decideK1[i] = decideK[i] - 1
+                    dec[i] = (2 * delDecide[i]) + delStep
                 else:
-                    if dec[i] < 0:
-                            dec[i] = dec[i] + (2 * delDecide[i]) + (2 * delStep)
+                    decideK1[i] = decideK[i] + 1
+                    dec[i] = (2 * delDecide[i]) - delStep
+                if doSmooth:
+
+                    color[i] = ColorType(cBot[i].r,cBot[i].g,cBot[i].b)
+                else:
+                    color[i] = ColorType(c3.r,c3.g,c3.b)
+
+            # always step this direction, can't be stepping by different vars at same time
+            for step in range(yTop, yBot[0]-1, -1):
+                for i in range(2):
+                    self.drawPoint(buff, self.coordsToPointCol(decideK[i],step,color[i]))  
+                    if delX[i] == 0:
+                        decideK[i] = decideK1[i]
+                        decideK1[i] = decideK[i] - 1
+                    elif delY[i]/delX[i] > 0:
+                        if dec[i] < 0:
+                            dec[i] = dec[i] - (2 * delDecide[i]) + (2 * delStep)
                             decideK[i] = decideK1[i]
                             decideK1[i] = decideK[i] - 1
+                        else:
+                            dec[i] = dec[i] - (2 * delDecide[i])
                     else:
-                        dec[i] = dec[i] + (2 * delDecide[i])
-                if doSmooth:
-                    alpha[i] = (step-yBot[i])/(delStep)
-                    color[i].r = cBot[i].r*(1-alpha[i]) + alpha[i]*cTop.r
-                    color[i].g = cBot[i].g*(1-alpha[i]) + alpha[i]*cTop.g
-                    color[i].b = cBot[i].b*(1-alpha[i]) + alpha[i]*cTop.b
-            # now fill scanline
-            self.drawLine(buff, self.coordsToPointCol(decideK[0],step,color[0]), self.coordsToPointCol(decideK[1],step,color[1]), self.doSmooth)
-        
+                        if dec[i] >= 0:
+                                dec[i] = dec[i] - (2 * delDecide[i]) - (2 * delStep)
+                                decideK[i] = decideK1[i]
+                                decideK1[i] = decideK[i] + 1
+                        else:
+                            dec[i] = dec[i] - (2 * delDecide[i])
+                    if doSmooth:
+                        alpha[i] = (step-yBot[i])/(delStep)
+                        color[i].r = cBot[i].r*(1-alpha[i]) + alpha[i]*cTop.r
+                        color[i].g = cBot[i].g*(1-alpha[i]) + alpha[i]*cTop.g
+                        color[i].b = cBot[i].b*(1-alpha[i]) + alpha[i]*cTop.b
+                # now fill scanline
+                self.drawLine(buff, self.coordsToPointCol(decideK[0],step,color[0]), self.coordsToPointCol(decideK[1],step,color[1]), self.doSmooth)
+        if isBotTri:
+            doStuff = True
         return
 
     # test for lines lines in all directions
