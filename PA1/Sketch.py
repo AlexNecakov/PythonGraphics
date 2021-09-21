@@ -70,7 +70,7 @@ class Sketch(CanvasBase):
         
     """
 
-    debug = 0
+    debug = 1
     texture_file_path = "./pattern.jpg"
     texture = None
 
@@ -339,17 +339,30 @@ class Sketch(CanvasBase):
                     color.g = cBot.g*(1-alpha) + alpha*cTop.g
                     color.b = cBot.b*(1-alpha) + alpha*cTop.b
         elif delY == 0:
-            if doSmooth:
-                color = ColorType(cBot.r,cBot.g,cBot.b)
-            else:
-                color = ColorType(c2.r,c2.g,c2.b)
-            for x in range(xBot, xTop):
-                self.drawPoint(buff, self.coordsToPointCol(x,yTop,color))
+            if delX >= 0:
                 if doSmooth:
-                    alpha = (x-xBot)/(delX)
-                    color.r = cBot.r*(1-alpha) + alpha*cTop.r
-                    color.g = cBot.g*(1-alpha) + alpha*cTop.g
-                    color.b = cBot.b*(1-alpha) + alpha*cTop.b
+                    color = ColorType(cBot.r,cBot.g,cBot.b)
+                else:
+                    color = ColorType(c2.r,c2.g,c2.b)
+                for x in range(xBot, xTop):
+                    self.drawPoint(buff, self.coordsToPointCol(x,yTop,color))
+                    if doSmooth:
+                        alpha = (x-xBot)/(delX)
+                        color.r = cBot.r*(1-alpha) + alpha*cTop.r
+                        color.g = cBot.g*(1-alpha) + alpha*cTop.g
+                        color.b = cBot.b*(1-alpha) + alpha*cTop.b
+            else:
+                if doSmooth:
+                    color = ColorType(cTop.r,cTop.g,cTop.b)
+                else:
+                    color = ColorType(c2.r,c2.g,c2.b)
+                for x in range(xTop, xBot):
+                    self.drawPoint(buff, self.coordsToPointCol(x,yTop,color))
+                    if doSmooth:
+                        alpha = (x-xTop)/(abs(delX))
+                        color.r = cTop.r*(1-alpha) + alpha*cBot.r
+                        color.g = cTop.g*(1-alpha) + alpha*cBot.g
+                        color.b = cTop.b*(1-alpha) + alpha*cBot.b
         # regular cases
         else:
             if doSmooth:
@@ -400,7 +413,7 @@ class Sketch(CanvasBase):
                     decideK1 = decideK - 1
                     for step in range(stepMax, stepMin):
                         self.drawPoint(buff, self.coordsToPointCol(step,decideK,color))
-                        if dec < 0:
+                        if dec <= 0:
                             dec = dec - (2 * delDecide) - (2 * delStep)
                             decideK = decideK1
                             decideK1 = decideK - 1
@@ -493,7 +506,8 @@ class Sketch(CanvasBase):
         yBot[1] = vertexList[0][0]
         xBot[1] = vertexList[0][1]
         cBot[1] = vertexList[0][2]
-        
+
+        # del 0 is the middle vertex, del 1 is the lowest height vertex
         delX = [0]*2
         delY = [0]*2
         delX[0] = xTop - xBot[0]
@@ -507,62 +521,38 @@ class Sketch(CanvasBase):
         # flat top edge
         elif (delY[0] == 0) ^ (delY[1] == 0):
             isTopTri = False
-        
+        # need to find cutoff point to make a top and bottom triangle
+        if(isBotTri & isTopTri):
+            xCutOff = xTop + (delY[0]/delY[1]) * delX[1]
+            yCutOff = yBot[0]
+        else:
+            xCutOff = xBot[1]
+            yCutOff = yBot[1]
 
-        # step up both dec vars
-        delDecide = [0]*2
-        decideK = [0]*2
-        decideK1 = [0]*2
-        dec = [0]*2
         color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
         alpha = [0]*2
+        for i in range(2):
+            if doSmooth:
+                color[i] = ColorType(cBot[i].r,cBot[i].g,cBot[i].b)
+            else:
+                color[i] = ColorType(c3.r,c3.g,c3.b)
+
         if isTopTri:
-            width = abs(delX[0])+abs(delX[1])
-            height = min(delY)
-            for i in range(2):
-                delDecide[i] = delX[i]
-                delStep = delY[i]
+            xSlope1 = (xBot[0] - xTop)/(yBot[0] - yTop)
+            xSlope2 = (xCutOff - xTop)/(yCutOff - yTop)
 
-                decideK[i] = xTop
-                if delX[i] <= 0:
-                    decideK1[i] = decideK[i] - 1
-                    dec[i] = (2 * delDecide[i]) + delStep
-                else:
-                    decideK1[i] = decideK[i] + 1
-                    dec[i] = (2 * delDecide[i]) - delStep
+            xStep1 = xTop
+            xStep2 = xTop
+
+            for step in range (yTop, yCutOff, -1):               
+                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), self.doSmooth)
+                xStep1 += xSlope1
+                xStep2 += xSlope2
                 if doSmooth:
-                    color[i] = ColorType(cBot[i].r,cBot[i].g,cBot[i].b)
-                else:
-                    color[i] = ColorType(c3.r,c3.g,c3.b)
-
-            # always step this direction, can't be stepping by different vars at same time
-            for step in range(yTop, yBot[0]-1, -1):
-                for i in range(2):
-                    self.drawPoint(buff, self.coordsToPointCol(decideK[i],step,color[i]))  
-                    if delX[i] == 0:
-                        decideK[i] = decideK1[i]
-                        decideK1[i] = decideK[i] - 1
-                    elif delY[i]/delX[i] > 0:
-                        if dec[i] < 0:
-                            dec[i] = dec[i] - (2 * delDecide[i]) + (2 * delStep)
-                            decideK[i] = decideK1[i]
-                            decideK1[i] = decideK[i] - 1
-                        else:
-                            dec[i] = dec[i] - (2 * delDecide[i])
-                    else:
-                        if dec[i] >= 0:
-                                dec[i] = dec[i] - (2 * delDecide[i]) - (2 * delStep)
-                                decideK[i] = decideK1[i]
-                                decideK1[i] = decideK[i] + 1
-                        else:
-                            dec[i] = dec[i] - (2 * delDecide[i])
-                    if doSmooth:
-                        alpha[i] = (step-yBot[i])/(delStep)
-                        color[i].r = cBot[i].r*(1-alpha[i]) + alpha[i]*cTop.r
-                        color[i].g = cBot[i].g*(1-alpha[i]) + alpha[i]*cTop.g
-                        color[i].b = cBot[i].b*(1-alpha[i]) + alpha[i]*cTop.b
-                # now fill scanline
-                self.drawLine(buff, self.coordsToPointCol(decideK[0],step,color[0]), self.coordsToPointCol(decideK[1],step,color[1]), self.doSmooth)
+                    alpha[i] = (yTop-step)/(yTop-yCutOff)
+                    color[i].r = cBot[i].r*(1-alpha[i]) + alpha[i]*cTop.r
+                    color[i].g = cBot[i].g*(1-alpha[i]) + alpha[i]*cTop.g
+                    color[i].b = cBot[i].b*(1-alpha[i]) + alpha[i]*cTop.b
         if isBotTri:
             doStuff = True
         return
