@@ -457,21 +457,116 @@ class Sketch(CanvasBase):
         x1, y1 = p1.coords
         x2, y2 = p2.coords
         x3, y3 = p3.coords
-        c = p1.color
+        c1 = p1.color
+        c2 = p2.color
+        c3 = p3.color
 
         # need uppermost vertex first, then go downwards
-        vertexList = [(y1,x1), (y2,x2), (y3,x3)]
+        vertexList = [(y1,x1,c1), (y2,x2,c2), (y3,x3,c3)]
         vertexList = sorted(vertexList)
 
         #give these descriptive names
         yTop = vertexList[2][0]
         xTop = vertexList[2][1]
-        ymid = vertexList[1][0]
-        xmid = vertexList[1][1]
-        yBot = vertexList[0][0]
-        xBot = vertexList[0][1]
+        cTop = vertexList[2][2]
+        yBot = []
+        xBot = []
+        cBot = []
+        yBot[0] = vertexList[1][0]
+        xBot[0] = vertexList[1][1]
+        cBot[0] = vertexList[1][2]
+        yBot[1] = vertexList[0][0]
+        xBot[1] = vertexList[0][1]
+        cBot[1] = vertexList[0][2]
 
+        delX = []
+        delY = []
+        delX[0] = xTop - xBot[0]
+        delY[0] = yTop - yBot[0]
+        delX[1] = xTop - xBot[1]
+        delY[1] = yTop - yBot[1]
+        
+        if doSmooth:
+            color = ColorType(cTop.r,cTop.g,cTop.b)
+        else:
+            color = ColorType(c3.r,c3.g,c3.b)
+        # choose var to step by
+        delDecide = []
+        delStep = []
+        decideK = []
+        stepMax = []
+        stepMin = []
+        for i in delY:
+            if 0<= abs(delY[i]/delX[i]) <= 1:
+                delDecide[i] = delY[i]
+                delStep[i] = delX[i]
 
+                decideK[i] = yBot[i]
+                stepMax[i] = xTop[i]
+                stepMin[i] = xBot[i]
+            else:
+                delDecide[i] = delX[i]
+                delStep[i] = delY[i]
+
+                decideK[i] = xBot[i]
+                stepMax[i] = yTop[i]
+                stepMin[i] = yBot[i]
+            
+        if delY/delX >=0:
+            decideK1 = decideK + 1
+            dec = (2 * delDecide) - delStep
+            for step in range(stepMin, stepMax):
+                if delY/delX <= 1:
+                    self.drawPoint(buff, self.coordsToPointCol(step,decideK,color))
+                else:
+                    self.drawPoint(buff, self.coordsToPointCol(decideK,step,color)) 
+                if dec >= 0:
+                    dec = dec + (2 * delDecide) - (2 * delStep)
+                    decideK = decideK1
+                    decideK1 = decideK + 1
+                else:
+                    dec = dec + (2 * delDecide)
+                if doSmooth:
+                    alpha = (step-stepMin)/(delStep)
+                    color.r = cBot.r*(1-alpha) + alpha*cTop.r
+                    color.g = cBot.g*(1-alpha) + alpha*cTop.g
+                    color.b = cBot.b*(1-alpha) + alpha*cTop.b
+        else:
+            color = ColorType(cTop.r,cTop.g,cTop.b)
+            dec = (2 * delDecide) + delStep
+            if delY/delX >= -1:
+                decideK = yTop
+                decideK1 = decideK - 1
+                for step in range(stepMax, stepMin):
+                    self.drawPoint(buff, self.coordsToPointCol(step,decideK,color))
+                    if dec < 0:
+                        dec = dec - (2 * delDecide) - (2 * delStep)
+                        decideK = decideK1
+                        decideK1 = decideK - 1
+                    else:
+                        dec = dec - (2 * delDecide)
+                    if doSmooth:
+                        alpha = (stepMax-step)/(delStep)
+                        color.r = cTop.r*(1-alpha) + alpha*cBot.r
+                        color.g = cTop.g*(1-alpha) + alpha*cBot.g
+                        color.b = cTop.b*(1-alpha) + alpha*cBot.b
+            else:
+                decideK = xTop
+                decideK1 = decideK + 1
+                # this is a separate case due to python for loops not counting backwards
+                for step in range(stepMax, stepMin, -1):
+                    self.drawPoint(buff, self.coordsToPointCol(decideK,step,color)) 
+                    if dec < 0:
+                        dec = dec + (2 * delDecide) + (2 * delStep)
+                        decideK = decideK1
+                        decideK1 = decideK + 1
+                    else:
+                        dec = dec + (2 * delDecide)
+                    if doSmooth:
+                        alpha = (stepMax-step)/(delStep)
+                        color.r = cTop.r*(1-alpha) + alpha*cBot.r
+                        color.g = cTop.g*(1-alpha) + alpha*cBot.g
+                        color.b = cTop.b*(1-alpha) + alpha*cBot.b
         return
 
     # test for lines lines in all directions
