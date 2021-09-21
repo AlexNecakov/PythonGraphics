@@ -102,21 +102,21 @@ class Sketch(CanvasBase):
                                self.testCaseTri01,
                                self.testCaseTri02,
                                self.testCaseTriTexture01]  # method at here must accept one argument, n_steps
-        # Try to read texture file
-        if os.path.isfile(self.texture_file_path):
-            # Read image and make it to an ndarray
-            texture_image = Image.open(self.texture_file_path)
-            texture_array = np.array(texture_image).astype(np.uint8)
-            # Because imported image is upside down, reverse it
-            texture_array = np.flip(texture_array, axis=0)
-            # Store texture image in our Buff format
-            self.texture = Buff(texture_array.shape[1], texture_array.shape[0])
-            self.texture.setStaticBuffArray(np.transpose(texture_array, (1, 0, 2)))
-            if self.debug > 0:
-                print("Texture Loaded with shape: ", texture_array.shape)
-                print("Texture Buff have size: ", self.texture.size)
-        else:
-            raise ImportError("Cannot import texture file")
+        # # Try to read texture file (Causes import errors in my debugger, not bothering to try)
+        # if os.path.isfile(self.texture_file_path):
+        #     # Read image and make it to an ndarray
+        #     texture_image = Image.open(self.texture_file_path)
+        #     texture_array = np.array(texture_image).astype(np.uint8)
+        #     # Because imported image is upside down, reverse it
+        #     texture_array = np.flip(texture_array, axis=0)
+        #     # Store texture image in our Buff format
+        #     self.texture = Buff(texture_array.shape[1], texture_array.shape[0])
+        #     self.texture.setStaticBuffArray(np.transpose(texture_array, (1, 0, 2)))
+        #     if self.debug > 0:
+        #         print("Texture Loaded with shape: ", texture_array.shape)
+        #         print("Texture Buff have size: ", self.texture.size)
+        # else:
+        #     raise ImportError("Cannot import texture file")
 
     def __addPoint2Pointlist(self, pointlist, x, y):
         if self.randomColor:
@@ -269,6 +269,7 @@ class Sketch(CanvasBase):
         """
         x1, y1 = p1.coords
         x2, y2 = p2.coords
+        # find order, only doing fill so don't care about pairs
         xmin = min(x1, x2)
         xmax = max(x1, x2)
         ymin = min(y1, y2)
@@ -347,6 +348,7 @@ class Sketch(CanvasBase):
                     color.r = cBot.r*(1-alpha) + alpha*cTop.r
                     color.g = cBot.g*(1-alpha) + alpha*cTop.g
                     color.b = cBot.b*(1-alpha) + alpha*cTop.b
+        # regular cases
         else:
             if doSmooth:
                 color = ColorType(cBot.r,cBot.g,cBot.b)
@@ -367,7 +369,7 @@ class Sketch(CanvasBase):
                 decideK = xBot
                 stepMax = yTop
                 stepMin = yBot
-                
+            #pos slope case
             if delY/delX >=0:
                 decideK1 = decideK + 1
                 dec = (2 * delDecide) - delStep
@@ -387,6 +389,7 @@ class Sketch(CanvasBase):
                         color.r = cBot.r*(1-alpha) + alpha*cTop.r
                         color.g = cBot.g*(1-alpha) + alpha*cTop.g
                         color.b = cBot.b*(1-alpha) + alpha*cTop.b
+            # neg slope case, could be going from right to left, may be preferable
             else:
                 color = ColorType(cTop.r,cTop.g,cTop.b)
                 dec = (2 * delDecide) + delStep
@@ -539,6 +542,7 @@ class Sketch(CanvasBase):
             else:
                 color[i] = ColorType(c3.r,c3.g,c3.b)
 
+        # always step this direction, can't be stepping by different vars at same time
         for step in range(stepMin[0], stepMax[0]):
             xCor = [0]*2
             yCor = [0]*2
@@ -578,6 +582,7 @@ class Sketch(CanvasBase):
                     color[i].r = cBot[i].r*(1-alpha[i]) + alpha[i]*cTop.r
                     color[i].g = cBot[i].g*(1-alpha[i]) + alpha[i]*cTop.g
                     color[i].b = cBot[i].b*(1-alpha[i]) + alpha[i]*cTop.b
+            # now fill scanline
             self.drawLine(buff, self.coordsToPointCol(xCor[0],yCor[0],color[0]), self.coordsToPointCol(xCor[1],yCor[1],color[1]), self.doSmooth)
         
         return
