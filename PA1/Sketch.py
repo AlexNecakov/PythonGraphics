@@ -317,11 +317,6 @@ class Sketch(CanvasBase):
         xbot = vertexList[0][1]
         delX = xtop - xbot
         delY = ytop - ybot
-        print("1: " + str(x1) + "," + str(y1))
-        print("2: " + str(x2) + "," + str(y2))
-        print("top: " + str(xtop) + "," + str(ytop))
-        print("bot: " + str(xbot) + "," + str(ybot))
-        print("slope: " + str(delY/delX))
 
         # special cases
         if delX == 0:
@@ -337,20 +332,20 @@ class Sketch(CanvasBase):
                 delNot = delX
 
                 stepK = ybot
-                not1 = xtop
-                not2 = xbot
+                notMax = xtop
+                notMin = xbot
             else:
                 delStep = delX
                 delNot = delY
 
                 stepK = xbot
-                not1 = ytop
-                not2 = ybot
+                notMax = ytop
+                notMin = ybot
                 
             if delY/delX >=0:
                 stepK1 = stepK + 1
                 dec = (2 * delStep) - delNot
-                for notStep in range(not2, not1):
+                for notStep in range(notMin, notMax):
                     if delY/delX <= 1:
                         self.drawPoint(buff, self.coordsToPointCol(notStep,stepK,c))
                     else:
@@ -364,25 +359,28 @@ class Sketch(CanvasBase):
             else:
                 dec = (2 * delStep) + delNot
                 if delY/delX >= -1:
+                    stepK = ytop
                     stepK1 = stepK - 1
-                    for notStep in range(not1, not2):
+                    for notStep in range(notMax, notMin):
                         self.drawPoint(buff, self.coordsToPointCol(notStep,stepK,c))
-                        if dec < 0:
-                            dec = dec + (2 * delStep) + (2 * delNot)
-                            stepK = stepK1
-                            stepK1 = stepK - 1
-                        else:
-                            dec = dec + (2 * delStep)
-                else:
-                    stepK1 = stepK + 1
-                    for notStep in range(not1, not2, 1):
-                        self.drawPoint(buff, self.coordsToPointCol(stepK,notStep,c)) 
                         if dec < 0:
                             dec = dec - (2 * delStep) - (2 * delNot)
                             stepK = stepK1
-                            stepK1 = stepK + 1
+                            stepK1 = stepK - 1
                         else:
                             dec = dec - (2 * delStep)
+                else:
+                    stepK = xtop
+                    stepK1 = stepK + 1
+                    # this is a separate case due to python for loops not counting backwards
+                    for notStep in range(notMax, notMin, -1):
+                        self.drawPoint(buff, self.coordsToPointCol(stepK,notStep,c)) 
+                        if dec < 0:
+                            dec = dec + (2 * delStep) + (2 * delNot)
+                            stepK = stepK1
+                            stepK1 = stepK + 1
+                        else:
+                            dec = dec + (2 * delStep)
 
         return
 
