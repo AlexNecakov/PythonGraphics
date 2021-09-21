@@ -486,6 +486,7 @@ class Sketch(CanvasBase):
         xBot = [0]*2
         cBot = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
         
+        # bot 0 is the middle height vertex, bot 1 is lowest height vertex
         yBot[0] = vertexList[1][0]
         xBot[0] = vertexList[1][1]
         cBot[0] = vertexList[1][2]
@@ -516,6 +517,8 @@ class Sketch(CanvasBase):
         color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
         alpha = [0]*2
         if isTopTri:
+            width = abs(delX[0])+abs(delX[1])
+            height = min(delY)
             for i in range(2):
                 delDecide[i] = delX[i]
                 delStep = delY[i]
@@ -528,7 +531,6 @@ class Sketch(CanvasBase):
                     decideK1[i] = decideK[i] + 1
                     dec[i] = (2 * delDecide[i]) - delStep
                 if doSmooth:
-
                     color[i] = ColorType(cBot[i].r,cBot[i].g,cBot[i].b)
                 else:
                     color[i] = ColorType(c3.r,c3.g,c3.b)
