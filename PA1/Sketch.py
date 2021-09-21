@@ -302,7 +302,6 @@ class Sketch(CanvasBase):
         # Requirements:
         #   1. Only integer is allowed in interpolate point coordinates between p1 and p2
         #   2. Float number is allowed in interpolate point color
-        #   Assume slope 0<=m<=1
         #   Alg: Dk+1 = Dk + 2dely - 2delx*(yk+1 - yk)
         x1, y1 = p1.coords
         x2, y2 = p2.coords
@@ -310,22 +309,47 @@ class Sketch(CanvasBase):
         delX = x1 - x2
         delY = y1 - y2
 
-        # init y to the first y
-        yk = y2
-        # we also need y k+1
-        yk1 = yk + 1
+        # vertical case
+        if delX == 0:
+            for y in range(y2, y1):
+                self.drawPoint(buff, self.coordsToPointCol(x1,y,c))
+        elif delY == 0:
+            for x in range(x2, x1):
+                self.drawPoint(buff, self.coordsToPointCol(x,y1,c))
+        elif 0<= delY/delX <= 1:
+            # init y to the first y
+            yk = y2
+            # we also need y k+1
+            yk1 = yk + 1
 
-        # init decision param
-        dec = (2 * delY) - delX
+            # init decision param
+            dec = (2 * delY) - delX
 
-        for x in range(x2, x1):
-            self.drawPoint(buff, self.coordsToPointCol(x,yk,c))
-            if dec >= 0:
-                dec = dec + (2 * delY) - (2 * delX)
-                yk = yk1
-                yk1 = yk + 1
-            else:
-                dec = dec + (2 * delY)
+            for x in range(x2, x1):
+                self.drawPoint(buff, self.coordsToPointCol(x,yk,c))
+                if dec >= 0:
+                    dec = dec + (2 * delY) - (2 * delX)
+                    yk = yk1
+                    yk1 = yk + 1
+                else:
+                    dec = dec + (2 * delY)
+        elif 1 < delY/delX:
+            # init x to the first x
+            xk = x2
+            # we also need x k+1
+            xk1 = xk + 1
+
+            # init decision param
+            dec = (2 * delX) - delY
+
+            for y in range(y2, y1):
+                self.drawPoint(buff, self.coordsToPointCol(xk,y,c))
+                if dec >= 0:
+                    dec = dec + (2 * delX) - (2 * delY)
+                    xk = xk1
+                    xk1 = xk + 1
+                else:
+                    dec = dec + (2 * delX)
 
 
         return
@@ -364,6 +388,20 @@ class Sketch(CanvasBase):
         x2, y2 = p2.coords
         x3, y3 = p3.coords
         c = p1.color
+
+        # need uppermost vertex first, then go downwards
+        vertexList = [(y1,x1), (y2,x2), (y3,x3)]
+        vertexList = sorted(vertexList)
+
+        #give these descriptive names
+        ytop = vertexList[2][0]
+        xtop = vertexList[2][1]
+        ymid = vertexList[1][0]
+        xmid = vertexList[1][1]
+        ybot = vertexList[0][0]
+        xbot = vertexList[0][1]
+
+
         return
 
     # test for lines lines in all directions
