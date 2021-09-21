@@ -529,7 +529,7 @@ class Sketch(CanvasBase):
             isTopTri = False
         # need to find cutoff point to make a top and bottom triangle
         if(isBotTri & isTopTri):
-            xCutOff = xTop + (delY[0]/delY[1]) * delX[1]
+            xCutOff = xTop - (delY[0]/delY[1]) * delX[1]
             yCutOff = yBot[0]
             alph = (delY[0]/delY[1])
             cCutOff = ColorType(cTop.r*(1-alph) + alph*cBot[1].r,cTop.g*(1-alph) + alph*cBot[1].g,cTop.b*(1-alph) + alph*cBot[1].b)
@@ -540,27 +540,16 @@ class Sketch(CanvasBase):
         delXCut = xTop - xCutOff
         delYCut = yTop - yCutOff
 
-        print("top:" + str(xTop) + "," + str(yTop))
-        print("mid:" + str(xBot[0]) + "," + str(yBot[0]))
-        print("bot:" + str(xBot[1]) + "," + str(yBot[1]))
-        print("cut:" + str(xCutOff) + "," + str(yCutOff))
-
         if isTopTri:
             xSlope1 = (xBot[0] - xTop)/(yCutOff - yTop)
-            if delX[0] < 0:
-                xSlope1 = xSlope1 * -1
             xSlope2 = (xCutOff-xTop)/(yCutOff - yTop)
-            if delXCut > 0:
-                xSlope2 = xSlope2 * -1
 
             xStep1 = xTop
             xStep2 = xTop
-            print("slope1:" + str(xSlope1))
-            print("slope2:" + str(xSlope2))
             for step in range (yTop, yCutOff-1, -1):               
                 self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), self.doSmooth)
-                xStep1 += xSlope1
-                xStep2 += xSlope2
+                xStep1 -= xSlope1
+                xStep2 -= xSlope2
                 if doSmooth:
                     alpha[0] = (yTop-step)/(yTop-yCutOff)
                     color[0].r = cTop.r*(1-alpha[0]) + alpha[0]*cBot[0].r
