@@ -507,10 +507,6 @@ class Sketch(CanvasBase):
         xBot[1] = vertexList[0][1]
         cBot[1] = vertexList[0][2]
 
-        if doSmooth:
-            color = [ColorType(cTop.r,cTop.g,cTop.b),ColorType(cTop.r,cTop.g,cTop.b)]
-        else:
-            color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
         alpha = [0]*2
         
         # del 0 is the middle vertex, del 1 is the lowest height vertex
@@ -541,6 +537,10 @@ class Sketch(CanvasBase):
         delYCut = yTop - yCutOff
 
         if isTopTri:
+            if doSmooth:
+                color = [ColorType(cTop.r,cTop.g,cTop.b),ColorType(cTop.r,cTop.g,cTop.b)]
+            else:
+                color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
             xSlope1 = (xBot[0] - xTop)/(yCutOff - yTop)
             xSlope2 = (xCutOff-xTop)/(yCutOff - yTop)
 
@@ -560,7 +560,29 @@ class Sketch(CanvasBase):
                     color[1].g = cTop.g*(1-alpha[1]) + alpha[1]*cCutOff.g
                     color[1].b = cTop.b*(1-alpha[1]) + alpha[1]*cCutOff.b
         if isBotTri:
-            doStuff = True
+            print("bot tri")
+            if doSmooth:
+                color = [ColorType(cBot[1].r,cBot[1].g,cBot[1].b),ColorType(cBot[1].r,cBot[1].g,cBot[1].b)]
+            else:
+                color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
+            xSlope1 = (xBot[0] - xBot[1])/(yCutOff - yBot[1])
+            xSlope2 = (xCutOff-xBot[1])/(yCutOff - yBot[1])
+
+            xStep1 = xBot[1]
+            xStep2 = xBot[1]
+            for step in range (yBot[1], yCutOff+1):               
+                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), self.doSmooth)
+                xStep1 += xSlope1
+                xStep2 += xSlope2
+                if doSmooth:
+                    alpha[0] = (step-yBot[1])/(yCutOff-yBot[1])
+                    color[0].r = cBot[1].r*(1-alpha[0]) + alpha[0]*cBot[0].r
+                    color[0].g = cBot[1].g*(1-alpha[0]) + alpha[0]*cBot[0].g
+                    color[0].b = cBot[1].b*(1-alpha[0]) + alpha[0]*cBot[0].b
+                    alpha[1] = (yTop-step)/(yTop-yCutOff)
+                    color[1].r = cBot[1].r*(1-alpha[1]) + alpha[1]*cCutOff.r
+                    color[1].g = cBot[1].g*(1-alpha[1]) + alpha[1]*cCutOff.g
+                    color[1].b = cBot[1].b*(1-alpha[1]) + alpha[1]*cCutOff.b
         return
 
     # test for lines lines in all directions
