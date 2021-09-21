@@ -131,7 +131,7 @@ class Sketch(CanvasBase):
         else:
             p = Point((x, y), ColorType(1, 0, 0))
         return p
-    def coordsToPoint(self, x, y, c):
+    def coordsToPointCol(self, x, y, c):
         p = Point((x, y), c)
         return p
 
@@ -277,7 +277,7 @@ class Sketch(CanvasBase):
 
         for x in range(xmin,xmax+1):
             for y in range(ymin,ymax+1):
-                self.drawPoint(buff, self.coordsToPoint(x,y,c))
+                self.drawPoint(buff, self.coordsToPointCol(x,y,c))
         return
 
     def drawLine(self, buff, p1, p2, doSmooth=True, doAA=False, doAAlevel=4):
@@ -319,7 +319,7 @@ class Sketch(CanvasBase):
         dec = (2 * delY) - delX
 
         for x in range(x2, x1):
-            self.drawPoint(buff, self.coordsToPoint(x,yk,c))
+            self.drawPoint(buff, self.coordsToPointCol(x,yk,c))
             if dec >= 0:
                 dec = dec + (2 * delY) - (2 * delX)
                 yk = yk1
