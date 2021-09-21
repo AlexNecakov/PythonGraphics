@@ -70,7 +70,7 @@ class Sketch(CanvasBase):
         
     """
 
-    debug = 2
+    debug = 1
     texture_file_path = "./pattern.jpg"
     texture = None
 
@@ -159,12 +159,13 @@ class Sketch(CanvasBase):
             self.drawPoint(self.buff, self.points_r[-1])
         elif len(self.points_r) % 3 == 2:
             if self.debug > 0:
-                print("draw a line from ", self.points_r[-1], " -> ", self.points_r[-2])
+                print("draw a point", self.points_r[-1])
             self.drawPoint(self.buff, self.points_r[-1])
         elif len(self.points_r) % 3 == 0 and len(self.points_r) > 0:
             if self.debug > 0:
                 print("draw a triangle {} -> {} -> {}".format(self.points_r[-3], self.points_r[-2], self.points_r[-1]))
             self.drawPoint(self.buff, self.points_r[-1])
+            self.drawTriangle(self.buff, self.points_r[-1], self.points_r[-2], self.points_r[-3], self.doSmooth)
             self.points_r.clear()
 
     def Interrupt_Keyboard(self, keycode):
@@ -469,33 +470,34 @@ class Sketch(CanvasBase):
         yTop = vertexList[2][0]
         xTop = vertexList[2][1]
         cTop = vertexList[2][2]
-        yBot = []
-        xBot = []
-        cBot = []
+        yBot = [0]*2
+        xBot = [0]*2
+        cBot = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
+        
         yBot[0] = vertexList[1][0]
         xBot[0] = vertexList[1][1]
         cBot[0] = vertexList[1][2]
         yBot[1] = vertexList[0][0]
         xBot[1] = vertexList[0][1]
         cBot[1] = vertexList[0][2]
-
-        delX = []
-        delY = []
+        
+        delX = [0]*2
+        delY = [0]*2
         delX[0] = xTop - xBot[0]
         delY[0] = yTop - yBot[0]
         delX[1] = xTop - xBot[1]
         delY[1] = yTop - yBot[1]
         
         # choose var to step by
-        delDecide = []
-        delStep = []
-        decideK = []
-        decideK1 = []
-        stepMax = []
-        stepMin = []
-        dec = []
-        color = []
-        alpha = []
+        delDecide = [0]*2
+        delStep = [0]*2
+        decideK = [0]*2
+        decideK1 = [0]*2
+        stepMax = [0]*2
+        stepMin = [0]*2
+        dec = [0]*2
+        color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
+        alpha = [0]*2
         for i in delY:
             if 0<= abs(delY[i]/delX[i]) <= 1:
                 delDecide[i] = delY[i]
@@ -681,7 +683,7 @@ if __name__ == "__main__":
         frame = wx.Frame(None, size=(500, 500), title="Test", style=wx.DEFAULT_FRAME_STYLE | wx.FULL_REPAINT_ON_RESIZE)
 
         canvas = Sketch(frame)
-        canvas.debug = 0
+        #canvas.debug = 0
 
         frame.Show()
         app.MainLoop()
