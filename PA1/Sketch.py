@@ -541,10 +541,7 @@ class Sketch(CanvasBase):
             xStep1 = xTop
             xStep2 = xTop
             # step down from top vertex
-            for step in range (yTop, yCutOff-1, -1):               
-                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
-                xStep1 -= xSlope1
-                xStep2 -= xSlope2
+            for step in range (yTop, yCutOff-1, -1):            
                 if doSmooth:
                     alpha = (yTop-step)/(yTop-yCutOff)
                     color[0].r = cTop.r*(1-alpha) + alpha*cMid.r
@@ -552,7 +549,10 @@ class Sketch(CanvasBase):
                     color[0].b = cTop.b*(1-alpha) + alpha*cMid.b
                     color[1].r = cTop.r*(1-alpha) + alpha*cCutOff.r
                     color[1].g = cTop.g*(1-alpha) + alpha*cCutOff.g
-                    color[1].b = cTop.b*(1-alpha) + alpha*cCutOff.b
+                    color[1].b = cTop.b*(1-alpha) + alpha*cCutOff.b   
+                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
+                xStep1 -= xSlope1
+                xStep2 -= xSlope2
         # step up from bottom vertex
         if isBotTri:
             if doSmooth:
@@ -564,10 +564,7 @@ class Sketch(CanvasBase):
 
             xStep1 = xBot
             xStep2 = xBot
-            for step in range (yBot, yCutOff+1):               
-                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
-                xStep1 += xSlope1
-                xStep2 += xSlope2
+            for step in range (yBot, yCutOff+1):         
                 if doSmooth:
                     alpha = (step-yBot)/(yCutOff-yBot)
                     color[0].r = cBot.r*(1-alpha) + alpha*cMid.r
@@ -575,7 +572,10 @@ class Sketch(CanvasBase):
                     color[0].b = cBot.b*(1-alpha) + alpha*cMid.b
                     color[1].r = cBot.r*(1-alpha) + alpha*cCutOff.r
                     color[1].g = cBot.g*(1-alpha) + alpha*cCutOff.g
-                    color[1].b = cBot.b*(1-alpha) + alpha*cCutOff.b
+                    color[1].b = cBot.b*(1-alpha) + alpha*cCutOff.b      
+                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
+                xStep1 += xSlope1
+                xStep2 += xSlope2
         return
 
     # test for lines lines in all directions
