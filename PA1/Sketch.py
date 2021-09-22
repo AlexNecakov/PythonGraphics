@@ -529,22 +529,22 @@ class Sketch(CanvasBase):
             yCutOff = yBot[0]
             alph = (delY[0]/delY[1])
             cCutOff = ColorType(cTop.r*(1-alph) + alph*cBot[1].r,cTop.g*(1-alph) + alph*cBot[1].g,cTop.b*(1-alph) + alph*cBot[1].b)
-        else:
+        elif isBotTri == False & isTopTri:
             xCutOff = xBot[1]
             yCutOff = yBot[1]
             cCutOff = ColorType(cBot[1].r,cBot[1].g,cBot[1].b)
+        else:
+            xCutOff = xTop
+            yCutOff = yTop
+            cCutOff = ColorType(cTop.r,cTop.g,cTop.b)    
             
         if isTopTri:
             if doSmooth:
                 color = [ColorType(cTop.r,cTop.g,cTop.b),ColorType(cTop.r,cTop.g,cTop.b)]
             else:
                 color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
-            if yCutOff == yTop:
-                xSlope1 = xBot[0] - xTop
-                xSlope2 = xCutOff-xTop
-            else:
-                xSlope1 = (xBot[0] - xTop)/(yCutOff - yTop)
-                xSlope2 = (xCutOff-xTop)/(yCutOff - yTop)
+            xSlope1 = (xBot[0] - xTop)/(yCutOff - yTop)
+            xSlope2 = (xCutOff-xTop)/(yCutOff - yTop)
 
             xStep1 = xTop
             xStep2 = xTop
@@ -566,14 +566,8 @@ class Sketch(CanvasBase):
                 color = [ColorType(cBot[1].r,cBot[1].g,cBot[1].b),ColorType(cBot[1].r,cBot[1].g,cBot[1].b)]
             else:
                 color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
-            if yCutOff == yBot[1]:
-                print("cutoff:"+str(xCutOff)+","+str(yCutOff))
-                print("bottom:"+str(xBot[1])+","+str(yBot[1]))
-                xSlope1 = xBot[0] - xBot[1]
-                xSlope2 = xCutOff-xBot[1]
-            else:
-                xSlope1 = (xBot[0] - xBot[1])/(yCutOff - yBot[1])
-                xSlope2 = (xCutOff-xBot[1])/(yCutOff - yBot[1])
+            xSlope1 = (xBot[0] - xBot[1])/(yCutOff - yBot[1])
+            xSlope2 = (xCutOff-xBot[1])/(yCutOff - yBot[1])
 
             xStep1 = xBot[1]
             xStep2 = xBot[1]
@@ -582,10 +576,7 @@ class Sketch(CanvasBase):
                 xStep1 += xSlope1
                 xStep2 += xSlope2
                 if doSmooth:
-                    if yCutOff == yBot[1]:
-                        alpha[0] = 1
-                    else:
-                        alpha[0] = (step-yBot[1])/(yCutOff-yBot[1])
+                    alpha[0] = (step-yBot[1])/(yCutOff-yBot[1])
                     color[0].r = cBot[1].r*(1-alpha[0]) + alpha[0]*cBot[0].r
                     color[0].g = cBot[1].g*(1-alpha[0]) + alpha[0]*cBot[0].g
                     color[0].b = cBot[1].b*(1-alpha[0]) + alpha[0]*cBot[0].b
