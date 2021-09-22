@@ -529,10 +529,12 @@ class Sketch(CanvasBase):
             yCutOff = yBot[0]
             alph = (delY[0]/delY[1])
             cCutOff = ColorType(cTop.r*(1-alph) + alph*cBot[1].r,cTop.g*(1-alph) + alph*cBot[1].g,cTop.b*(1-alph) + alph*cBot[1].b)
+        # in top only, bot vertex is cutoff
         elif isBotTri == False & isTopTri:
             xCutOff = xBot[1]
             yCutOff = yBot[1]
             cCutOff = ColorType(cBot[1].r,cBot[1].g,cBot[1].b)
+        # in bot only, top vertex is cutoff
         else:
             xCutOff = xTop
             yCutOff = yTop
@@ -549,7 +551,7 @@ class Sketch(CanvasBase):
             xStep1 = xTop
             xStep2 = xTop
             for step in range (yTop, yCutOff-1, -1):               
-                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), self.doSmooth)
+                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
                 xStep1 -= xSlope1
                 xStep2 -= xSlope2
                 if doSmooth:
@@ -572,7 +574,7 @@ class Sketch(CanvasBase):
             xStep1 = xBot[1]
             xStep2 = xBot[1]
             for step in range (yBot[1], yCutOff+1):               
-                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), self.doSmooth)
+                self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
                 xStep1 += xSlope1
                 xStep2 += xSlope2
                 if doSmooth:
@@ -678,7 +680,7 @@ class Sketch(CanvasBase):
                                  (127. + 127. * math.sin(theta + delta + 2 * math.pi / 3)) / 255,
                                  (127. + 127. * math.sin(theta + delta + 4 * math.pi / 3)) / 255))
             self.drawTriangle(self.buff, v0, v1, v2, True, self.doAA, self.doAAlevel)
-
+            
     def testCaseTriTexture01(self, n_steps):
         # Test case for no smooth color filling triangle
         n_steps = int(n_steps / 2)
