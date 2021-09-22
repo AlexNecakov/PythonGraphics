@@ -495,45 +495,35 @@ class Sketch(CanvasBase):
         yTop = vertexList[2][0]
         xTop = vertexList[2][1]
         cTop = vertexList[2][2]
-        yBot = [0]*2
-        xBot = [0]*2
-        cBot = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
-        
-        # bot 0 is the middle height vertex, bot 1 is lowest height vertex
-        yBot[0] = vertexList[1][0]
-        xBot[0] = vertexList[1][1]
-        cBot[0] = vertexList[1][2]
-        yBot[1] = vertexList[0][0]
-        xBot[1] = vertexList[0][1]
-        cBot[1] = vertexList[0][2]
+        yMid = vertexList[1][0]
+        xMid = vertexList[1][1]
+        cMid = vertexList[1][2]
+        yBot = vertexList[0][0]
+        xBot = vertexList[0][1]
+        cBot = vertexList[0][2]
 
-        alpha = [0]*2
-        
-        # del 0 is the middle vertex, del 1 is the lowest height vertex
-        delX = [0]*2
-        delY = [0]*2
-        delX[0] = xTop - xBot[0]
-        delY[0] = yTop - yBot[0]
-        delX[1] = xTop - xBot[1]
-        delY[1] = yTop - yBot[1]
+        delXMid = xTop - xMid
+        delYMid = yTop - yMid
+        delXBot = xTop - xBot
+        delYBot = yTop - yBot
 
         # flat bottom edge
-        if delY[0] == delY[1]:
+        if delYMid == delYBot:
             isBotTri = False
         # flat top edge
-        elif (delY[0] == 0) ^ (delY[1] == 0):
+        elif (delYMid == 0) ^ (delYBot == 0):
             isTopTri = False
         # need to find cutoff point to make a top and bottom triangle
         if(isBotTri & isTopTri):
-            xCutOff = xTop - (delY[0]/delY[1]) * delX[1]
-            yCutOff = yBot[0]
-            alph = (delY[0]/delY[1])
-            cCutOff = ColorType(cTop.r*(1-alph) + alph*cBot[1].r,cTop.g*(1-alph) + alph*cBot[1].g,cTop.b*(1-alph) + alph*cBot[1].b)
+            xCutOff = xTop - (delYMid/delYBot) * delXBot
+            yCutOff = yMid
+            alph = (delYMid/delYBot)
+            cCutOff = ColorType(cTop.r*(1-alph) + alph*cBot.r,cTop.g*(1-alph) + alph*cBot.g,cTop.b*(1-alph) + alph*cBot.b)
         # in top only, bot vertex is cutoff
         elif isBotTri == False & isTopTri:
-            xCutOff = xBot[1]
-            yCutOff = yBot[1]
-            cCutOff = ColorType(cBot[1].r,cBot[1].g,cBot[1].b)
+            xCutOff = xBot
+            yCutOff = yBot
+            cCutOff = ColorType(cBot.r,cBot.g,cBot.b)
         # in bot only, top vertex is cutoff
         else:
             xCutOff = xTop
@@ -545,47 +535,47 @@ class Sketch(CanvasBase):
                 color = [ColorType(cTop.r,cTop.g,cTop.b),ColorType(cTop.r,cTop.g,cTop.b)]
             else:
                 color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
-            xSlope1 = (xBot[0] - xTop)/(yCutOff - yTop)
+            xSlope1 = (xMid - xTop)/(yCutOff - yTop)
             xSlope2 = (xCutOff-xTop)/(yCutOff - yTop)
 
             xStep1 = xTop
             xStep2 = xTop
+            # step down from top vertex
             for step in range (yTop, yCutOff-1, -1):               
                 self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
                 xStep1 -= xSlope1
                 xStep2 -= xSlope2
                 if doSmooth:
-                    alpha[0] = (yTop-step)/(yTop-yCutOff)
-                    color[0].r = cTop.r*(1-alpha[0]) + alpha[0]*cBot[0].r
-                    color[0].g = cTop.g*(1-alpha[0]) + alpha[0]*cBot[0].g
-                    color[0].b = cTop.b*(1-alpha[0]) + alpha[0]*cBot[0].b
-                    alpha[1] = (yTop-step)/(yTop-yCutOff)
-                    color[1].r = cTop.r*(1-alpha[1]) + alpha[1]*cCutOff.r
-                    color[1].g = cTop.g*(1-alpha[1]) + alpha[1]*cCutOff.g
-                    color[1].b = cTop.b*(1-alpha[1]) + alpha[1]*cCutOff.b
+                    alpha = (yTop-step)/(yTop-yCutOff)
+                    color[0].r = cTop.r*(1-alpha) + alpha*cMid.r
+                    color[0].g = cTop.g*(1-alpha) + alpha*cMid.g
+                    color[0].b = cTop.b*(1-alpha) + alpha*cMid.b
+                    color[1].r = cTop.r*(1-alpha) + alpha*cCutOff.r
+                    color[1].g = cTop.g*(1-alpha) + alpha*cCutOff.g
+                    color[1].b = cTop.b*(1-alpha) + alpha*cCutOff.b
+        # step up from bottom vertex
         if isBotTri:
             if doSmooth:
-                color = [ColorType(cBot[1].r,cBot[1].g,cBot[1].b),ColorType(cBot[1].r,cBot[1].g,cBot[1].b)]
+                color = [ColorType(cBot.r,cBot.g,cBot.b),ColorType(cBot.r,cBot.g,cBot.b)]
             else:
                 color = [ColorType(c3.r,c3.g,c3.b),ColorType(c3.r,c3.g,c3.b)]
-            xSlope1 = (xBot[0] - xBot[1])/(yCutOff - yBot[1])
-            xSlope2 = (xCutOff-xBot[1])/(yCutOff - yBot[1])
+            xSlope1 = (xMid - xBot)/(yCutOff - yBot)
+            xSlope2 = (xCutOff-xBot)/(yCutOff - yBot)
 
-            xStep1 = xBot[1]
-            xStep2 = xBot[1]
-            for step in range (yBot[1], yCutOff+1):               
+            xStep1 = xBot
+            xStep2 = xBot
+            for step in range (yBot, yCutOff+1):               
                 self.drawLine(buff, self.coordsToPointCol(int(xStep1),step,color[0]), self.coordsToPointCol(int(xStep2),step,color[1]), doSmooth)
                 xStep1 += xSlope1
                 xStep2 += xSlope2
                 if doSmooth:
-                    alpha[0] = (step-yBot[1])/(yCutOff-yBot[1])
-                    color[0].r = cBot[1].r*(1-alpha[0]) + alpha[0]*cBot[0].r
-                    color[0].g = cBot[1].g*(1-alpha[0]) + alpha[0]*cBot[0].g
-                    color[0].b = cBot[1].b*(1-alpha[0]) + alpha[0]*cBot[0].b
-                    alpha[1] = (step-yBot[1])/(yCutOff-yBot[1])
-                    color[1].r = cBot[1].r*(1-alpha[1]) + alpha[1]*cCutOff.r
-                    color[1].g = cBot[1].g*(1-alpha[1]) + alpha[1]*cCutOff.g
-                    color[1].b = cBot[1].b*(1-alpha[1]) + alpha[1]*cCutOff.b
+                    alpha = (step-yBot)/(yCutOff-yBot)
+                    color[0].r = cBot.r*(1-alpha) + alpha*cMid.r
+                    color[0].g = cBot.g*(1-alpha) + alpha*cMid.g
+                    color[0].b = cBot.b*(1-alpha) + alpha*cMid.b
+                    color[1].r = cBot.r*(1-alpha) + alpha*cCutOff.r
+                    color[1].g = cBot.g*(1-alpha) + alpha*cCutOff.g
+                    color[1].b = cBot.b*(1-alpha) + alpha*cCutOff.b
         return
 
     # test for lines lines in all directions
@@ -680,7 +670,7 @@ class Sketch(CanvasBase):
                                  (127. + 127. * math.sin(theta + delta + 2 * math.pi / 3)) / 255,
                                  (127. + 127. * math.sin(theta + delta + 4 * math.pi / 3)) / 255))
             self.drawTriangle(self.buff, v0, v1, v2, True, self.doAA, self.doAAlevel)
-            
+
     def testCaseTriTexture01(self, n_steps):
         # Test case for no smooth color filling triangle
         n_steps = int(n_steps / 2)
