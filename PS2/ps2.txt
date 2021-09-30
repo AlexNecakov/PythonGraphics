@@ -1,0 +1,36 @@
+// Algorithm to determine if vertices of simple, non-degenerate polygon
+// are given in CW or CCW order
+// The polygon may be concave or convex 
+Input: v[1], ..., v[N] 
+// N polygon vertices 
+Input: p
+// point P inside polygon and not on boundary
+Output: True or False   
+// True if CCW, False if CW 
+Vector e1, e2;  
+float z;
+// use winding number approach to find if point is inside polygon
+// if P is calculated to be outside polygon through winding number,
+// we know vertices are given in opposite order from CCW convention
+int w=0; 
+// compute cross-product between successive edges 
+// if sign of all the z values are all the same, then convex 
+// loop around polygon, taking cross product at each vertex 
+for (j=1; j<=N; j++){ 
+    i = j-1
+    e1= v[j]-v[i]; 
+    q = point outside polygon (choose arbitrarily);
+    pq = p - q;
+    z = (e1.x * pq.y) - (pq.x * e1.y);  
+    // z of cross-product 
+    if(z > 0.0){ 
+        w++
+    }
+    else if(z < 0.0){
+        w--
+    }
+} 
+if (w = 0)
+    return false;
+else
+    return true;
