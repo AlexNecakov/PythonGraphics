@@ -53,9 +53,9 @@ except:
 from Displayable import Displayable
 
 
-class DisplayableCylinder(Displayable):
+class DisplayableSphere(Displayable):
     """
-    Create a enclosed cylinder whose one end is at z=0 and it grows along z coordinates
+    Create a enclosed sphere whose one end is at z=0 and it grows along z coordinates
     """
     callListHandle = 0  # long int. override the one in Displayable
     qd = None  # Quadric
@@ -78,13 +78,70 @@ class DisplayableCylinder(Displayable):
         self.callListHandle = gl.glGenLists(1)
         self.qd = glu.gluNewQuadric()
 
+        vL = [
+            [-self.edgeLength / 2, -self.edgeLength / 2, -self.edgeLength / 2],
+            [self.edgeLength / 2, -self.edgeLength / 2, -self.edgeLength / 2],
+            [self.edgeLength / 2, self.edgeLength / 2, -self.edgeLength / 2],
+            [- self.edgeLength / 2, self.edgeLength / 2, -self.edgeLength / 2],
+            [- self.edgeLength / 2, -self.edgeLength / 2, self.edgeLength / 2],
+            [self.edgeLength / 2, -self.edgeLength / 2, self.edgeLength / 2],
+            [self.edgeLength / 2, self.edgeLength / 2, self.edgeLength / 2],
+            [- self.edgeLength / 2, self.edgeLength / 2, self.edgeLength / 2],
+        ]
+        triangleVerticesList = np.array([
+            *vL[0], *vL[1], *vL[2],
+            *vL[0], *vL[2], *vL[3],
+            *vL[0], *vL[4], *vL[7],
+            *vL[0], *vL[7], *vL[3],
+            *vL[7], *vL[6], *vL[2],
+            *vL[7], *vL[2], *vL[3],
+            *vL[5], *vL[1], *vL[2],
+            *vL[5], *vL[2], *vL[6],
+            *vL[4], *vL[5], *vL[6],
+            *vL[4], *vL[6], *vL[7],
+            *vL[0], *vL[1], *vL[5],
+            *vL[0], *vL[5], *vL[4]
+        ], dtype="float32")
+
         gl.glNewList(self.callListHandle, gl.GL_COMPILE)
         gl.glPushMatrix()
 
         gl.glScale(*self.scale)
         gl.glTranslate(0, 0, self.edgeLength / 2)
 
-        glu.gluCylinder(self.qd,1,1,1,1,1)
+        # a primitive cube
+        gl.glBegin(gl.GL_QUADS)
+        gl.glVertex3f(*vL[1])
+        gl.glVertex3f(*vL[0])
+        gl.glVertex3f(*vL[3])
+        gl.glVertex3f(*vL[2])
+
+        gl.glVertex3f(*vL[4])
+        gl.glVertex3f(*vL[5])
+        gl.glVertex3f(*vL[6])
+        gl.glVertex3f(*vL[7])
+
+        gl.glVertex3f(*vL[0])
+        gl.glVertex3f(*vL[4])
+        gl.glVertex3f(*vL[7])
+        gl.glVertex3f(*vL[3])
+
+        gl.glVertex3f(*vL[7])
+        gl.glVertex3f(*vL[6])
+        gl.glVertex3f(*vL[2])
+        gl.glVertex3f(*vL[3])
+
+        gl.glVertex3f(*vL[5])
+        gl.glVertex3f(*vL[1])
+        gl.glVertex3f(*vL[2])
+        gl.glVertex3f(*vL[6])
+
+        gl.glVertex3f(*vL[0])
+        gl.glVertex3f(*vL[1])
+        gl.glVertex3f(*vL[5])
+        gl.glVertex3f(*vL[4])
+
+        gl.glEnd()
 
         gl.glPopMatrix()
         gl.glEndList()

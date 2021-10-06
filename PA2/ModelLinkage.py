@@ -10,6 +10,8 @@ from Component import Component
 from Point import Point
 import ColorType as Ct
 from DisplayableCube import DisplayableCube
+from DisplayableCylinder import DisplayableCylinder
+from DisplayableSphere import DisplayableSphere
 
 
 class ModelLinkage(Component):
@@ -26,7 +28,7 @@ class ModelLinkage(Component):
         self.contextParent = parent
 
         linkageLength = 0.5
-        link1 = Component(Point((0, 0, 0)), DisplayableCube(self.contextParent, 1, [0.2, 0.2, 0.5]))
+        link1 = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [0.2, 0.2, 0.5]))
         link1.setDefaultColor(Ct.DARKORANGE1)
         link1.setDefaultAngle(90, link1.vAxis)
         link2 = Component(Point((0, 0, linkageLength)), DisplayableCube(self.contextParent, 1, [0.2, 0.2, linkageLength]))
