@@ -2,8 +2,8 @@
 Model our creature and wrap it in one class
 First version at 09/28/2021
 
-:author: micou(Zezhou Sun)
-:version: 2021.2.1
+:author: Alex Necakov
+:version: 2021.10.6
 """
 
 from Component import Component
@@ -14,9 +14,9 @@ from DisplayableCylinder import DisplayableCylinder
 from DisplayableSphere import DisplayableSphere
 
 
-class ModelLinkage(Component):
+class ModelSpider(Component):
     """
-    Define our linkage model
+    Define our spider model
     """
 
     components = None
@@ -28,7 +28,7 @@ class ModelLinkage(Component):
         self.contextParent = parent
 
         linkageLength = 0.5
-        link1 = Component(Point((0, 0, 0)), DisplayableCube(self.contextParent, 1, [0.2, 0.2, 0.5]))
+        link1 = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [0.2, 0.2, 0.5]))
         link1.setDefaultColor(Ct.DARKORANGE1)
         link1.setDefaultAngle(90, link1.vAxis)
         link2 = Component(Point((0, 0, linkageLength)), DisplayableCube(self.contextParent, 1, [0.2, 0.2, linkageLength]))
