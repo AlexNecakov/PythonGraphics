@@ -78,70 +78,13 @@ class DisplayableSphere(Displayable):
         self.callListHandle = gl.glGenLists(1)
         self.qd = glu.gluNewQuadric()
 
-        vL = [
-            [-self.edgeLength / 2, -self.edgeLength / 2, -self.edgeLength / 2],
-            [self.edgeLength / 2, -self.edgeLength / 2, -self.edgeLength / 2],
-            [self.edgeLength / 2, self.edgeLength / 2, -self.edgeLength / 2],
-            [- self.edgeLength / 2, self.edgeLength / 2, -self.edgeLength / 2],
-            [- self.edgeLength / 2, -self.edgeLength / 2, self.edgeLength / 2],
-            [self.edgeLength / 2, -self.edgeLength / 2, self.edgeLength / 2],
-            [self.edgeLength / 2, self.edgeLength / 2, self.edgeLength / 2],
-            [- self.edgeLength / 2, self.edgeLength / 2, self.edgeLength / 2],
-        ]
-        triangleVerticesList = np.array([
-            *vL[0], *vL[1], *vL[2],
-            *vL[0], *vL[2], *vL[3],
-            *vL[0], *vL[4], *vL[7],
-            *vL[0], *vL[7], *vL[3],
-            *vL[7], *vL[6], *vL[2],
-            *vL[7], *vL[2], *vL[3],
-            *vL[5], *vL[1], *vL[2],
-            *vL[5], *vL[2], *vL[6],
-            *vL[4], *vL[5], *vL[6],
-            *vL[4], *vL[6], *vL[7],
-            *vL[0], *vL[1], *vL[5],
-            *vL[0], *vL[5], *vL[4]
-        ], dtype="float32")
-
         gl.glNewList(self.callListHandle, gl.GL_COMPILE)
         gl.glPushMatrix()
 
         gl.glScale(*self.scale)
         gl.glTranslate(0, 0, self.edgeLength / 2)
 
-        # a primitive cube
-        gl.glBegin(gl.GL_QUADS)
-        gl.glVertex3f(*vL[1])
-        gl.glVertex3f(*vL[0])
-        gl.glVertex3f(*vL[3])
-        gl.glVertex3f(*vL[2])
-
-        gl.glVertex3f(*vL[4])
-        gl.glVertex3f(*vL[5])
-        gl.glVertex3f(*vL[6])
-        gl.glVertex3f(*vL[7])
-
-        gl.glVertex3f(*vL[0])
-        gl.glVertex3f(*vL[4])
-        gl.glVertex3f(*vL[7])
-        gl.glVertex3f(*vL[3])
-
-        gl.glVertex3f(*vL[7])
-        gl.glVertex3f(*vL[6])
-        gl.glVertex3f(*vL[2])
-        gl.glVertex3f(*vL[3])
-
-        gl.glVertex3f(*vL[5])
-        gl.glVertex3f(*vL[1])
-        gl.glVertex3f(*vL[2])
-        gl.glVertex3f(*vL[6])
-
-        gl.glVertex3f(*vL[0])
-        gl.glVertex3f(*vL[1])
-        gl.glVertex3f(*vL[5])
-        gl.glVertex3f(*vL[4])
-
-        gl.glEnd()
+        glu.gluCylinder(self.qd,1,1,1,1,1)
 
         gl.glPopMatrix()
         gl.glEndList()
