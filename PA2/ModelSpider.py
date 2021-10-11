@@ -12,7 +12,7 @@ import ColorType as Ct
 from DisplayableCube import DisplayableCube
 from DisplayableCylinder import DisplayableCylinder
 from DisplayableSphere import DisplayableSphere
-from DisplayableLeg import DisplayableLeg
+from ModelLeg import ModelLeg
 
 
 class ModelSpider(Component):
@@ -29,21 +29,18 @@ class ModelSpider(Component):
         self.contextParent = parent
 
         linkageLength = 0.5
-        link1 = Component(Point((0, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*linkageLength, linkageLength, linkageLength]))
-        link1.setDefaultColor(Ct.DARKORANGE1)
-        link1.setDefaultAngle(90, link1.vAxis)
-        link2 = Component(Point((1, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*linkageLength, linkageLength, linkageLength]))
-        link2.setDefaultColor(Ct.DARKORANGE2)
-        link3 = Component(Point((1, 1, 1)), DisplayableLeg(self.contextParent, 1, [0.2, 0.2, linkageLength]))
-        link3.setDefaultColor(Ct.DARKORANGE3)
+        thorax = Component(Point((0, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*linkageLength, linkageLength, linkageLength]))
+        thorax.setDefaultColor(Ct.PURPLE)
+        thorax.setDefaultAngle(90, thorax.vAxis)
+        abdomen = Component(Point((1, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*linkageLength, linkageLength, linkageLength]))
+        abdomen.setDefaultColor(Ct.SILVER)
+        legTest = ModelLeg(self.contextParent, Point((0, 0, linkageLength)))
         # link4 = Component(Point((0, 0, linkageLength)), DisplayableCube(self.contextParent, 1, [0.2, 0.2, linkageLength]))
         # link4.setDefaultColor(Ct.DARKORANGE4)
 
-        self.addChild(link1)
-        link1.addChild(link2)
-        link2.addChild(link3)
-        # link3.addChild(link4)
+        self.addChild(thorax)
+        thorax.addChild(abdomen)
+        thorax.addChild(legTest)
 
-        self.components = [link1, link2, link3]
-        # self.components = [link1, link2, link3, link4]
+        self.components = [thorax, abdomen, legTest]
 
