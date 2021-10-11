@@ -84,7 +84,7 @@ class DisplayableSphere(Displayable):
         gl.glScale(*self.scale)
         gl.glTranslate(0, 0, self.edgeLength / 2)
 
-        glu.gluCylinder(self.qd,1,1,1,1,1)
+        glu.gluSphere(self.qd, self.edgeLength, 30, 30)
 
         gl.glPopMatrix()
         gl.glEndList()
