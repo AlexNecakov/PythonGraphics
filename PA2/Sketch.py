@@ -22,6 +22,7 @@ from DisplayableCube import DisplayableCube
 from CanvasBase import CanvasBase
 from ModelLinkage import ModelLinkage
 from ModelAxes import ModelAxes
+from ModelSpider import ModelSpider
 
 try:
     import wx
@@ -122,7 +123,7 @@ class Sketch(CanvasBase):
         #   2. Orientation of joint rotations for the left and right parts should mirror each other.
 
         m1 = ModelAxes(self, Point((-1, -1, -1)))  # coordinate system with x, y, z axes
-        m2 = ModelLinkage(self, Point((0, 0, 0)))  # our model linkage
+        m2 = ModelSpider(self, Point((0, 0, 0)))  # our model linkage
 
         self.topLevelComponent.addChild(m1)
         self.topLevelComponent.addChild(m2)
