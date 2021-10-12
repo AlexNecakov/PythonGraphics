@@ -158,5 +158,13 @@ class ModelSpider(Component):
         thorax.addChild(legHindL)
         thorax.addChild(legHindR)
 
-        self.components = [thorax, abdomen, legMandL, legMandR, legSecondL, legSecondR, legThirdL, legThirdR, legHindL, legHindR]
+        self.components = [thorax, abdomen, 
+        legMandL.components[0], legMandL.components[1], legMandL.components[2], legMandL.components[3],
+        legMandR.components[0], legMandR.components[1], legMandR.components[2], legMandR.components[3],
+        legSecondL.components[0], legSecondL.components[1], legSecondL.components[2], legSecondL.components[3],
+        legSecondR.components[0], legSecondR.components[1], legSecondR.components[2], legSecondR.components[3],
+        legThirdL.components[0], legThirdL.components[1], legThirdL.components[2], legThirdL.components[3],
+        legThirdR.components[0], legThirdR.components[1], legThirdR.components[2], legThirdR.components[3],
+        legHindL.components[0], legHindL.components[1], legHindL.components[2], legHindL.components[3],
+        legHindR.components[0], legHindR.components[1], legHindR.components[2], legHindR.components[3]]
 

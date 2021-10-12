@@ -27,7 +27,7 @@ class ModelLeg(Component):
         self.components = []
         self.contextParent = parent
 
-        jointLength = .8
+        jointLength = 1.6
         jointRadius = .08
 
         topJointAngle = -15
@@ -54,21 +54,21 @@ class ModelLeg(Component):
         botJointMinWAngle = -10
         botJointMaxWAngle = 10
 
-        topJoint = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
+        topJoint = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength/2]))
         topJoint.setDefaultColor(Ct.RED)
         topJoint.setDefaultAngle(topJointAngle, topJoint.uAxis)
         topJoint.setRotateExtent(topJoint.uAxis, topJointMinUAngle, topJointMaxUAngle)
         topJoint.setRotateExtent(topJoint.vAxis, topJointMinVAngle, topJointMaxVAngle)
         topJoint.setRotateExtent(topJoint.wAxis, topJointMinWAngle, topJointMaxWAngle)
         
-        midJoint = Component(Point((0, jointRadius*2, jointLength)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
+        midJoint = Component(Point((0, jointRadius, jointLength/2)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength/2]))
         midJoint.setDefaultColor(Ct.GREEN)
         midJoint.setDefaultAngle(midJointAngle, midJoint.uAxis)
         midJoint.setRotateExtent(midJoint.uAxis, midJointMinUAngle, midJointMaxUAngle)
         midJoint.setRotateExtent(midJoint.vAxis, midJointMinVAngle, midJointMaxVAngle)
         midJoint.setRotateExtent(midJoint.wAxis, midJointMinWAngle, midJointMaxWAngle)
         
-        botJoint = Component(Point((0, jointRadius, jointLength)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
+        botJoint = Component(Point((0, jointRadius, jointLength/2)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength/2]))
         botJoint.setDefaultColor(Ct.BLUE)
         botJoint.setDefaultAngle(botJointAngle, botJoint.uAxis)
         botJoint.setRotateExtent(botJoint.uAxis, botJointMinUAngle, botJointMaxUAngle)
