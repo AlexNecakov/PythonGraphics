@@ -31,6 +31,7 @@ class ModelSpider(Component):
         thoraxLength = 0.5
         legHeight = thoraxLength/2
 
+        #rotation limits not really needed on parent component
         thoraxMinUAngle = -180
         thoraxMaxUAngle = 180
         thoraxMinVAngle = -180
@@ -38,52 +39,51 @@ class ModelSpider(Component):
         thoraxMinWAngle = -180
         thoraxMaxWAngle = 180
         
-        abdomenMinUAngle = -180
-        abdomenMaxUAngle = 180
-        abdomenMinVAngle = -180
-        abdomenMaxVAngle = 180
-        abdomenMinWAngle = -180
-        abdomenMaxWAngle = 180
+        abdomenMinUAngle = -20
+        abdomenMaxUAngle = 20
+        abdomenMinVAngle = -5
+        abdomenMaxVAngle = 5
+        abdomenMinWAngle = -10
+        abdomenMaxWAngle = 30
 
         mandLegPos = -thoraxLength/2
         mandLegAngle = -60
-        mandLegMinUAngle = -180
-        mandLegMaxUAngle = 180
+        mandLegMinUAngle = -30
+        mandLegMaxUAngle = 30
         mandLegMinVAngle = -90
         mandLegMaxVAngle = -30
-        mandLegMinWAngle = -180
-        mandLegMaxWAngle = 180
+        mandLegMinWAngle = -80
+        mandLegMaxWAngle = 60
 
         secondLegPos = 0
         secondLegAngle = -30
-        secondLegMinUAngle = -180
-        secondLegMaxUAngle = 180
+        secondLegMinUAngle = -30
+        secondLegMaxUAngle = 30
         secondLegMinVAngle = -60
         secondLegMaxVAngle = 0
-        secondLegMinWAngle = -180
-        secondLegMaxWAngle = 180
+        secondLegMinWAngle = -80
+        secondLegMaxWAngle = 60
 
         thirdLegPos = 0
         thirdLegAngle = 20
-        thirdLegMinUAngle = -180
-        thirdLegMaxUAngle = 180
+        thirdLegMinUAngle = -30
+        thirdLegMaxUAngle = 30
         thirdLegMinVAngle = -10
         thirdLegMaxVAngle = 50
-        thirdLegMinWAngle = -180
-        thirdLegMaxWAngle = 180
+        thirdLegMinWAngle = -80
+        thirdLegMaxWAngle = 60
 
         hindLegPos = thoraxLength/2
         hindLegAngle = 50
-        hindLegMinUAngle = -180
-        hindLegMaxUAngle = 180
+        hindLegMinUAngle = -30
+        hindLegMaxUAngle = 30
         hindLegMinVAngle = 20
         hindLegMaxVAngle = 80
-        hindLegMinWAngle = -180
-        hindLegMaxWAngle = 180
+        hindLegMinWAngle = -80
+        hindLegMaxWAngle = 60
 
         thorax = Component(Point((0, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*thoraxLength, thoraxLength, thoraxLength]))
         thorax.setDefaultColor(Ct.PURPLE)
-        thorax.setDefaultAngle(90, thorax.vAxis)
         thorax.setRotateExtent(thorax.uAxis, thoraxMinUAngle, thoraxMaxUAngle)
         thorax.setRotateExtent(thorax.vAxis, thoraxMinVAngle, thoraxMaxVAngle)
         thorax.setRotateExtent(thorax.wAxis, thoraxMinWAngle, thoraxMaxWAngle)
