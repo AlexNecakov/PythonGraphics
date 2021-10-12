@@ -238,10 +238,12 @@ class Sketch(CanvasBase):
         if keycode in [wx.WXK_UP]:
             # Increase rotation angle
             self.Interrupt_Scroll(1)
+            self.components[self.select_obj_index].rotate(1,self.components[self.select_obj_index].axisBucket[self.select_axis_index])
             self.update()
         if keycode in [wx.WXK_DOWN]:
             # Decrease rotation angle
             self.Interrupt_Scroll(-1)
+            self.components[self.select_obj_index].rotate(-1,self.components[self.select_obj_index].axisBucket[self.select_axis_index])
             self.update()
         if keycode in [wx.WXK_ESCAPE]:
             # exit component editing mode
