@@ -28,26 +28,42 @@ class ModelSpider(Component):
         self.components = []
         self.contextParent = parent
 
-        linkageLength = 0.5
-        thorax = Component(Point((0, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*linkageLength, linkageLength, linkageLength]))
+        thoraxLength = 0.5
+        legHeight = thoraxLength/2
+        mandLegPos = -thoraxLength/2
+        secondLegPos = 0
+        thirdLegPos = 0
+        hindLegPos = thoraxLength/2
+
+        thorax = Component(Point((0, 0, 0)), DisplayableSphere(self.contextParent, 1, [2*thoraxLength, thoraxLength, thoraxLength]))
         thorax.setDefaultColor(Ct.PURPLE)
         thorax.setDefaultAngle(90, thorax.vAxis)
-        abdomen = Component(Point((linkageLength*2, 0, 0)), DisplayableSphere(self.contextParent, 1, [linkageLength*1.8, linkageLength, linkageLength]))
+        abdomen = Component(Point((thoraxLength*2.5, 0, 0)), DisplayableSphere(self.contextParent, 1, [thoraxLength*1.75, thoraxLength, thoraxLength]))
         abdomen.setDefaultAngle(15, abdomen.wAxis)
         abdomen.setDefaultColor(Ct.SILVER)
-        legMandL = ModelLeg(self.contextParent, Point((-linkageLength, 0, linkageLength/2)))
-        legMandL.setDefaultAngle(-50, legMandL.vAxis)
-        legMandR = ModelLeg(self.contextParent, Point((-linkageLength, 0, linkageLength/2)))
-        legMandR.setDefaultAngle(50, legMandR.vAxis)
+        
+        legMandL = ModelLeg(self.contextParent, Point((mandLegPos, 0, legHeight)))
+        legMandL.setDefaultAngle(-60, legMandL.vAxis)
+        legMandR = ModelLeg(self.contextParent, Point((mandLegPos, 0, legHeight)))
+        legMandR.setDefaultAngle(60, legMandR.vAxis)
         legMandR.setCurrentScale([1,1,-1])
-        legSecondL = ModelLeg(self.contextParent, Point((-linkageLength/2, 0, linkageLength/2)))
-        legSecondR = ModelLeg(self.contextParent, Point((-linkageLength/2, 0, linkageLength/2)))
+        
+        legSecondL = ModelLeg(self.contextParent, Point((secondLegPos, 0, legHeight)))
+        legSecondL.setDefaultAngle(-30, legSecondL.vAxis)
+        legSecondR = ModelLeg(self.contextParent, Point((secondLegPos, 0, legHeight)))
+        legSecondR.setDefaultAngle(30, legSecondR.vAxis)
         legSecondR.setCurrentScale([1,1,-1])
-        legThirdL = ModelLeg(self.contextParent, Point((0, 0, linkageLength/2)))
-        legThirdR = ModelLeg(self.contextParent, Point((0, 0, linkageLength/2)))
+        
+        legThirdL = ModelLeg(self.contextParent, Point((thirdLegPos, 0, legHeight)))
+        legThirdL.setDefaultAngle(20, legThirdL.vAxis)
+        legThirdR = ModelLeg(self.contextParent, Point((thirdLegPos, 0, legHeight)))
+        legThirdR.setDefaultAngle(-20, legThirdR.vAxis)
         legThirdR.setCurrentScale([1,1,-1])
-        legHindL = ModelLeg(self.contextParent, Point((linkageLength/2, 0, linkageLength/2)))
-        legHindR = ModelLeg(self.contextParent, Point((linkageLength/2, 0, linkageLength/2)))
+        
+        legHindL = ModelLeg(self.contextParent, Point((hindLegPos, 0, legHeight)))
+        legHindL.setDefaultAngle(50, legHindL.vAxis)
+        legHindR = ModelLeg(self.contextParent, Point((hindLegPos, 0, legHeight)))
+        legHindR.setDefaultAngle(-50, legHindR.vAxis)
         legHindR.setCurrentScale([1,1,-1])
 
         self.addChild(thorax)

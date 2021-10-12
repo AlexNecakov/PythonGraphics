@@ -28,17 +28,20 @@ class ModelLeg(Component):
         self.contextParent = parent
 
         jointLength = .8
-        jointRadius = .05
+        jointRadius = .08
         topJoint = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
         topJoint.setDefaultColor(Ct.RED)
         topJoint.setDefaultAngle(-15, topJoint.uAxis)
+        
         midJoint = Component(Point((0, jointRadius*2, jointLength)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
         midJoint.setDefaultColor(Ct.GREEN)
-        midJoint.setDefaultAngle(15, midJoint.uAxis)
-        botJoint = Component(Point((0, jointRadius*2, jointLength)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
+        midJoint.setDefaultAngle(25, midJoint.uAxis)
+        
+        botJoint = Component(Point((0, jointRadius, jointLength)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
         botJoint.setDefaultColor(Ct.BLUE)
         botJoint.setDefaultAngle(15, botJoint.uAxis)
-        foot = Component(Point((0, 0, jointLength*1.5)), DisplayableSphere(self.contextParent, jointRadius))
+        
+        foot = Component(Point((0, 0, jointLength*1.45)), DisplayableSphere(self.contextParent, jointRadius))
         foot.setDefaultColor(Ct.DARKORANGE4)
 
         self.addChild(topJoint)
