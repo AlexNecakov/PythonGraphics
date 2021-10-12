@@ -49,8 +49,8 @@ class ModelSpider(Component):
         mandLegAngle = -60
         mandLegMinUAngle = -180
         mandLegMaxUAngle = 180
-        mandLegMinVAngle = -180
-        mandLegMaxVAngle = 180
+        mandLegMinVAngle = -90
+        mandLegMaxVAngle = -30
         mandLegMinWAngle = -180
         mandLegMaxWAngle = 180
 
@@ -58,8 +58,8 @@ class ModelSpider(Component):
         secondLegAngle = -30
         secondLegMinUAngle = -180
         secondLegMaxUAngle = 180
-        secondLegMinVAngle = -180
-        secondLegMaxVAngle = 180
+        secondLegMinVAngle = -60
+        secondLegMaxVAngle = 0
         secondLegMinWAngle = -180
         secondLegMaxWAngle = 180
 
@@ -67,8 +67,8 @@ class ModelSpider(Component):
         thirdLegAngle = 20
         thirdLegMinUAngle = -180
         thirdLegMaxUAngle = 180
-        thirdLegMinVAngle = -180
-        thirdLegMaxVAngle = 180
+        thirdLegMinVAngle = -10
+        thirdLegMaxVAngle = 50
         thirdLegMinWAngle = -180
         thirdLegMaxWAngle = 180
 
@@ -76,8 +76,8 @@ class ModelSpider(Component):
         hindLegAngle = 50
         hindLegMinUAngle = -180
         hindLegMaxUAngle = 180
-        hindLegMinVAngle = -180
-        hindLegMaxVAngle = 180
+        hindLegMinVAngle = 20
+        hindLegMaxVAngle = 80
         hindLegMinWAngle = -180
         hindLegMaxWAngle = 180
 
@@ -101,8 +101,9 @@ class ModelSpider(Component):
         legMandL.setRotateExtent(legMandL.vAxis, mandLegMinVAngle, mandLegMaxVAngle)
         legMandL.setRotateExtent(legMandL.wAxis, mandLegMinWAngle, mandLegMaxWAngle)
         legMandR = ModelLeg(self.contextParent, Point((mandLegPos, 0, legHeight)))
-        legMandR.setCurrentScale([1,1,-1])
+        legMandR.setDefaultAngle(180, legMandR.uAxis)
         legMandR.setDefaultAngle(mandLegAngle, legMandR.vAxis)
+        legMandR.setDefaultAngle(180, legMandR.wAxis)
         legMandR.setRotateExtent(legMandR.uAxis, mandLegMinUAngle, mandLegMaxUAngle)
         legMandR.setRotateExtent(legMandR.vAxis, mandLegMinVAngle, mandLegMaxVAngle)
         legMandR.setRotateExtent(legMandR.wAxis, mandLegMinWAngle, mandLegMaxWAngle)
@@ -113,8 +114,9 @@ class ModelSpider(Component):
         legSecondL.setRotateExtent(legSecondL.vAxis, secondLegMinVAngle, secondLegMaxVAngle)
         legSecondL.setRotateExtent(legSecondL.wAxis, secondLegMinWAngle, secondLegMaxWAngle)
         legSecondR = ModelLeg(self.contextParent, Point((secondLegPos, 0, legHeight)))
-        legSecondR.setCurrentScale([1,1,-1])
+        legSecondR.setDefaultAngle(180, legSecondR.uAxis)
         legSecondR.setDefaultAngle(secondLegAngle, legSecondR.vAxis)
+        legSecondR.setDefaultAngle(180, legSecondR.wAxis)
         legSecondR.setRotateExtent(legSecondR.uAxis, secondLegMinUAngle, secondLegMaxUAngle)
         legSecondR.setRotateExtent(legSecondR.vAxis, secondLegMinVAngle, secondLegMaxVAngle)
         legSecondR.setRotateExtent(legSecondR.wAxis, secondLegMinWAngle, secondLegMaxWAngle)
@@ -125,8 +127,9 @@ class ModelSpider(Component):
         legThirdL.setRotateExtent(legThirdL.vAxis, thirdLegMinVAngle, thirdLegMaxVAngle)
         legThirdL.setRotateExtent(legThirdL.wAxis, thirdLegMinWAngle, thirdLegMaxWAngle)
         legThirdR = ModelLeg(self.contextParent, Point((thirdLegPos, 0, legHeight)))
-        legThirdR.setCurrentScale([1,1,-1])
+        legThirdR.setDefaultAngle(180, legThirdR.uAxis)
         legThirdR.setDefaultAngle(thirdLegAngle, legThirdR.vAxis)
+        legThirdR.setDefaultAngle(180, legThirdR.wAxis)
         legThirdR.setRotateExtent(legThirdR.uAxis, thirdLegMinUAngle, thirdLegMaxUAngle)
         legThirdR.setRotateExtent(legThirdR.vAxis, thirdLegMinVAngle, thirdLegMaxVAngle)
         legThirdR.setRotateExtent(legThirdR.wAxis, thirdLegMinWAngle, thirdLegMaxWAngle)
@@ -137,8 +140,9 @@ class ModelSpider(Component):
         legHindL.setRotateExtent(legHindL.vAxis, hindLegMinVAngle, hindLegMaxVAngle)
         legHindL.setRotateExtent(legHindL.wAxis, hindLegMinWAngle, hindLegMaxWAngle)
         legHindR = ModelLeg(self.contextParent, Point((hindLegPos, 0, legHeight)))
-        legHindR.setCurrentScale([1,1,-1])
+        legHindR.setDefaultAngle(180, legHindR.uAxis)
         legHindR.setDefaultAngle(hindLegAngle, legHindR.vAxis)
+        legHindR.setDefaultAngle(180, legHindR.wAxis)
         legHindR.setRotateExtent(legHindR.uAxis, hindLegMinUAngle, hindLegMaxUAngle)
         legHindR.setRotateExtent(legHindR.vAxis, hindLegMinVAngle, hindLegMaxVAngle)
         legHindR.setRotateExtent(legHindR.wAxis, hindLegMinWAngle, hindLegMaxWAngle)
