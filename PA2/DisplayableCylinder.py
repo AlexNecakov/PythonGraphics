@@ -82,7 +82,7 @@ class DisplayableCylinder(Displayable):
         gl.glPushMatrix()
 
         gl.glScale(*self.scale)
-        gl.glTranslate(0, 0, self.edgeLength / 2)
+        #gl.glTranslate(0, 0, self.edgeLength / 2)
 
         glu.gluCylinder(self.qd, self.edgeLength, self.edgeLength, self.edgeLength, 60, 60)
 
