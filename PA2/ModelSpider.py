@@ -72,6 +72,8 @@ class ModelSpider(Component):
         legMandL = ModelLeg(self.contextParent, Point((mandLegPos, 0, legHeight)))
         legMandL.setDefaultAngle(mandLegAngle, legMandL.vAxis)
         legMandR = ModelLeg(self.contextParent, Point((mandLegPos, 0, legHeight)))
+        #do this for mirrored control
+        #user can't change actual leg comp position, just the subcomponents so this will work properly
         legMandR.setDefaultScale([-1,-1,-1])
         legMandR.setDefaultAngle(180, legMandR.uAxis)
         legMandR.setDefaultAngle(180+mandLegAngle, legMandR.vAxis)

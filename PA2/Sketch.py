@@ -94,6 +94,7 @@ class Sketch(CanvasBase):
     last_mouse_leftPosition = None
     components = None
     select_obj_index = -1  # index in components
+    select_multi_list = [] # indices for multiselect 
     select_axis_index = -1  # index of select axis
     select_pose_index = -1  # index of pose
     select_color = [ColorType(1, 0, 0), ColorType(0, 1, 0), ColorType(0, 0, 1)]
@@ -239,12 +240,14 @@ class Sketch(CanvasBase):
         if keycode in [wx.WXK_UP]:
             # Increase rotation angle
             self.Interrupt_Scroll(1)
-            self.components[self.select_obj_index].rotate(1,self.components[self.select_obj_index].axisBucket[self.select_axis_index])
+            for c in self.select_multi_list:
+                self.components[c].rotate(1,self.components[c].axisBucket[self.select_axis_index])
             self.update()
         if keycode in [wx.WXK_DOWN]:
             # Decrease rotation angle
             self.Interrupt_Scroll(-1)
-            self.components[self.select_obj_index].rotate(-1,self.components[self.select_obj_index].axisBucket[self.select_axis_index])
+            for c in self.select_multi_list:
+                self.components[c].rotate(-1,self.components[c].axisBucket[self.select_axis_index])
             self.update()
         if keycode in [wx.WXK_ESCAPE]:
             # exit component editing mode
@@ -252,6 +255,7 @@ class Sketch(CanvasBase):
                 self.components[self.select_obj_index].reset("color")
             self.select_obj_index = -1
             self.select_axis_index = -1
+            self.select_multi_list.clear()
             self.update()
         if chr(keycode) in "r":
             # reset viewing angle only
@@ -264,6 +268,7 @@ class Sketch(CanvasBase):
             self.select_obj_index = 0
             self.select_axis_index = 0
             self.select_pose_index = -1
+            self.select_multi_list.clear()
             self.update()
         if chr(keycode) in "t":
             for c in self.components:
@@ -369,6 +374,146 @@ class Sketch(CanvasBase):
                 self.components[22].setCurrentAngle(90, self.components[22].axisBucket[0])
                 self.components[25].setCurrentAngle(90, self.components[25].axisBucket[0])
             self.update()
+        #thorax
+        if chr(keycode) in "o":
+            if self.select_multi_list.count(0) == 0:
+                self.select_multi_list.append(0)
+            else:
+                self.select_multi_list.remove(0)
+        #abdomen
+        if chr(keycode) in "p":
+            if self.select_multi_list.count(1) == 0:
+                self.select_multi_list.append(1)
+            else:
+                self.select_multi_list.remove(1)
+        #leg 1
+        if chr(keycode) in "1":
+            if self.select_multi_list.count(2) == 0:
+                self.select_multi_list.append(2)
+            else:
+                self.select_multi_list.remove(2)
+        if chr(keycode) in "2":
+            if self.select_multi_list.count(3) == 0:
+                self.select_multi_list.append(3)
+            else:
+                self.select_multi_list.remove(3)
+        if chr(keycode) in "3":
+            if self.select_multi_list.count(4) == 0:
+                self.select_multi_list.append(4)
+            else:
+                self.select_multi_list.remove(4)
+        #leg 2
+        if chr(keycode) in "4":
+            if self.select_multi_list.count(5) == 0:
+                self.select_multi_list.append(5)
+            else:
+                self.select_multi_list.remove(5)
+        if chr(keycode) in "5":
+            if self.select_multi_list.count(6) == 0:
+                self.select_multi_list.append(6)
+            else:
+                self.select_multi_list.remove(6)
+        if chr(keycode) in "6":
+            if self.select_multi_list.count(7) == 0:
+                self.select_multi_list.append(7)
+            else:
+                self.select_multi_list.remove(7)
+        #leg 3
+        if chr(keycode) in "7":
+            if self.select_multi_list.count(8) == 0:
+                self.select_multi_list.append(8)
+            else:
+                self.select_multi_list.remove(8)
+        if chr(keycode) in "8":
+            if self.select_multi_list.count(9) == 0:
+                self.select_multi_list.append(9)
+            else:
+                self.select_multi_list.remove(9)
+        if chr(keycode) in "9":
+            if self.select_multi_list.count(10) == 0:
+                self.select_multi_list.append(10)
+            else:
+                self.select_multi_list.remove(10)
+        #leg 4
+        if chr(keycode) in "q":
+            if self.select_multi_list.count(11) == 0:
+                self.select_multi_list.append(11)
+            else:
+                self.select_multi_list.remove(11)
+        if chr(keycode) in "a":
+            if self.select_multi_list.count(12) == 0:
+                self.select_multi_list.append(12)
+            else:
+                self.select_multi_list.remove(12)
+        if chr(keycode) in "z":
+            if self.select_multi_list.count(13) == 0:
+                self.select_multi_list.append(13)
+            else:
+                self.select_multi_list.remove(13)
+        #leg 5
+        if chr(keycode) in "w":
+            if self.select_multi_list.count(14) == 0:
+                self.select_multi_list.append(14)
+            else:
+                self.select_multi_list.remove(14)
+        if chr(keycode) in "s":
+            if self.select_multi_list.count(15) == 0:
+                self.select_multi_list.append(15)
+            else:
+                self.select_multi_list.remove(15)
+        if chr(keycode) in "x":
+            if self.select_multi_list.count(16) == 0:
+                self.select_multi_list.append(16)
+            else:
+                self.select_multi_list.remove(16)
+        #leg 6
+        if chr(keycode) in "e":
+            if self.select_multi_list.count(17) == 0:
+                self.select_multi_list.append(17)
+            else:
+                self.select_multi_list.remove(17)
+        if chr(keycode) in "d":
+            if self.select_multi_list.count(18) == 0:
+                self.select_multi_list.append(18)
+            else:
+                self.select_multi_list.remove(18)
+        if chr(keycode) in "c":
+            if self.select_multi_list.count(19) == 0:
+                self.select_multi_list.append(19)
+            else:
+                self.select_multi_list.remove(19)
+        #leg 7
+        if chr(keycode) in "y":
+            if self.select_multi_list.count(20) == 0:
+                self.select_multi_list.append(20)
+            else:
+                self.select_multi_list.remove(20)
+        if chr(keycode) in "h":
+            if self.select_multi_list.count(21) == 0:
+                self.select_multi_list.append(21)
+            else:
+                self.select_multi_list.remove(21)
+        if chr(keycode) in "n":
+            if self.select_multi_list.count(22) == 0:
+                self.select_multi_list.append(22)
+            else:
+                self.select_multi_list.remove(22)
+        #leg 8
+        if chr(keycode) in "u":
+            if self.select_multi_list.count(23) == 0:
+                self.select_multi_list.append(23)
+            else:
+                self.select_multi_list.remove(23)
+        if chr(keycode) in "j":
+            if self.select_multi_list.count(24) == 0:
+                self.select_multi_list.append(24)
+            else:
+                self.select_multi_list.remove(24)
+        if chr(keycode) in "m":
+            if self.select_multi_list.count(25) == 0:
+                self.select_multi_list.append(25)
+            else:
+                self.select_multi_list.remove(25)
 
 
 if __name__ == "__main__":
