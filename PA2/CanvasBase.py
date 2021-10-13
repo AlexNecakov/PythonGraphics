@@ -225,8 +225,8 @@ class CanvasBase(glcanvas.GLCanvas):
         gl.glLightfv(gl.GL_LIGHT2, gl.GL_DIFFUSE, [1, 1, 1, 1], 0)
         gl.glEnable(gl.GL_LIGHTING)
         gl.glEnable(gl.GL_LIGHT0)
-        #gl.glEnable(gl.GL_LIGHT1)
-        #gl.glEnable(gl.GL_LIGHT2)
+        gl.glEnable(gl.GL_LIGHT1)
+        gl.glEnable(gl.GL_LIGHT2)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_NORMALIZE)
 
