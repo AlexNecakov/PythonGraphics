@@ -1,11 +1,10 @@
-'''
-This is the main entry of your program. Almost all things you need to implement are in this file.
-The main class Sketch inherits from CanvasBase. For the parts you need to implement, they are all marked with TODO.
-First version Created on 09/28/2018
-
-:author: micou(Zezhou Sun)
-:version: 2021.1.1
-'''
+"""
+:author: Alex Necakov
+:course: CS480
+:assignment: PA2
+:due date: 10/12/21
+:description: model of spider in opengl, suppporting custom rotation and posing
+"""
 import os
 import wx
 import time
