@@ -95,6 +95,7 @@ class Sketch(CanvasBase):
     components = None
     select_obj_index = -1  # index in components
     select_axis_index = -1  # index of select axis
+    select_pose_index = -1  # index of pose
     select_color = [ColorType(1, 0, 0), ColorType(0, 1, 0), ColorType(0, 0, 1)]
 
     def __init__(self, parent):
@@ -262,6 +263,111 @@ class Sketch(CanvasBase):
             self.viewing_quaternion = Quaternion()
             self.select_obj_index = 0
             self.select_axis_index = 0
+            self.select_pose_index = -1
+            self.update()
+        if chr(keycode) in "t":
+            for c in self.components:
+                c.reset()
+            self.select_pose_index = (self.select_pose_index - 1) % 5
+            #legs down
+            if self.select_pose_index == 0:
+                self.components[1].setCurrentAngle(-20, self.components[1].axisBucket[0])
+                self.components[2].setCurrentAngle(0, self.components[2].axisBucket[0])
+                self.components[5].setCurrentAngle(0, self.components[5].axisBucket[0])
+                self.components[8].setCurrentAngle(0, self.components[8].axisBucket[0])
+                self.components[11].setCurrentAngle(0, self.components[11].axisBucket[0])
+                self.components[14].setCurrentAngle(0, self.components[14].axisBucket[0])
+                self.components[17].setCurrentAngle(0, self.components[17].axisBucket[0])
+                self.components[20].setCurrentAngle(0, self.components[20].axisBucket[0])
+                self.components[23].setCurrentAngle(0, self.components[23].axisBucket[0])
+                self.components[4].setCurrentAngle(0, self.components[4].axisBucket[0])
+                self.components[7].setCurrentAngle(0, self.components[7].axisBucket[0])
+                self.components[10].setCurrentAngle(0, self.components[10].axisBucket[0])
+                self.components[13].setCurrentAngle(0, self.components[13].axisBucket[0])
+                self.components[16].setCurrentAngle(0, self.components[16].axisBucket[0])
+                self.components[19].setCurrentAngle(0, self.components[19].axisBucket[0])
+                self.components[22].setCurrentAngle(0, self.components[22].axisBucket[0])
+                self.components[25].setCurrentAngle(0, self.components[25].axisBucket[0])
+            #rotate legs
+            elif self.select_pose_index == 1:
+                self.components[1].setCurrentAngle(20, self.components[1].axisBucket[0])
+                self.components[2].setCurrentAngle(10, self.components[2].axisBucket[1])
+                self.components[5].setCurrentAngle(10, self.components[5].axisBucket[1])
+                self.components[8].setCurrentAngle(10, self.components[8].axisBucket[1])
+                self.components[11].setCurrentAngle(10, self.components[11].axisBucket[1])
+                self.components[14].setCurrentAngle(10, self.components[14].axisBucket[1])
+                self.components[17].setCurrentAngle(10, self.components[17].axisBucket[1])
+                self.components[20].setCurrentAngle(10, self.components[20].axisBucket[1])
+                self.components[23].setCurrentAngle(10, self.components[23].axisBucket[1])
+                self.components[2].setCurrentAngle(20, self.components[2].axisBucket[2])
+                self.components[5].setCurrentAngle(20, self.components[5].axisBucket[2])
+                self.components[8].setCurrentAngle(20, self.components[8].axisBucket[2])
+                self.components[11].setCurrentAngle(20, self.components[11].axisBucket[2])
+                self.components[14].setCurrentAngle(20, self.components[14].axisBucket[2])
+                self.components[17].setCurrentAngle(20, self.components[17].axisBucket[2])
+                self.components[20].setCurrentAngle(20, self.components[20].axisBucket[2])
+                self.components[23].setCurrentAngle(20, self.components[23].axisBucket[2])
+            #i summon spider in attack position
+            elif self.select_pose_index == 2:
+                self.components[0].setCurrentAngle(-30, self.components[0].axisBucket[2])
+                self.components[2].setCurrentAngle(-45, self.components[2].axisBucket[0])
+                self.components[5].setCurrentAngle(-45, self.components[5].axisBucket[0])
+                self.components[11].setCurrentAngle(20, self.components[11].axisBucket[2])
+                self.components[14].setCurrentAngle(20, self.components[14].axisBucket[2])
+            #legs flat
+            elif self.select_pose_index == 3:
+                self.components[1].setCurrentAngle(-20, self.components[1].axisBucket[0])
+                self.components[2].setCurrentAngle(0, self.components[2].axisBucket[0])
+                self.components[5].setCurrentAngle(0, self.components[5].axisBucket[0])
+                self.components[8].setCurrentAngle(0, self.components[8].axisBucket[0])
+                self.components[11].setCurrentAngle(0, self.components[11].axisBucket[0])
+                self.components[14].setCurrentAngle(0, self.components[14].axisBucket[0])
+                self.components[17].setCurrentAngle(0, self.components[17].axisBucket[0])
+                self.components[20].setCurrentAngle(0, self.components[20].axisBucket[0])
+                self.components[23].setCurrentAngle(0, self.components[23].axisBucket[0])
+                self.components[3].setCurrentAngle(0, self.components[3].axisBucket[0])
+                self.components[6].setCurrentAngle(0, self.components[6].axisBucket[0])
+                self.components[9].setCurrentAngle(0, self.components[9].axisBucket[0])
+                self.components[12].setCurrentAngle(0, self.components[12].axisBucket[0])
+                self.components[15].setCurrentAngle(0, self.components[15].axisBucket[0])
+                self.components[18].setCurrentAngle(0, self.components[18].axisBucket[0])
+                self.components[21].setCurrentAngle(0, self.components[21].axisBucket[0])
+                self.components[24].setCurrentAngle(0, self.components[24].axisBucket[0])
+                self.components[4].setCurrentAngle(0, self.components[4].axisBucket[0])
+                self.components[7].setCurrentAngle(0, self.components[7].axisBucket[0])
+                self.components[10].setCurrentAngle(0, self.components[10].axisBucket[0])
+                self.components[13].setCurrentAngle(0, self.components[13].axisBucket[0])
+                self.components[16].setCurrentAngle(0, self.components[16].axisBucket[0])
+                self.components[19].setCurrentAngle(0, self.components[19].axisBucket[0])
+                self.components[22].setCurrentAngle(0, self.components[22].axisBucket[0])
+                self.components[25].setCurrentAngle(0, self.components[25].axisBucket[0])
+            #leg cage
+            elif self.select_pose_index == 4:
+                self.components[1].setCurrentAngle(-20, self.components[1].axisBucket[0])
+                self.components[2].setCurrentAngle(-45, self.components[2].axisBucket[0])
+                self.components[5].setCurrentAngle(-45, self.components[5].axisBucket[0])
+                self.components[8].setCurrentAngle(-45, self.components[8].axisBucket[0])
+                self.components[11].setCurrentAngle(-45, self.components[11].axisBucket[0])
+                self.components[14].setCurrentAngle(-45, self.components[14].axisBucket[0])
+                self.components[17].setCurrentAngle(-45, self.components[17].axisBucket[0])
+                self.components[20].setCurrentAngle(-45, self.components[20].axisBucket[0])
+                self.components[23].setCurrentAngle(-45, self.components[23].axisBucket[0])
+                self.components[3].setCurrentAngle(90, self.components[3].axisBucket[0])
+                self.components[6].setCurrentAngle(90, self.components[6].axisBucket[0])
+                self.components[9].setCurrentAngle(90, self.components[9].axisBucket[0])
+                self.components[12].setCurrentAngle(90, self.components[12].axisBucket[0])
+                self.components[15].setCurrentAngle(90, self.components[15].axisBucket[0])
+                self.components[18].setCurrentAngle(90, self.components[18].axisBucket[0])
+                self.components[21].setCurrentAngle(90, self.components[21].axisBucket[0])
+                self.components[24].setCurrentAngle(90, self.components[24].axisBucket[0])
+                self.components[4].setCurrentAngle(90, self.components[4].axisBucket[0])
+                self.components[7].setCurrentAngle(90, self.components[7].axisBucket[0])
+                self.components[10].setCurrentAngle(90, self.components[10].axisBucket[0])
+                self.components[13].setCurrentAngle(90, self.components[13].axisBucket[0])
+                self.components[16].setCurrentAngle(90, self.components[16].axisBucket[0])
+                self.components[19].setCurrentAngle(90, self.components[19].axisBucket[0])
+                self.components[22].setCurrentAngle(90, self.components[22].axisBucket[0])
+                self.components[25].setCurrentAngle(90, self.components[25].axisBucket[0])
             self.update()
 
 
