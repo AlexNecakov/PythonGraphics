@@ -55,7 +55,7 @@ class ModelLeg(Component):
         botJointMaxWAngle = 10
 
         topJoint = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
-        topJoint.setDefaultColor(Ct.RED)
+        topJoint.setDefaultColor(Ct.DARKORANGE4)
         topJoint.setDefaultAngle(topJointAngle, topJoint.uAxis)
         topJoint.setRotateExtent(topJoint.uAxis, topJointMinUAngle, topJointMaxUAngle)
         topJoint.setRotateExtent(topJoint.vAxis, topJointMinVAngle, topJointMaxVAngle)
@@ -69,7 +69,7 @@ class ModelLeg(Component):
         kneeUpper.setRotateExtent(kneeUpper.wAxis, 0, 0)
         
         midJoint = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
-        midJoint.setDefaultColor(Ct.GREEN)
+        midJoint.setDefaultColor(Ct.DARKORANGE4)
         midJoint.setDefaultAngle(midJointAngle, midJoint.uAxis)
         midJoint.setRotateExtent(midJoint.uAxis, midJointMinUAngle, midJointMaxUAngle)
         midJoint.setRotateExtent(midJoint.vAxis, midJointMinVAngle, midJointMaxVAngle)
@@ -83,7 +83,7 @@ class ModelLeg(Component):
         kneeLower.setRotateExtent(kneeLower.wAxis, 0, 0)
         
         botJoint = Component(Point((0, 0, 0)), DisplayableCylinder(self.contextParent, 1, [jointRadius, jointRadius, jointLength]))
-        botJoint.setDefaultColor(Ct.BLUE)
+        botJoint.setDefaultColor(Ct.DARKORANGE4)
         botJoint.setDefaultAngle(botJointAngle, botJoint.uAxis)
         botJoint.setRotateExtent(botJoint.uAxis, botJointMinUAngle, botJointMaxUAngle)
         botJoint.setRotateExtent(botJoint.vAxis, botJointMinVAngle, botJointMaxVAngle)
