@@ -14,6 +14,7 @@ from Animation import Animation
 from ModelTank import Tank
 from ModelLinkage import Linkage
 from ModelEgg import Egg
+from ModelSpider import Spider
 import ColorType as Ct
 from EnvironmentObject import EnvironmentObject
 
@@ -52,6 +53,7 @@ class Vivarium(Component, Animation):
         # self.addNewObjInTank(Linkage(parent, Point((0, 0, 0))))
         self.addNewObjInTank(Egg(parent, Point((0.8, 0, 0)),Ct.YELLOW))
         self.addNewObjInTank(Egg(parent, Point((-0.8, 0, 0)),Ct.PINK))
+        self.addNewObjInTank(Spider(parent, Point((-0.8, 0, 0)),Ct.PINK))
 
     def animationUpdate(self):
         """

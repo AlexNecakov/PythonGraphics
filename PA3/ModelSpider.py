@@ -13,6 +13,9 @@ from DisplayableCube import DisplayableCube
 from DisplayableCylinder import DisplayableCylinder
 from DisplayableSphere import DisplayableSphere
 from ModelLeg import ModelLeg
+from Animation import Animation
+from EnvironmentObject import EnvironmentObject
+from Vivarium import Tank
 
 
 class ModelSpider(Component):
@@ -23,7 +26,7 @@ class ModelSpider(Component):
     components = None
     contextParent = None
 
-    def __init__(self, parent, position, display_obj=None):
+    def __init__(self, parent, position, color, linkageLength=0.5, display_obj=None):
         super().__init__(position, display_obj)
         self.components = []
         self.contextParent = parent
@@ -120,3 +123,94 @@ class ModelSpider(Component):
         legHindL.components[0], legHindL.components[1], legHindL.components[2],
         legHindR.components[0], legHindR.components[1], legHindR.components[2]]
 
+##### TODO 1: Construct your two different creatures
+# Requirements:
+#   1. For the basic parts of your creatures, feel free to use routines provided with the previous assignment.
+#   You are also free to create your own basic parts, but they must be polyhedral (solid).
+#   2. The creatures you design should have moving linkages of the basic parts: legs, arms, wings, antennae,
+#   fins, tentacles, etc.
+#   3. Model requirements:
+#         1. Predator: At least one (1) creature. Should have at least two moving parts in addition to the main body
+#         2. Prey: At least two (2) creatures. The two prey can be instances of the same design. Should have at
+#         least one moving part.
+#         3. The predator and prey should have distinguishable different colors.
+#         4. You are welcome to reuse your PA2 creature in this assignment.
+
+class Spider(Component, Animation, EnvironmentObject):
+    """
+    A Linkage with animation enabled and is defined as an object in environment
+    """
+    components = None
+    rotation_speed = None
+    translation_speed = None
+
+    def __init__(self, parent, position,color):
+        super(Spider, self).__init__(position)
+        main = ModelSpider(parent, Point((0, 0, 0)),color, 0.1)
+        # arm2 = ModelLinkage(parent, Point((0, 0, 0)), 0.1)
+        # arm2.setDefaultAngle(arm2.vAxis, 120)
+        # arm3 = ModelLinkage(parent, Point((0, 0, 0)), 0.1)
+        # arm3.setDefaultAngle(arm3.vAxis, 240)
+
+        self.components = main.components
+
+        self.addChild(arm1)
+        
+        # self.rotation_speed = []
+        #     self.rotation_speed.append([1, 0, 0])
+
+        # self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
+
+        self.bound_center = Point((0, 0, 0))
+        self.bound_radius = 0.1 * 4
+        self.species_id = 1
+
+    def animationUpdate(self):
+        ##### TODO 2: Animate your creature!
+        # Requirements:
+        #   1. Set reasonable joints limit for your creature
+        #   2. The linkages should move back and forth in a periodic motion, as the creatures move about the vivarium.
+        #   3. Your creatures should be able to move in 3 dimensions, not only on a plane.
+        for comp in self.components:
+            comp.uAngle+=5
+        # create period animation for creature joints
+        # for i, comp in enumerate(self.components):
+        #     comp.rotate(self.rotation_speed[i][0], comp.uAxis)
+        #     comp.rotate(self.rotation_speed[i][1], comp.vAxis)
+        #     comp.rotate(self.rotation_speed[i][2], comp.wAxis)
+        #     if comp.uAngle in comp.uRange:  # rotation reached the limit
+        #         self.rotation_speed[i][0] *= -1
+        #     if comp.vAngle in comp.vRange:
+        #         self.rotation_speed[i][1] *= -1
+        #     if comp.wAngle in comp.wRange:
+        #         self.rotation_speed[i][2] *= -1
+        # self.vAngle = (self.vAngle + 5) % 360
+
+        ##### TODO 3: Interact with the environment
+        # Requirements:
+        #   1. Your creatures should always stay within the fixed size 3D "tank". You should do collision detection
+        #   between it and tank walls. When it hits with tank walls, it should turn and change direction to stay
+        #   within the tank.
+        #   2. Your creatures should have a prey/predator relationship. For example, you could have a bug being chased
+        #   by a spider, or a fish eluding a shark. This means your creature should react to other creatures in the tank
+        #       1. Use potential functions to change its direction based on other creatures’ location, their
+        #       inter-creature distances, and their current configuration.
+        #       2. You should detect collisions between creatures.
+        #           1. Predator-prey collision: The prey should disappear (get eaten) from the tank.
+        #           2. Collision between the same species: They should bounce apart from each other. You can use a
+        #           reflection vector about a plane to decide the after-collision direction.
+        #       3. You are welcome to use bounding spheres for collision detection.
+
+        ##### TODO 4: Eyes on the road!
+        # Requirements:
+        #   1. CCreatures should face in the direction they are moving. For instance, a fish should be facing the
+        #   direction in which it swims. Remember that we require your creatures to be movable in 3 dimensions,
+        #   so they should be able to face any direction in 3D space.
+
+        ##### BONUS 6: Group behaviors
+        # Requirements:
+        #   1. Add at least 5 creatures to the vivarium and make it possible for creatures to engage in group behaviors,
+        #   for instance flocking together. This can be achieved by implementing the
+        #   [Boids animation algorithms](http://www.red3d.com/cwr/boids/) of Craig Reynolds.
+
+        self.update()
