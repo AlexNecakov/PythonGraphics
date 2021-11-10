@@ -42,8 +42,8 @@ class Vivarium(Component, Animation):
         self.components = [tank]
 
         # self.addNewObjInTank(Linkage(parent, Point((0, 0, 0))))
-        self.addNewObjInTank(Fish(parent, Point((0.1, 0, 0)),Ct.DARKORANGE1))
-        self.addNewObjInTank(Fish(parent, Point((0.8, 0.9, 0)),Ct.DARKORANGE3))
+        self.addNewObjInTank(Fish(parent, Point((1, 1, 1)),Ct.DARKORANGE1))
+        self.addNewObjInTank(Fish(parent, Point((0, 0, 0)),Ct.BLUE))
         
     def animationUpdate(self):
         """
@@ -53,14 +53,14 @@ class Vivarium(Component, Animation):
             if isinstance(c, Animation):
                 c.animationUpdate()
 
-                position = c.bound_center
-                coords = position.coords
-                x = coords[0]
-                y = coords[1]
-                z = coords[2]
+                # position = c.bound_center
+                # coords = position.coords
+                # x = coords[0]
+                # y = coords[1]
+                # z = coords[2]
 
                 # for coord in coords:
-                #     if abs(coord) + c.bound_radius > 4:
+                #     if abs(coord) + c.bound_radius > 2:
                 #         c.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
 
     def delObjInTank(self, obj):
@@ -75,4 +75,5 @@ class Vivarium(Component, Animation):
             self.components.append(newComponent)
         if isinstance(newComponent, EnvironmentObject):
             # add environment components list reference to this new object's
-            newComponent.env_obj_list = self.components[1:]
+            for comp in self.components:
+                comp.env_obj_list = self.components[1:]

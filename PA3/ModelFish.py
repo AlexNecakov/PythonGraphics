@@ -236,16 +236,11 @@ class DisplayableCube(Displayable):
 
 ##### TODO 1: Construct your two different creatures
 # Requirements:
-#   1. For the basic parts of your creatures, feel free to use routines provided with the previous assignment.
-#   You are also free to create your own basic parts, but they must be polyhedral (solid).
 #   2. The creatures you design should have moving linkages of the basic parts: legs, arms, wings, antennae,
 #   fins, tentacles, etc.
 #   3. Model requirements:
 #         1. Predator: At least one (1) creature. Should have at least two moving parts in addition to the main body
-#         2. Prey: At least two (2) creatures. The two prey can be instances of the same design. Should have at
-#         least one moving part.
 #         3. The predator and prey should have distinguishable different colors.
-#         4. You are welcome to reuse your PA2 creature in this assignment.
 
 class Fish(Component, Animation, EnvironmentObject):
     """
@@ -257,7 +252,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
     def __init__(self, parent, position,color):
         super(Fish, self).__init__(position)
-        base = ModelFish(parent, Point((0, 0, 0)), color, .1)
+        base = ModelFish(parent, Point((0, 0, 0)), color, .5)
 
         self.components = base.components
         
@@ -277,9 +272,9 @@ class Fish(Component, Animation, EnvironmentObject):
         self.components[2].setRotateExtent(self.components[2].wAxis, -5, 5)
         self.rotation_speed.append([1, 0, 0])
 
-        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
-        self.bound_center = base.current_position
-        self.bound_radius = 1.1
+        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
+        self.bound_center = Point((0, 0, 0))
+        self.bound_radius = .75
         self.species_id = 1
 
     def animationUpdate(self):
@@ -295,7 +290,7 @@ class Fish(Component, Animation, EnvironmentObject):
             if comp.wAngle in comp.wRange:
                 self.rotation_speed[i][2] *= -1
 
-        position = self.components[0].current_position
+        position = self.current_position
         coords = position.coords
         x = coords[0]
         y = coords[1]
@@ -308,22 +303,19 @@ class Fish(Component, Animation, EnvironmentObject):
         if abs(z) + self.bound_radius > 2:
             self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
 
-        for i, envObj in enumerate(self.env_obj_list[1:]):
-            if (self.bound_center.dist(envObj.bound_center) < self.bound_radius + envObj.bound_radius):
-                self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
+        # for i, envObj in enumerate(self.env_obj_list):
+        #     if (self.bound_center.dist(envObj.bound_center) < self.bound_radius + envObj.bound_radius):
+        #         self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
                 
         x += self.translation_speed[0]
         y += self.translation_speed[1]
         z += self.translation_speed[2]
 
-        self.components[0].setCurrentPosition(Point((x,y,z)))
-        self.bound_center.setCoords(Point((x,y,z)))
+        self.setCurrentPosition(Point((x,y,z)))
+        self.bound_center.setCoords(Point(x,y,z))
 
         ##### TODO 3: Interact with the environment
         # Requirements:
-        #   1. Your creatures should always stay within the fixed size 3D "tank". You should do collision detection
-        #   between it and tank walls. When it hits with tank walls, it should turn and change direction to stay
-        #   within the tank.
         #   2. Your creatures should have a prey/predator relationship. For example, you could have a bug being chased
         #   by a spider, or a fish eluding a shark. This means your creature should react to other creatures in the tank
         #       1. Use potential functions to change its direction based on other creatures’ location, their
@@ -332,13 +324,12 @@ class Fish(Component, Animation, EnvironmentObject):
         #           1. Predator-prey collision: The prey should disappear (get eaten) from the tank.
         #           2. Collision between the same species: They should bounce apart from each other. You can use a
         #           reflection vector about a plane to decide the after-collision direction.
-        #       3. You are welcome to use bounding spheres for collision detection.
         
 
 
         ##### TODO 4: Eyes on the road!
         # Requirements:
-        #   1. CCreatures should face in the direction they are moving. For instance, a fish should be facing the
+        #   1. Creatures should face in the direction they are moving. For instance, a fish should be facing the
         #   direction in which it swims. Remember that we require your creatures to be movable in 3 dimensions,
         #   so they should be able to face any direction in 3D space.
 
