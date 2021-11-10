@@ -274,7 +274,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
         self.bound_center = Point((0, 0, 0))
-        self.bound_radius = .75
+        self.bound_radius = .5
         self.species_id = 1
 
     def animationUpdate(self):
@@ -296,6 +296,7 @@ class Fish(Component, Animation, EnvironmentObject):
         y = coords[1]
         z = coords[2]
         
+        # tank wall collision
         if abs(x) + self.bound_radius > 2:
             self.translation_speed.setCoords((-self.translation_speed[0],self.translation_speed[1],self.translation_speed[2]))
         if abs(y) + self.bound_radius > 2:
@@ -303,16 +304,20 @@ class Fish(Component, Animation, EnvironmentObject):
         if abs(z) + self.bound_radius > 2:
             self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
 
-        # for i, envObj in enumerate(self.env_obj_list):
-        #     if (self.bound_center.dist(envObj.bound_center) < self.bound_radius + envObj.bound_radius):
-        #         self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
-                
+        # other object collision
+        for i, envObj in enumerate(self.env_obj_list):
+            if ((self.current_position.dist(envObj.current_position) < self.bound_radius + envObj.bound_radius) & (self.current_position.dist(envObj.current_position) > 0)):
+                if(envObj.species_id == self.species_id):
+                    self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
+                elif(envObj.species_id > self.species_id):
+                    self.deleteFlag = True
+                 
         x += self.translation_speed[0]
         y += self.translation_speed[1]
         z += self.translation_speed[2]
 
         self.setCurrentPosition(Point((x,y,z)))
-        self.bound_center.setCoords(Point(x,y,z))
+        #self.bound_center.setCoords(Point(x,y,z))
 
         ##### TODO 3: Interact with the environment
         # Requirements:
@@ -322,8 +327,6 @@ class Fish(Component, Animation, EnvironmentObject):
         #       inter-creature distances, and their current configuration.
         #       2. You should detect collisions between creatures.
         #           1. Predator-prey collision: The prey should disappear (get eaten) from the tank.
-        #           2. Collision between the same species: They should bounce apart from each other. You can use a
-        #           reflection vector about a plane to decide the after-collision direction.
         
 
 

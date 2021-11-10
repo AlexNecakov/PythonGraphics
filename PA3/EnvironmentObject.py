@@ -17,6 +17,7 @@ class EnvironmentObject:
     bound_radius = 0  # float
     env_obj_list = None  # list<Environment>
     species_id = 0  # species with larger id number will prey species with small number
+    deleteFlag = False # becomes true when eaten, flag to remove
 
     def __init__(self):
         """

@@ -52,17 +52,8 @@ class Vivarium(Component, Animation):
         for c in self.components[::-1]:
             if isinstance(c, Animation):
                 c.animationUpdate()
-
-                # position = c.bound_center
-                # coords = position.coords
-                # x = coords[0]
-                # y = coords[1]
-                # z = coords[2]
-
-                # for coord in coords:
-                #     if abs(coord) + c.bound_radius > 2:
-                #         c.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
-
+                if (c.deleteFlag == True):
+                    delObjInTank(c)
     def delObjInTank(self, obj):
         if isinstance(obj, Component):
             self.tank.children.remove(obj)
