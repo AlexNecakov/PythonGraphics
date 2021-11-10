@@ -370,15 +370,14 @@ class Fish(Component, Animation, EnvironmentObject):
         #   1. Creatures should face in the direction they are moving. For instance, a fish should be facing the
         #   direction in which it swims. Remember that we require your creatures to be movable in 3 dimensions,
         #   so they should be able to face any direction in 3D space.
-        u = self.translation_speed.coords
-        v = self.vAxis
-        w = self.translation_speed.cross3d(Point(v)).coords
+        u = self.vAxis
+        v = self.translation_speed.normalize().coords
+        w = Point(u).cross3d(Point(v)).coords
         rotMatrix = [
             [u[0], u[1], u[2], 0],
             [v[0], v[1], v[2], 0],
             [w[0], w[1], w[2], 0],
-            [0,    0,    0,    1]
-        ]
+            [0,    0,    0,    1]]
         self.setPreRotation(rotMatrix)
-        
+
         self.update()
