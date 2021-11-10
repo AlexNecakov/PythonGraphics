@@ -42,10 +42,11 @@ class Vivarium(Component, Animation):
         # Store all components in one list, for us to access them later
         self.components = [tank]
 
-        # self.addNewObjInTank(Linkage(parent, Point((0, 0, 0))))
-        self.addNewObjInTank(Fish(parent, Point((1, 1, 1)),Ct.DARKORANGE1))
-        self.addNewObjInTank(Fish(parent, Point((0, 0, 0)),Ct.BLUE))
-        self.addNewObjInTank(Shark(parent, Point((-1, -1, -1)),Ct.SILVER))
+        self.addNewObjInTank(Fish(parent, Point((random.random(), random.random(), random.random())),Ct.DARKORANGE1))
+        random.seed()
+        self.addNewObjInTank(Fish(parent, Point((random.random(), random.random(), random.random())),Ct.BLUE))
+        random.seed()
+        self.addNewObjInTank(Shark(parent, Point((random.random(), random.random(), random.random())),Ct.SILVER))
         
     def animationUpdate(self):
         """

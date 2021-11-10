@@ -244,7 +244,7 @@ class Shark(Component, Animation, EnvironmentObject):
 
     def __init__(self, parent, position,color):
         super(Shark, self).__init__(position)
-        base = ModelShark(parent, Point((0, 0, 0)), color, .8)
+        base = ModelShark(parent, Point((0, 0, 0)), color, .3)
 
         self.components = base.components
         
@@ -266,7 +266,7 @@ class Shark(Component, Animation, EnvironmentObject):
 
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.03
         self.bound_center = Point((0, 0, 0))
-        self.bound_radius = .8
+        self.bound_radius = .3
         self.species_id = 5
 
     def animationUpdate(self):
@@ -288,6 +288,7 @@ class Shark(Component, Animation, EnvironmentObject):
         y = coords[1]
         z = coords[2]
         
+        
         # other object collision / influence
         for i, envObj in enumerate(self.env_obj_list):
             envPos = envObj.current_position
@@ -301,31 +302,34 @@ class Shark(Component, Animation, EnvironmentObject):
                 elif(envObj.species_id > self.species_id):
                     self.deleteFlag = True
             if(envObj.species_id < self.species_id):
-                newX = 1/(((envX - x)**2)+0.03)
-                newY = 1/(((envY - y)**2)+0.03)
-                newZ = 1/(((envZ - z)**2)+0.03)
-                self.translation_speed.setCoords((newX, newY, newZ))
-                self.translation_speed = self.translation_speed.normalize()* 0.05
+                newX = 1/(((envX-x)**2)+0.0000001)
+                newY = 1/(((envY-y)**2)+0.0000001)
+                newZ = 1/(((envZ-z)**2)+0.0000001)
+                self.translation_speed.setCoords((newX+random.random()-0.5, newY+random.random()-0.5, newZ+random.random()-0.5))
+                self.translation_speed = self.translation_speed.normalize()* 0.03
         
         # tank wall collision
         if abs(x) + self.bound_radius >= 2:
-            self.translation_speed.setCoords((-self.translation_speed[0],self.translation_speed[1],self.translation_speed[2]))
-            if(x >= 2):
-                x -= self.bound_radius
-            if(x <= -2):
-                x += self.bound_radius
+            self.translation_speed.setCoords((-self.translation_speed[0]*4,self.translation_speed[1],self.translation_speed[2]))
+            self.translation_speed = self.translation_speed.normalize()* 0.03
+            # if(x >= 2):
+            #     x -= self.bound_radius
+            # if(x <= -2):
+            #     x += self.bound_radius
         if abs(y) + self.bound_radius >= 2:
-            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1],self.translation_speed[2]))
-            if(y >= 2):
-                y -= self.bound_radius
-            if(y <= -2):
-                y += self.bound_radius
+            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1]*4,self.translation_speed[2]))
+            self.translation_speed = self.translation_speed.normalize()* 0.03
+            # if(y >= 2):
+            #     y -= self.bound_radius
+            # if(y <= -2):
+            #     y += self.bound_radius
         if abs(z) + self.bound_radius >= 2:
-            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
-            if(z >= 2):
-                z -= self.bound_radius
-            if(z <= -2):
-                z += self.bound_radius
+            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]*4))
+            self.translation_speed = self.translation_speed.normalize()* 0.03
+            # if(z >= 2):
+            #     z -= self.bound_radius
+            # if(z <= -2):
+            #     z += self.bound_radius
                  
         x += self.translation_speed[0]
         y += self.translation_speed[1]
