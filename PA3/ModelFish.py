@@ -257,7 +257,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
     def __init__(self, parent, position,color):
         super(Fish, self).__init__(position)
-        base = ModelFish(parent, Point((0, 0, 0)), color, .75)
+        base = ModelFish(parent, Point((0, 0, 0)), color, .1)
 
         self.components = base.components
         
@@ -278,17 +278,12 @@ class Fish(Component, Animation, EnvironmentObject):
         self.rotation_speed.append([1, 0, 0])
 
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
-        self.bound_center = Point((0, 0, 0))
-        self.bound_radius = 3
+        self.bound_center = base.current_position
+        self.bound_radius = 1.1
         self.species_id = 1
 
     def animationUpdate(self):
-        ##### TODO 2: Animate your creature!
-        # Requirements:
-        #   1. Set reasonable joints limit for your creature
-        #   2. The linkages should move back and forth in a periodic motion, as the creatures move about the vivarium.
-        #   3. Your creatures should be able to move in 3 dimensions, not only on a plane.
-        # create period animation for creature joints
+        # animation cycle
         for i, comp in enumerate(self.components):
             comp.rotate(self.rotation_speed[i][0], comp.uAxis)
             comp.rotate(self.rotation_speed[i][1], comp.vAxis)
@@ -306,9 +301,12 @@ class Fish(Component, Animation, EnvironmentObject):
         y = coords[1]
         z = coords[2]
         
-        for coord in coords:
-            if abs(coord) + self.bound_radius > 4:
-                self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
+        if abs(x) + self.bound_radius > 2:
+            self.translation_speed.setCoords((-self.translation_speed[0],self.translation_speed[1],self.translation_speed[2]))
+        if abs(y) + self.bound_radius > 2:
+            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1],self.translation_speed[2]))
+        if abs(z) + self.bound_radius > 2:
+            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
 
         for i, envObj in enumerate(self.env_obj_list[1:]):
             if (self.bound_center.dist(envObj.bound_center) < self.bound_radius + envObj.bound_radius):
