@@ -322,9 +322,9 @@ class Shark(Component, Animation, EnvironmentObject):
                 zNew += 2*(envZ - z)
         newDir = Point((xNew,yNew,zNew)).normalize()
         self.translation_speed.setCoords((
-            xDir + newDir.coords[0], 
-            yDir + newDir.coords[1], 
-            zDir + newDir.coords[2]))
+            xDir + newDir.coords[0]/4, 
+            yDir + newDir.coords[1]/4, 
+            zDir + newDir.coords[2]/4))
 
         # tank wall collision
         if abs(x) + self.bound_radius >= 2:
@@ -354,7 +354,7 @@ class Shark(Component, Animation, EnvironmentObject):
                 z -= 2*self.bound_radius
             if(z <= -2):
                 z += 2*self.bound_radius
-        if (random.random() > 0.7):
+        if (random.random() > 0.8):
             self.translation_speed = Point([random.random()-0.5 for _ in range(3)])
             self.stepSize = max(min(self.stepSize+(random.random()-0.5)*.01,0.1),0.01)
         self.translation_speed = self.translation_speed.normalize()* self.stepSize
@@ -369,8 +369,15 @@ class Shark(Component, Animation, EnvironmentObject):
         #   1. Creatures should face in the direction they are moving. For instance, a fish should be facing the
         #   direction in which it swims. Remember that we require your creatures to be movable in 3 dimensions,
         #   so they should be able to face any direction in 3D space.
-        rotMatrix = [self.vAxis, self.translation_speed.coords, self.translation_speed.cross3d(Point(self.components[0].vAxis)).coords]
+        u = self.translation_speed.coords
+        v = self.vAxis
+        w = self.translation_speed.cross3d(Point(v)).normalize()
+        rotMatrix = [
+            [u[0], u[1], u[2], 0],
+            [v[0], v[1], v[2], 0],
+            [w[0], w[1], w[2], 0],
+            [0,    0,    0,    1]
+        ]
         self.setPreRotation(rotMatrix)
-
 
         self.update()
