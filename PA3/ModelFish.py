@@ -242,6 +242,7 @@ class Fish(Component, Animation, EnvironmentObject):
     contextParent = None
     rotation_speed = None
     translation_speed = None
+    stepSize = 0.05
 
     def __init__(self, parent, position,color):
         super(Fish, self).__init__(position)
@@ -266,7 +267,7 @@ class Fish(Component, Animation, EnvironmentObject):
         self.components[2].setRotateExtent(self.components[2].wAxis, -5, 5)
         self.rotation_speed.append([1, 0, 0])
 
-        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
+        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * self.stepSize
         self.bound_center = Point((0, 0, 0))
         self.bound_radius = .1
         self.species_id = 1
@@ -302,35 +303,43 @@ class Fish(Component, Animation, EnvironmentObject):
                     self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
                 elif(envObj.species_id > self.species_id):
                     self.deleteFlag = True
+            epsilon = 0.0000001
+            newX = x
+            newY = y
+            newZ = z
             if(envObj.species_id > self.species_id):
-                newX = 1/(((x - envX)**2)+0.0000001)
-                newY = 1/(((y - envY)**2)+0.0000001)
-                newZ = 1/(((z - envZ)**2)+0.0000001)
-                self.translation_speed.setCoords((newX+random.random()-0.5, newY+random.random()-0.5, newZ+random.random()-0.5))
-                self.translation_speed = self.translation_speed.normalize()* 0.05
+                newX = 1/(((x - envX)**2)+epsilon)
+                newY = 1/(((y - envY)**2)+epsilon)
+                newZ = 1/(((z - envZ)**2)+epsilon)
+            elif(envObj.species_id < self.species_id):
+                newX = 1/(((envX - x)**2)+epsilon)
+                newY = 1/(((envY - y)**2)+epsilon)
+                newZ = 1/(((envZ - z)**2)+epsilon)
+            self.translation_speed.setCoords((newX+random.random()-0.5, newY+random.random()-0.5, newZ+random.random()-0.5))
+            self.translation_speed = self.translation_speed.normalize()* self.stepSize
         
         # tank wall collision
         if abs(x) + self.bound_radius >= 2:
-            self.translation_speed.setCoords((-self.translation_speed[0]*4,self.translation_speed[1],self.translation_speed[2]))
-            self.translation_speed = self.translation_speed.normalize()* 0.05
-            # if(x >= 2):
-            #     x -= self.bound_radius
-            # if(x <= -2):
-            #     x += self.bound_radius
+            self.translation_speed.setCoords((-self.translation_speed[0],self.translation_speed[1],self.translation_speed[2]))
+            self.translation_speed = self.translation_speed.normalize()* self.stepSize
+            if(x >= 2):
+                x -= self.bound_radius
+            if(x <= -2):
+                x += self.bound_radius
         if abs(y) + self.bound_radius >= 2:
-            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1]*4,self.translation_speed[2]))
-            self.translation_speed = self.translation_speed.normalize()* 0.05
-            # if(y >= 2):
-            #     y -= self.bound_radius
-            # if(y <= -2):
-            #     y += self.bound_radius
+            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1],self.translation_speed[2]))
+            self.translation_speed = self.translation_speed.normalize()* self.stepSize
+            if(y >= 2):
+                y -= self.bound_radius
+            if(y <= -2):
+                y += self.bound_radius
         if abs(z) + self.bound_radius >= 2:
-            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]*4))
-            self.translation_speed = self.translation_speed.normalize()* 0.05
-            # if(z >= 2):
-            #     z -= self.bound_radius
-            # if(z <= -2):
-            #     z += self.bound_radius
+            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
+            self.translation_speed = self.translation_speed.normalize()* self.stepSize 
+            if(z >= 2):
+                z -= self.bound_radius
+            if(z <= -2):
+                z += self.bound_radius
                  
         x += self.translation_speed[0]
         y += self.translation_speed[1]
