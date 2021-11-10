@@ -1,9 +1,9 @@
 """
 Model our creature and wrap it in one class
-First version at 09/28/2021
+Also collision
 
-:author: micou(Zezhou Sun)
-:version: 2021.2.1
+:author: Alex Necakov
+:version: 2021.11.10
 """
 import random
 
@@ -334,27 +334,27 @@ class Fish(Component, Animation, EnvironmentObject):
                 self.translation_speed[1],
                 self.translation_speed[2]))
             if(x >= 2):
-                x -= 2*self.bound_radius
+                x -= 4*self.bound_radius
             if(x <= -2):
-                x += 2*self.bound_radius
+                x += 4*self.bound_radius
         if abs(y) + self.bound_radius >= 2:
             self.translation_speed.setCoords((
                 self.translation_speed[0],
                 -self.translation_speed[1],
                 self.translation_speed[2]))
             if(y >= 2):
-                y -= 2*self.bound_radius
+                y -= 4*self.bound_radius
             if(y <= -2):
-                y += 2*self.bound_radius
+                y += 4*self.bound_radius
         if abs(z) + self.bound_radius >= 2:
             self.translation_speed.setCoords((
                 self.translation_speed[0],
                 self.translation_speed[1],
                 -self.translation_speed[2]))
             if(z >= 2):
-                z -= 2*self.bound_radius
+                z -= 4*self.bound_radius
             if(z <= -2):
-                z += 2*self.bound_radius
+                z += 4*self.bound_radius
         if (random.random() > 0.5):
             self.translation_speed = Point([random.random()-0.5 for _ in range(3)])
             self.stepSize = max(min(self.stepSize+(random.random()-0.5)*.01,0.1),0.01)
@@ -379,5 +379,6 @@ class Fish(Component, Animation, EnvironmentObject):
             [w[0], w[1], w[2], 0],
             [0,    0,    0,    1]]
         self.setPreRotation(rotMatrix)
+        self.rotation_speed[0] = w
 
         self.update()

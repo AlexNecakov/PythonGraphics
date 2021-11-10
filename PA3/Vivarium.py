@@ -2,8 +2,8 @@
 All creatures should be added to Vivarium. Some help functions to add/remove creature are defined here.
 Created on 20181028
 
-:author: micou(Zezhou Sun)
-:version: 2021.1.1
+:author: Alex Necakov
+:version: 2021.11.10
 """
 import random
 
@@ -43,7 +43,7 @@ class Vivarium(Component, Animation):
         self.components = [tank]
 
         self.addNewObjInTank(Fish(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.DARKORANGE1))
-        #self.addNewObjInTank(Fish(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.BLUE))
+        self.addNewObjInTank(Fish(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.BLUE))
         self.addNewObjInTank(Shark(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.SILVER))
         
     def animationUpdate(self):
