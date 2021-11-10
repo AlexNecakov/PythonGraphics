@@ -41,9 +41,9 @@ except ImportError:
     raise ImportError("Required dependency PyOpenGL not present")
 
 
-class ModelFish(Component):
+class ModelShark(Component):
     """
-    Define our fish model
+    Define our Shark model
     """
 
     components = None
@@ -242,21 +242,19 @@ class DisplayableCube(Displayable):
 #         1. Predator: At least one (1) creature. Should have at least two moving parts in addition to the main body
 #         3. The predator and prey should have distinguishable different colors.
 
-class Fish(Component, Animation, EnvironmentObject):
+class Shark(Component, Animation, EnvironmentObject):
     """
     A Linkage with animation enabled and is defined as an object in environment
     """
     components = None
-    contextParent = None
     rotation_speed = None
     translation_speed = None
 
     def __init__(self, parent, position,color):
-        super(Fish, self).__init__(position)
-        base = ModelFish(parent, Point((0, 0, 0)), color, .5)
+        super(Shark, self).__init__(position)
+        base = ModelShark(parent, Point((0, 0, 0)), color, .5)
 
         self.components = base.components
-        self.contextParent = parent
         
         self.addChild(base)
 
@@ -277,7 +275,7 @@ class Fish(Component, Animation, EnvironmentObject):
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
         self.bound_center = Point((0, 0, 0))
         self.bound_radius = .5
-        self.species_id = 1
+        self.species_id = 5
 
     def animationUpdate(self):
         # animation cycle
@@ -324,7 +322,7 @@ class Fish(Component, Animation, EnvironmentObject):
         ##### TODO 3: Interact with the environment
         # Requirements:
         #   2. Your creatures should have a prey/predator relationship. For example, you could have a bug being chased
-        #   by a spider, or a fish eluding a shark. This means your creature should react to other creatures in the tank
+        #   by a spider, or a Shark eluding a shark. This means your creature should react to other creatures in the tank
         #       1. Use potential functions to change its direction based on other creatures’ location, their
         #       inter-creature distances, and their current configuration.
         #       2. You should detect collisions between creatures.
@@ -334,7 +332,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
         ##### TODO 4: Eyes on the road!
         # Requirements:
-        #   1. Creatures should face in the direction they are moving. For instance, a fish should be facing the
+        #   1. Creatures should face in the direction they are moving. For instance, a Shark should be facing the
         #   direction in which it swims. Remember that we require your creatures to be movable in 3 dimensions,
         #   so they should be able to face any direction in 3D space.
 

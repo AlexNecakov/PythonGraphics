@@ -14,6 +14,7 @@ from Animation import Animation
 from ModelTank import Tank
 from ModelLinkage import Linkage
 from ModelFish import Fish
+from ModelShark import Shark
 import ColorType as Ct
 from EnvironmentObject import EnvironmentObject
 
@@ -44,6 +45,7 @@ class Vivarium(Component, Animation):
         # self.addNewObjInTank(Linkage(parent, Point((0, 0, 0))))
         self.addNewObjInTank(Fish(parent, Point((1, 1, 1)),Ct.DARKORANGE1))
         self.addNewObjInTank(Fish(parent, Point((0, 0, 0)),Ct.BLUE))
+        self.addNewObjInTank(Shark(parent, Point((-1, -1, -1)),Ct.SILVER))
         
     def animationUpdate(self):
         """
@@ -53,7 +55,8 @@ class Vivarium(Component, Animation):
             if isinstance(c, Animation):
                 c.animationUpdate()
                 if (c.deleteFlag == True):
-                    delObjInTank(c)
+                    self.delObjInTank(c)
+                    self.update()
     def delObjInTank(self, obj):
         if isinstance(obj, Component):
             self.tank.children.remove(obj)
