@@ -13,8 +13,7 @@ from Component import Component
 from Animation import Animation
 from ModelTank import Tank
 from ModelLinkage import Linkage
-from ModelEgg import Egg
-from ModelSpider import Spider
+from ModelFish import Fish
 import ColorType as Ct
 from EnvironmentObject import EnvironmentObject
 
@@ -27,14 +26,6 @@ class Vivarium(Component, Animation):
     parent = None  # class that have current context
     tank = None
     tank_dimensions = None
-
-    ##### BONUS 5(TODO 5 for CS680 Students): Feed your creature
-    # Requirements:
-    #   Add chunks of food to the vivarium which can be eaten by your creatures.
-    #     * When ‘f’ is pressed, have a food particle be generated at random within the vivarium.
-    #     * Be sure to draw the food on the screen with an additional model. It should drop slowly to the bottom of
-    #     the vivarium and remain there within the tank until eaten.
-    #     * The food should disappear once it has been eaten. Food is eaten by the first creature that touches it.
 
     def __init__(self, parent):
         self.parent = parent
@@ -51,9 +42,8 @@ class Vivarium(Component, Animation):
         self.components = [tank]
 
         # self.addNewObjInTank(Linkage(parent, Point((0, 0, 0))))
-        self.addNewObjInTank(Egg(parent, Point((0.8, 0, 0)),Ct.YELLOW))
-        self.addNewObjInTank(Egg(parent, Point((-0.8, 0, 0)),Ct.PINK))
-        self.addNewObjInTank(Spider(parent, Point((-0.8, 0, 0)),Ct.PINK))
+        self.addNewObjInTank(Fish(parent, Point((0.1, 0, 0)),Ct.DARKORANGE1))
+        #self.addNewObjInTank(Egg(parent, Point((-0.8, 0, 0)),Ct.PINK))
 
     def animationUpdate(self):
         """
@@ -69,11 +59,6 @@ class Vivarium(Component, Animation):
             x = coords[0]
             y = coords[1]
             z = coords[2]
-
-            if(idx%2==0): 
-                x+=0.01
-            else:
-                x-=0.01
 
             c.setCurrentPosition(Point((x,y,z)))
 

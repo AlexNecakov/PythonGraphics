@@ -41,9 +41,9 @@ except ImportError:
     raise ImportError("Required dependency PyOpenGL not present")
 
 
-class ModelLinkage(Component):
+class ModelFish(Component):
     """
-    Define our linkage model
+    Define our fish model
     """
 
     components = None
@@ -54,27 +54,24 @@ class ModelLinkage(Component):
         self.components = []
         self.contextParent = parent
 
-        link1 = Component(Point((0, 0, 0)),
-                          DisplayableSphere(self.contextParent, 1, [0.7,1.0,0.7]))
-        print(position)
-        link1.setDefaultColor(color)
-        # link2 = Component(Point((0, 0, linkageLength)),
-        #                   DisplayableCube(self.contextParent, 1, [linkageLength / 4, linkageLength / 4, linkageLength]))
-        # link2.setDefaultColor(Ct.DARKORANGE2)
-        # link3 = Component(Point((0, 0, linkageLength)),
-        #                   DisplayableCube(self.contextParent, 1, [linkageLength / 4, linkageLength / 4, linkageLength]))
-        # link3.setDefaultColor(Ct.DARKORANGE3)
-        # link4 = Component(Point((0, 0, linkageLength)),
-        #                   DisplayableCube(self.contextParent, 1, [linkageLength / 4, linkageLength / 4, linkageLength]))
-        # link4.setDefaultColor(Ct.DARKORANGE4)
+        body = Component(Point((0, 0, 0)),
+            DisplayableSphere(self.contextParent, 1, [linkageLength,linkageLength/2,linkageLength]))
+        body.setDefaultColor(color)
+        tailUpper = Component(Point((0, 0, 0)),
+            DisplayableSphere(self.contextParent, 1, [linkageLength/2,linkageLength/4,linkageLength]))
+        tailUpper.setDefaultColor(color)
+        tailUpper.setDefaultAngle(tailUpper.vAxis, -120)
+        tailLower = Component(Point((0, 0, 0)),
+            DisplayableSphere(self.contextParent, 1, [linkageLength/2,linkageLength/4,linkageLength]))
+        tailLower.setDefaultColor(color)
+        tailLower.setDefaultAngle(tailLower.vAxis, 120)
+        
 
-        self.addChild(link1)
-        # link1.addChild(link2)
-        # link2.addChild(link3)
-        # link3.addChild(link4)
+        self.addChild(body)
+        body.addChild(tailUpper)
+        body.addChild(tailLower)
 
-        # self.components = [link1, link2, link3, link4]
-        self.components = [link1]
+        self.components = [body, tailUpper, tailLower]
 
 class DisplayableSphere(Displayable):
     """
@@ -250,7 +247,7 @@ class DisplayableCube(Displayable):
 #         3. The predator and prey should have distinguishable different colors.
 #         4. You are welcome to reuse your PA2 creature in this assignment.
 
-class Egg(Component, Animation, EnvironmentObject):
+class Fish(Component, Animation, EnvironmentObject):
     """
     A Linkage with animation enabled and is defined as an object in environment
     """
@@ -259,32 +256,25 @@ class Egg(Component, Animation, EnvironmentObject):
     translation_speed = None
 
     def __init__(self, parent, position,color):
-        super(Egg, self).__init__(position)
-        arm1 = ModelLinkage(parent, Point((0, 0, 0)),color, 0.1)
-        # arm2 = ModelLinkage(parent, Point((0, 0, 0)), 0.1)
-        # arm2.setDefaultAngle(arm2.vAxis, 120)
-        # arm3 = ModelLinkage(parent, Point((0, 0, 0)), 0.1)
-        # arm3.setDefaultAngle(arm3.vAxis, 240)
+        super(Fish, self).__init__(position)
+        base = ModelFish(parent, Point((0, 0, 0)), color, .75)
 
-        # self.components = arm1.components + arm2.components + arm3.components
-        self.components = arm1.components
+        self.components = base.components
+        
+        self.addChild(base)
 
-        self.addChild(arm1)
-        # self.addChild(arm2)
-        # self.addChild(arm3)
+        self.rotation_speed = []
+        for comp in self.components:
+            comp.setRotateExtent(comp.uAxis, 0, 35)
+            comp.setRotateExtent(comp.vAxis, -45, 45)
+            comp.setRotateExtent(comp.wAxis, -45, 45)
+            self.rotation_speed.append([1, 0, 0])
 
-        # self.rotation_speed = []
-        # for comp in self.components:
-        #     comp.setRotateExtent(comp.uAxis, 0, 35)
-        #     comp.setRotateExtent(comp.vAxis, -45, 45)
-        #     comp.setRotateExtent(comp.wAxis, -45, 45)
-        #     self.rotation_speed.append([1, 0, 0])
-
-        # self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
-
-        # self.bound_center = Point((0, 0, 0))
-        # self.bound_radius = 0.1 * 4
-        # self.species_id = 1
+        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
+        print(self.translation_speed)
+        self.bound_center = Point((0, 0, 0))
+        self.bound_radius = 0.1 * 4
+        self.species_id = 1
 
     def animationUpdate(self):
         ##### TODO 2: Animate your creature!
@@ -292,8 +282,8 @@ class Egg(Component, Animation, EnvironmentObject):
         #   1. Set reasonable joints limit for your creature
         #   2. The linkages should move back and forth in a periodic motion, as the creatures move about the vivarium.
         #   3. Your creatures should be able to move in 3 dimensions, not only on a plane.
-        for comp in self.components:
-            comp.uAngle+=5
+        # for comp in self.components:
+        #     comp.uAngle+=5
         # create period animation for creature joints
         # for i, comp in enumerate(self.components):
         #     comp.rotate(self.rotation_speed[i][0], comp.uAxis)
@@ -306,6 +296,14 @@ class Egg(Component, Animation, EnvironmentObject):
         #     if comp.wAngle in comp.wRange:
         #         self.rotation_speed[i][2] *= -1
         # self.vAngle = (self.vAngle + 5) % 360
+
+        position = self.components[0].current_position
+        coords = position.coords
+        x = coords[0] + self.translation_speed[0]
+        y = coords[1] + self.translation_speed[1]
+        z = coords[2] + self.translation_speed[2]
+
+        self.components[0].setCurrentPosition(Point((x,y,z)))
 
         ##### TODO 3: Interact with the environment
         # Requirements:
@@ -321,6 +319,8 @@ class Egg(Component, Animation, EnvironmentObject):
         #           2. Collision between the same species: They should bounce apart from each other. You can use a
         #           reflection vector about a plane to decide the after-collision direction.
         #       3. You are welcome to use bounding spheres for collision detection.
+        
+
 
         ##### TODO 4: Eyes on the road!
         # Requirements:
@@ -328,10 +328,5 @@ class Egg(Component, Animation, EnvironmentObject):
         #   direction in which it swims. Remember that we require your creatures to be movable in 3 dimensions,
         #   so they should be able to face any direction in 3D space.
 
-        ##### BONUS 6: Group behaviors
-        # Requirements:
-        #   1. Add at least 5 creatures to the vivarium and make it possible for creatures to engage in group behaviors,
-        #   for instance flocking together. This can be achieved by implementing the
-        #   [Boids animation algorithms](http://www.red3d.com/cwr/boids/) of Craig Reynolds.
 
         self.update()
