@@ -53,16 +53,6 @@ class Vivarium(Component, Animation):
             if isinstance(c, Animation):
                 c.animationUpdate()
 
-        for idx,c in enumerate(self.components[1:]):
-            position = c.current_position
-            coords = position.coords
-            x = coords[0]
-            y = coords[1]
-            z = coords[2]
-
-            c.setCurrentPosition(Point((x,y,z)))
-
-
     def delObjInTank(self, obj):
         if isinstance(obj, Component):
             self.tank.children.remove(obj)

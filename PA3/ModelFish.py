@@ -57,11 +57,11 @@ class ModelFish(Component):
         body = Component(Point((0, 0, 0)),
             DisplayableSphere(self.contextParent, 1, [linkageLength,linkageLength/2,linkageLength]))
         body.setDefaultColor(color)
-        tailUpper = Component(Point((0, 0, 0)),
+        tailUpper = Component(Point((linkageLength/4, 0, 0)),
             DisplayableSphere(self.contextParent, 1, [linkageLength/2,linkageLength/4,linkageLength]))
         tailUpper.setDefaultColor(color)
         tailUpper.setDefaultAngle(tailUpper.vAxis, -120)
-        tailLower = Component(Point((0, 0, 0)),
+        tailLower = Component(Point((linkageLength/4, 0, 0)),
             DisplayableSphere(self.contextParent, 1, [linkageLength/2,linkageLength/4,linkageLength]))
         tailLower.setDefaultColor(color)
         tailLower.setDefaultAngle(tailLower.vAxis, 120)
@@ -264,14 +264,20 @@ class Fish(Component, Animation, EnvironmentObject):
         self.addChild(base)
 
         self.rotation_speed = []
-        for comp in self.components:
-            comp.setRotateExtent(comp.uAxis, 0, 35)
-            comp.setRotateExtent(comp.vAxis, -45, 45)
-            comp.setRotateExtent(comp.wAxis, -45, 45)
-            self.rotation_speed.append([1, 0, 0])
+        
+        self.rotation_speed.append([0, 0, 0])
+
+        self.components[1].setRotateExtent(self.components[1].uAxis, -40, 40)
+        self.components[1].setRotateExtent(self.components[1].vAxis, -125, -115)
+        self.components[1].setRotateExtent(self.components[1].wAxis, -5, 5)
+        self.rotation_speed.append([1, 0, 0])
+
+        self.components[2].setRotateExtent(self.components[2].uAxis, -40, 40)
+        self.components[2].setRotateExtent(self.components[2].vAxis, 115, 125)
+        self.components[2].setRotateExtent(self.components[2].wAxis, -5, 5)
+        self.rotation_speed.append([1, 0, 0])
 
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
-        print(self.translation_speed)
         self.bound_center = Point((0, 0, 0))
         self.bound_radius = 0.1 * 4
         self.species_id = 1
@@ -282,26 +288,29 @@ class Fish(Component, Animation, EnvironmentObject):
         #   1. Set reasonable joints limit for your creature
         #   2. The linkages should move back and forth in a periodic motion, as the creatures move about the vivarium.
         #   3. Your creatures should be able to move in 3 dimensions, not only on a plane.
-        # for comp in self.components:
-        #     comp.uAngle+=5
         # create period animation for creature joints
-        # for i, comp in enumerate(self.components):
-        #     comp.rotate(self.rotation_speed[i][0], comp.uAxis)
-        #     comp.rotate(self.rotation_speed[i][1], comp.vAxis)
-        #     comp.rotate(self.rotation_speed[i][2], comp.wAxis)
-        #     if comp.uAngle in comp.uRange:  # rotation reached the limit
-        #         self.rotation_speed[i][0] *= -1
-        #     if comp.vAngle in comp.vRange:
-        #         self.rotation_speed[i][1] *= -1
-        #     if comp.wAngle in comp.wRange:
-        #         self.rotation_speed[i][2] *= -1
-        # self.vAngle = (self.vAngle + 5) % 360
+        for i, comp in enumerate(self.components):
+            comp.rotate(self.rotation_speed[i][0], comp.uAxis)
+            comp.rotate(self.rotation_speed[i][1], comp.vAxis)
+            comp.rotate(self.rotation_speed[i][2], comp.wAxis)
+            if comp.uAngle in comp.uRange:  # rotation reached the limit
+                self.rotation_speed[i][0] *= -1
+            if comp.vAngle in comp.vRange:
+                self.rotation_speed[i][1] *= -1
+            if comp.wAngle in comp.wRange:
+                self.rotation_speed[i][2] *= -1
 
         position = self.components[0].current_position
         coords = position.coords
-        x = coords[0] + self.translation_speed[0]
-        y = coords[1] + self.translation_speed[1]
-        z = coords[2] + self.translation_speed[2]
+        x = coords[0]
+        y = coords[1]
+        z = coords[2]
+        
+        x += self.translation_speed[0]
+        y += self.translation_speed[1]
+        z += self.translation_speed[2]
+
+        
 
         self.components[0].setCurrentPosition(Point((x,y,z)))
 

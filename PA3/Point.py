@@ -153,6 +153,22 @@ class Point:
         d = anotherVector.coords
         return Point((s[1]*d[2]-s[2]*d[1], s[2]*d[0]-s[0]*d[2], s[0]*d[1]-s[1]*d[0]))
 
+    # had to add this helper function
+    def dist(self, pt):
+        """
+        get the distance between this Point and another Point
+
+        :rtype: float
+        """
+        if (self.coords is None) or (pt.coords is None):
+            raise Exception("Cannot do distance between empty Points")
+        if len(self.coords) != len(pt.coords):
+            raise Exception("Cannot do distance between Points with different size")
+
+        # this float conversion is necessary, otherwise result will have type np.float32/np.int/np.float64
+        # any other iterable variable multiplied with these types will be forced to convert to np.array type
+        return float(math.dist(self.coords, pt.coords))
+
     def setColor(self, color):
         """
         Set point color
