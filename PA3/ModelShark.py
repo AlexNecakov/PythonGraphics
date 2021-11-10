@@ -288,39 +288,51 @@ class Shark(Component, Animation, EnvironmentObject):
         y = coords[1]
         z = coords[2]
         
-        # tank wall collision
-        if abs(x) + self.bound_radius > 2:
-            self.translation_speed.setCoords((-self.translation_speed[0],self.translation_speed[1],self.translation_speed[2]))
-        if abs(y) + self.bound_radius > 2:
-            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1],self.translation_speed[2]))
-        if abs(z) + self.bound_radius > 2:
-            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
-
-        # other object collision
+        # other object collision / influence
         for i, envObj in enumerate(self.env_obj_list):
-            if ((self.current_position.dist(envObj.current_position) < self.bound_radius + envObj.bound_radius) & (self.current_position.dist(envObj.current_position) > 0)):
+            envPos = envObj.current_position
+            envCoords = envPos.coords
+            envX = envCoords[0]
+            envY = envCoords[1]
+            envZ = envCoords[2]
+            if ((position.dist(envPos) < self.bound_radius + envObj.bound_radius) & (position.dist(envPos) > 0)):
                 if(envObj.species_id == self.species_id):
                     self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
                 elif(envObj.species_id > self.species_id):
                     self.deleteFlag = True
+            if(envObj.species_id < self.species_id):
+                newX = 1/(((envX - x)**2)+0.03)
+                newY = 1/(((envY - y)**2)+0.03)
+                newZ = 1/(((envZ - z)**2)+0.03)
+                self.translation_speed.setCoords((newX, newY, newZ))
+                self.translation_speed = self.translation_speed.normalize()* 0.05
+        
+        # tank wall collision
+        if abs(x) + self.bound_radius >= 2:
+            self.translation_speed.setCoords((-self.translation_speed[0],self.translation_speed[1],self.translation_speed[2]))
+            if(x >= 2):
+                x -= self.bound_radius
+            if(x <= -2):
+                x += self.bound_radius
+        if abs(y) + self.bound_radius >= 2:
+            self.translation_speed.setCoords((self.translation_speed[0],-self.translation_speed[1],self.translation_speed[2]))
+            if(y >= 2):
+                y -= self.bound_radius
+            if(y <= -2):
+                y += self.bound_radius
+        if abs(z) + self.bound_radius >= 2:
+            self.translation_speed.setCoords((self.translation_speed[0],self.translation_speed[1],-self.translation_speed[2]))
+            if(z >= 2):
+                z -= self.bound_radius
+            if(z <= -2):
+                z += self.bound_radius
                  
         x += self.translation_speed[0]
         y += self.translation_speed[1]
         z += self.translation_speed[2]
 
         self.setCurrentPosition(Point((x,y,z)))
-
-        ##### TODO 3: Interact with the environment
-        # Requirements:
-        #   2. Your creatures should have a prey/predator relationship. For example, you could have a bug being chased
-        #   by a spider, or a Shark eluding a shark. This means your creature should react to other creatures in the tank
-        #       1. Use potential functions to change its direction based on other creatures’ location, their
-        #       inter-creature distances, and their current configuration.
-        #       2. You should detect collisions between creatures.
-        #           1. Predator-prey collision: The prey should disappear (get eaten) from the tank.
         
-
-
         ##### TODO 4: Eyes on the road!
         # Requirements:
         #   1. Creatures should face in the direction they are moving. For instance, a Shark should be facing the
