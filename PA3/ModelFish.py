@@ -234,14 +234,6 @@ class DisplayableCube(Displayable):
         gl.glPopMatrix()
         gl.glEndList()
 
-##### TODO 1: Construct your two different creatures
-# Requirements:
-#   2. The creatures you design should have moving linkages of the basic parts: legs, arms, wings, antennae,
-#   fins, tentacles, etc.
-#   3. Model requirements:
-#         1. Predator: At least one (1) creature. Should have at least two moving parts in addition to the main body
-#         3. The predator and prey should have distinguishable different colors.
-
 class Fish(Component, Animation, EnvironmentObject):
     """
     A Linkage with animation enabled and is defined as an object in environment
@@ -253,7 +245,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
     def __init__(self, parent, position,color):
         super(Fish, self).__init__(position)
-        base = ModelFish(parent, Point((0, 0, 0)), color, .5)
+        base = ModelFish(parent, Point((0, 0, 0)), color, .1)
 
         self.components = base.components
         self.contextParent = parent
@@ -276,7 +268,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
         self.bound_center = Point((0, 0, 0))
-        self.bound_radius = .5
+        self.bound_radius = .1
         self.species_id = 1
 
     def animationUpdate(self):
@@ -319,7 +311,6 @@ class Fish(Component, Animation, EnvironmentObject):
         z += self.translation_speed[2]
 
         self.setCurrentPosition(Point((x,y,z)))
-        #self.bound_center.setCoords(Point(x,y,z))
 
         ##### TODO 3: Interact with the environment
         # Requirements:

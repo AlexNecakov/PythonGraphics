@@ -55,14 +55,14 @@ class ModelShark(Component):
         self.contextParent = parent
 
         body = Component(Point((0, 0, 0)),
-            DisplayableSphere(self.contextParent, 1, [linkageLength,linkageLength/2,linkageLength]))
+            DisplayableSphere(self.contextParent, 1, [linkageLength/4,linkageLength/4,linkageLength]))
         body.setDefaultColor(color)
-        tailUpper = Component(Point((linkageLength/4, 0, 0)),
-            DisplayableSphere(self.contextParent, 1, [linkageLength/2,linkageLength/4,linkageLength]))
+        tailUpper = Component(Point((0, 0, 0)),
+            DisplayableSphere(self.contextParent, 1, [linkageLength/8,linkageLength/8,linkageLength]))
         tailUpper.setDefaultColor(color)
         tailUpper.setDefaultAngle(tailUpper.vAxis, -120)
-        tailLower = Component(Point((linkageLength/4, 0, 0)),
-            DisplayableSphere(self.contextParent, 1, [linkageLength/2,linkageLength/4,linkageLength]))
+        tailLower = Component(Point((0, 0, 0)),
+            DisplayableSphere(self.contextParent, 1, [linkageLength/8,linkageLength/8,linkageLength]))
         tailLower.setDefaultColor(color)
         tailLower.setDefaultAngle(tailLower.vAxis, 120)
         
@@ -234,14 +234,6 @@ class DisplayableCube(Displayable):
         gl.glPopMatrix()
         gl.glEndList()
 
-##### TODO 1: Construct your two different creatures
-# Requirements:
-#   2. The creatures you design should have moving linkages of the basic parts: legs, arms, wings, antennae,
-#   fins, tentacles, etc.
-#   3. Model requirements:
-#         1. Predator: At least one (1) creature. Should have at least two moving parts in addition to the main body
-#         3. The predator and prey should have distinguishable different colors.
-
 class Shark(Component, Animation, EnvironmentObject):
     """
     A Linkage with animation enabled and is defined as an object in environment
@@ -252,7 +244,7 @@ class Shark(Component, Animation, EnvironmentObject):
 
     def __init__(self, parent, position,color):
         super(Shark, self).__init__(position)
-        base = ModelShark(parent, Point((0, 0, 0)), color, .5)
+        base = ModelShark(parent, Point((0, 0, 0)), color, .8)
 
         self.components = base.components
         
@@ -272,9 +264,9 @@ class Shark(Component, Animation, EnvironmentObject):
         self.components[2].setRotateExtent(self.components[2].wAxis, -5, 5)
         self.rotation_speed.append([1, 0, 0])
 
-        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
+        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.03
         self.bound_center = Point((0, 0, 0))
-        self.bound_radius = .5
+        self.bound_radius = .8
         self.species_id = 5
 
     def animationUpdate(self):
@@ -317,7 +309,6 @@ class Shark(Component, Animation, EnvironmentObject):
         z += self.translation_speed[2]
 
         self.setCurrentPosition(Point((x,y,z)))
-        #self.bound_center.setCoords(Point(x,y,z))
 
         ##### TODO 3: Interact with the environment
         # Requirements:
