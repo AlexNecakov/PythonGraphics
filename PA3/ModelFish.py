@@ -279,7 +279,7 @@ class Fish(Component, Animation, EnvironmentObject):
 
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
         self.bound_center = Point((0, 0, 0))
-        self.bound_radius = 0.1 * 4
+        self.bound_radius = 3
         self.species_id = 1
 
     def animationUpdate(self):
@@ -306,13 +306,20 @@ class Fish(Component, Animation, EnvironmentObject):
         y = coords[1]
         z = coords[2]
         
+        for coord in coords:
+            if abs(coord) + self.bound_radius > 4:
+                self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
+
+        for i, envObj in enumerate(self.env_obj_list[1:]):
+            if (self.bound_center.dist(envObj.bound_center) < self.bound_radius + envObj.bound_radius):
+                self.translation_speed.setCoords((-self.translation_speed[0],-self.translation_speed[1],-self.translation_speed[2]))
+                
         x += self.translation_speed[0]
         y += self.translation_speed[1]
         z += self.translation_speed[2]
 
-        
-
         self.components[0].setCurrentPosition(Point((x,y,z)))
+        self.bound_center.setCoords(Point((x,y,z)))
 
         ##### TODO 3: Interact with the environment
         # Requirements:
