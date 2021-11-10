@@ -320,10 +320,11 @@ class Shark(Component, Animation, EnvironmentObject):
                 xNew += 2*(envX - x)
                 yNew += 2*(envY - y)
                 zNew += 2*(envZ - z)
+        newDir = Point((xNew,yNew,zNew)).normalize()
         self.translation_speed.setCoords((
-            xDir + xNew, 
-            yDir + yNew, 
-            zDir + zNew))
+            xDir + newDir.coords[0], 
+            yDir + newDir.coords[1], 
+            zDir + newDir.coords[2]))
 
         # tank wall collision
         if abs(x) + self.bound_radius >= 2:
@@ -332,28 +333,30 @@ class Shark(Component, Animation, EnvironmentObject):
                 self.translation_speed[1],
                 self.translation_speed[2]))
             if(x >= 2):
-                x -= 4*self.bound_radius
+                x -= 2*self.bound_radius
             if(x <= -2):
-                x += 4*self.bound_radius
+                x += 2*self.bound_radius
         if abs(y) + self.bound_radius >= 2:
             self.translation_speed.setCoords((
                 self.translation_speed[0],
                 -self.translation_speed[1],
                 self.translation_speed[2]))
             if(y >= 2):
-                y -= 4*self.bound_radius
+                y -= 2*self.bound_radius
             if(y <= -2):
-                y += 4*self.bound_radius
+                y += 2*self.bound_radius
         if abs(z) + self.bound_radius >= 2:
             self.translation_speed.setCoords((
                 self.translation_speed[0],
                 self.translation_speed[1],
                 -self.translation_speed[2]))
             if(z >= 2):
-                z -= 4*self.bound_radius
+                z -= 2*self.bound_radius
             if(z <= -2):
-                z += 4*self.bound_radius
-                
+                z += 2*self.bound_radius
+        if (random.random() > 0.7):
+            self.translation_speed = Point([random.random()-0.5 for _ in range(3)])
+            self.stepSize = max(min(self.stepSize+(random.random()-0.5)*.01,0.1),0.01)
         self.translation_speed = self.translation_speed.normalize()* self.stepSize
         x += self.translation_speed[0]
         y += self.translation_speed[1]

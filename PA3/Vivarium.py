@@ -43,7 +43,7 @@ class Vivarium(Component, Animation):
         self.components = [tank]
 
         self.addNewObjInTank(Fish(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.DARKORANGE1))
-        #self.addNewObjInTank(Fish(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.BLUE))
+        self.addNewObjInTank(Fish(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.BLUE))
         self.addNewObjInTank(Shark(parent, Point((3*(random.random()-0.5), 3*(random.random()-0.5), 3*(random.random()-0.5))),Ct.SILVER))
         
     def animationUpdate(self):
