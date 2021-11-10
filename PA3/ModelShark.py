@@ -242,7 +242,7 @@ class Shark(Component, Animation, EnvironmentObject):
     contextParent = None
     rotation_speed = None
     translation_speed = None
-    stepSize = 0.03
+    stepSize = 0.005
 
     def __init__(self, parent, position,color):
         super(Shark, self).__init__(position)
@@ -308,15 +308,21 @@ class Shark(Component, Animation, EnvironmentObject):
             newY = y
             newZ = z
             if(envObj.species_id > self.species_id):
-                newX = 1/(((x - envX)**2)+epsilon)
-                newY = 1/(((y - envY)**2)+epsilon)
-                newZ = 1/(((z - envZ)**2)+epsilon)
+                newX = 2*(x - envX)
+                newY = 2*(y - envY)
+                newZ = 2*(z - envZ)
+                # newX = 1/(((x - envX)**2)+epsilon)
+                # newY = 1/(((y - envY)**2)+epsilon)
+                # newZ = 1/(((z - envZ)**2)+epsilon)
             elif(envObj.species_id < self.species_id):
+                # newX = 2*(envX - x)
+                # newY = 2*(envY - y)
+                # newZ = 2*(envZ - z)
                 newX = 1/(((envX - x)**2)+epsilon)
                 newY = 1/(((envY - y)**2)+epsilon)
                 newZ = 1/(((envZ - z)**2)+epsilon)
-            self.translation_speed.setCoords((newX+random.random()-0.5, newY+random.random()-0.5, newZ+random.random()-0.5))
-            self.translation_speed = self.translation_speed.normalize()* self.stepSize
+        self.translation_speed.setCoords((newX+random.random()-0.5, newY+random.random()-0.5, newZ+random.random()-0.5))
+        self.translation_speed = self.translation_speed.normalize()* self.stepSize
         
         # tank wall collision
         if abs(x) + self.bound_radius >= 2:
