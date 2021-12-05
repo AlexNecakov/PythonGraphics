@@ -151,11 +151,12 @@ class Sketch(CanvasBase):
         self.shaderProg = GLProgram()
         self.shaderProg.compile()
 
+
         # instantiate models, then can only be done with a compiled GL program
         self.basisAxes = ModelAxes(self.shaderProg, Point((0, 0, 0)))
         self.basisAxes.initialize()
 
-        self.switchScene(SceneTwo(self.shaderProg))
+        self.switchScene(SceneOne(self.shaderProg))
 
         gl.glClearColor(*self.backgroundColor, 1.0)
         gl.glClearDepth(1.0)
@@ -359,6 +360,7 @@ class Sketch(CanvasBase):
         :param keycode: wxpython keyboard event's keycode
         :return: None
         """
+
         if keycode in [wx.WXK_RETURN]:
             self.update()
         if keycode in [wx.WXK_LEFT]:

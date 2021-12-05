@@ -18,6 +18,7 @@ from Point import Point
 import GLUtility
 
 from DisplayableCube import DisplayableCube
+from DisplayableSphere import DisplayableSphere
 from DisplayableTorus import DisplayableTorus
 
 class SceneOne(Component, Animation):
@@ -41,7 +42,7 @@ class SceneOne(Component, Animation):
         self.lRadius = 3
         self.lAngles = [0, 0, 0]
 
-        cube = Component(Point((-1, 0, 0)), DisplayableCube(shaderProg, 1.5, 1, 1.5))
+        cube = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         cube.setMaterial(m1)

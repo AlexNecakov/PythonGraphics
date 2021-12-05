@@ -19,6 +19,7 @@ import GLUtility
 
 from DisplayableCube import DisplayableCube
 from DisplayableTorus import DisplayableTorus
+from DisplayableSphere import DisplayableSphere
 
 ##### TODO 1: Generate Triangle Meshes
 # Requirements:
@@ -66,7 +67,7 @@ class SceneTwo(Component):
         self.shaderProg = shaderProg
         self.glutility = GLUtility.GLUtility()
 
-        cube = Component(Point((0, 0, 0)), DisplayableCube(shaderProg, 1.5, 1, 1.5))
+        cube = Component(Point((0, 0, 0)), DisplayableSphere(shaderProg, 1.0))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         cube.setMaterial(m1)

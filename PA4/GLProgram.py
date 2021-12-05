@@ -205,6 +205,7 @@ class GLProgram:
             // Reserved for illumination rendering, routing name is "lighting" or "illumination"
             if ((renderingFlag >> 0 & 0x1) == 1){{
                 vec4 result = vec4(vColor, 1.0);
+
                 ////////// TODO 3: Illuminate your meshes
                 // Requirements:
                 //   Use the illumination equations we learned in the lecture to implement components for Diffuse, 

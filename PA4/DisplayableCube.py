@@ -75,6 +75,8 @@ class DisplayableCube(Displayable):
             -length/2, -width/2, -height/2, 0, 0, -1, *color,
             -length/2, width/2, -height/2, 0, 0, -1, *color,
             length/2, width/2, -height/2, 0, 0, -1, *color,
+
+            
             -length / 2, -width / 2, -height / 2, 0, 0, -1, *color,
             length / 2, width / 2, -height / 2, 0, 0, -1, *color,
             length/2, -width/2, -height/2, 0, 0, -1, *color,
