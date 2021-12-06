@@ -69,7 +69,8 @@ class DisplayableCube(Displayable):
         self.height = height
         self.color = color
 
-        self.vertices = np.array([
+        self.vertices = np.zeros([24,11])
+        vl = np.array([
             # back face
             [-length/2, -width/2, -height/2, 0, 0, -1, *color],
             [-length/2, width/2, -height/2, 0, 0, -1, *color],
@@ -100,26 +101,27 @@ class DisplayableCube(Displayable):
             [length/2, -width/2, -height/2, 0, -1, 0, *color],
             [length/2, -width/2, height/2, 0, -1, 0, *color],
             [-length/2, -width/2, height/2, 0, -1, 0, *color]
-        ])
+        ]).reshape((24,9))
+        self.vertices[0:36, 0:9] = vl
 
         self.indices = np.array([
             [0,1,2],
             [0,2,3],
 
-            # [4,5,6],
-            # [4,6,7],
+            [4,5,6],
+            [4,6,7],
             
-            # [8,9,10],
-            # [8,10,11],
+            [8,9,10],
+            [8,10,11],
 
-            # [12,13,14],
-            # [12,14,15],
+            [12,13,14],
+            [12,14,15],
 
-            # [16,17,18],
-            # [16,18,19],
+            [16,17,18],
+            [16,18,19],
 
-            # [20,21,22],
-            # [20,22,23]
+            [20,21,22],
+            [20,22,23]
         ])
 
     def draw(self):
