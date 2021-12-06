@@ -48,12 +48,12 @@ class DisplayableSphere(Displayable):
     indices = None  # stores triangle indices to vertices
 
     # stores current cube's information, read-only
-    length = None
-    width = None
-    height = None
+    radius = None
+    stacks = None
+    slices = None
     color = None
 
-    def __init__(self, shaderProg, radius=1, color=ColorType.BLUE):
+    def __init__(self, shaderProg, radius=1, stacks=18, slices=36, color=ColorType.BLUE):
         super(DisplayableSphere, self).__init__()
         self.shaderProg = shaderProg
         self.shaderProg.use()
@@ -62,128 +62,59 @@ class DisplayableSphere(Displayable):
         self.vbo = VBO()  # vbo can only be initiate with glProgram activated
         self.ebo = EBO()
 
-        self.generate(radius, color)
+        self.generate(radius, stacks, slices, color)
 
-    def generate(self, radius=1, color=None):
-        # self.length = length
-        # self.width = width
-        # self.height = height
+    def generate(self, radius=1, stacks=18, slices=36, color=None):
+        self.radius = radius
+        self.stacks = stacks
+        self.slices = slices
         self.color = color
         pi = math.pi
 
-        sphere_vertices = np.zeros([31,31,3])
-        sphere_normals = np.zeros([31,31,3])
-        for i,phi in enumerate(np.arange(-pi/2,pi/2+pi/30,pi/30)):
-            for j,theta in enumerate(np.arange(-pi,pi+pi/15,2*pi/30)):
-                x = radius*math.cos(phi)*math.cos(theta)
-                y = radius*math.cos(phi)*math.sin(theta)
-                z = radius*math.sin(phi)
-
-                x_normal = math.cos(phi)*math.cos(theta)
-                y_normal = math.cos(phi)*math.sin(theta)
-                z_normal = math.sin(phi)
-
-                sphere_vertices[i][j] = [x,y,z]
-                sphere_normals[i][j] = [x_normal,y_normal,z_normal]
-
-        triangle_list = []
-        for i in range(31):
-            for j in range(31):
-                if(i<30 and j<30):
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2], sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i][j+1][0],sphere_vertices[i][j+1][1],\
-                        sphere_vertices[i][j+1][2],sphere_normals[i][j+1][0],sphere_normals[i][j+1][1],\
-                        sphere_normals[i][j+1][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i+1][j+1][0],sphere_vertices[i+1][j+1][1],\
-                        sphere_vertices[i+1][j+1][2],sphere_normals[i+1][j+1][0],sphere_normals[i+1][j+1][1],\
-                        sphere_normals[i+1][j+1][2],*color]))
-
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2], sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i+1][j][0],sphere_vertices[i+1][j][1],\
-                        sphere_vertices[i+1][j][2],sphere_normals[i+1][j][0],sphere_normals[i+1][j][1],\
-                        sphere_normals[i+1][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i+1][j+1][0],sphere_vertices[i+1][j+1][1],\
-                        sphere_vertices[i+1][j+1][2],sphere_normals[i+1][j+1][0],sphere_normals[i+1][j+1][1],\
-                        sphere_normals[i+1][j+1][2],*color]))
-                elif(i==30 and j<30):
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2],sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i][j+1][0],sphere_vertices[i][j+1][1],\
-                        sphere_vertices[i][j+1][2],sphere_normals[i][j+1][0],sphere_normals[i][j+1][1],\
-                        sphere_normals[i][j+1][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[0][j+1][0],sphere_vertices[0][j+1][1],\
-                        sphere_vertices[0][j+1][2],sphere_normals[0][j+1][0],sphere_normals[0][j+1][1],\
-                        sphere_normals[0][j+1][2],*color]))
-
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2], sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[0][j][0],sphere_vertices[0][j][1],\
-                        sphere_vertices[0][j][2],sphere_normals[0][j][0],sphere_normals[0][j][1],\
-                        sphere_normals[0][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[0][j+1][0],sphere_vertices[0][j+1][1],\
-                        sphere_vertices[0][j+1][2],sphere_normals[0][j+1][0],sphere_normals[0][j+1][1],\
-                        sphere_normals[0][j+1][2],*color]))
-                elif(i<30 and j==30):
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2],sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i][0][0],sphere_vertices[i][0][1],\
-                        sphere_vertices[i][0][2],sphere_normals[i][0][0],sphere_normals[i][0][1],\
-                        sphere_normals[i][0][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i+1][0][0],sphere_vertices[i+1][0][1],\
-                        sphere_vertices[i+1][0][2],sphere_normals[i+1][0][0],sphere_normals[i+1][0][1],\
-                        sphere_normals[i+1][0][2],*color]))
-
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2],sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i+1][j][0],sphere_vertices[i+1][j][1],\
-                        sphere_vertices[i+1][j][2],sphere_normals[i+1][j][0],sphere_normals[i+1][j][1],\
-                        sphere_normals[i+1][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i+1][0][0],sphere_vertices[i+1][0][1],\
-                        sphere_vertices[i+1][0][2],sphere_normals[i+1][0][0],sphere_normals[i+1][0][1],\
-                        sphere_normals[i+1][0][2],*color]))
-                elif (i==30 and j==30):
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2], sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[i][0][0],sphere_vertices[i][0][1],\
-                        sphere_vertices[i][0][2],sphere_normals[i][0][0],sphere_normals[i][0][1],\
-                        sphere_normals[i][0][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[0][0][0],sphere_vertices[0][0][1],\
-                        sphere_vertices[0][0][2],sphere_normals[0][0][0],sphere_normals[0][0][1],\
-                        sphere_normals[0][0][2],*color]))
-
-                    triangle_list.append(np.array([sphere_vertices[i][j][0],sphere_vertices[i][j][1]\
-                        ,sphere_vertices[i][j][2], sphere_normals[i][j][0],sphere_normals[i][j][1]\
-                        ,sphere_normals[i][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[0][j][0],sphere_vertices[0][j][1],\
-                        sphere_vertices[0][j][2],sphere_normals[0][j][0],sphere_normals[0][j][1],\
-                        sphere_normals[0][j][2],*color]))
-                    triangle_list.append(np.array([sphere_vertices[0][0][0],sphere_vertices[0][0][1],\
-                        sphere_vertices[0][0][2],sphere_normals[0][0][0],sphere_normals[0][0][1],\
-                        sphere_normals[0][0][2],*color]))
-
-        new_vl = np.stack(triangle_list)
-
+        self.vertices = np.zeros([6*(slices)*(stacks-1), 11])
+        self.vtxCoord = np.zeros([stacks,slices,3])
+        for i in range(stacks):
+            phi = i / (stacks - 1) * pi - pi/2
+            for j in range(slices):
+                theta = j / (slices) * 2 * pi
+                self.vtxCoord[i,j,:] = [self.radius * math.cos(phi) * math.cos(theta),
+                                        self.radius * math.cos(phi) * math.sin(theta),
+                                        self.radius * math.sin(phi)]
         
-        vl = np.array([
-            # back face
-            -radius/2, -radius/2, -radius/2, 0, 0, -1, *color,
-            -radius/2, radius/2, -radius/2, 0, 0, -1, *color,
-            radius/2, radius/2, -radius/2, 0, 0, -1, *color,            
-        ]).reshape((3, 9))
+        for i in range(stacks-1):
+            for j in range(slices):
+                gridN = i * slices + j
+                self.vertices[6*gridN+0, 0:3] = self.vtxCoord[i,j,:]
+                self.vertices[6*gridN+1, 0:3] = self.vtxCoord[i,(j+1)% slices,:]
+                self.vertices[6*gridN+2, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
+                
+                self.vertices[6*gridN+3, 0:3] = self.vtxCoord[i,j,:]
+                self.vertices[6*gridN+4, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
+                self.vertices[6*gridN+5, 0:3] = self.vtxCoord[i+1,j,:]
 
-        self.vertices = np.zeros([len(new_vl), 11])
-        self.vertices[0:len(new_vl), 0:9] = new_vl
+                self.vertices[6*gridN+0:6*gridN+6, 6:9] = [*color]
+                self.vertices[6*gridN+2, 6:9] = [*color]
+                self.vertices[6*gridN+5, 6:9] = [*color]
+        
+        self.indices = np.array([
+            [0,1,2],
+            [0,2,3],
 
-        self.indices = np.zeros(0)
+            [4,5,6],
+            [4,6,7],
+            
+            [8,9,10],
+            [8,10,11],
+
+            [12,13,14],
+            [12,14,15],
+
+            [16,17,18],
+            [16,18,19],
+
+            [20,21,22],
+            [20,22,23]
+        ])
 
     def draw(self):
         self.vao.bind()
