@@ -71,8 +71,9 @@ class DisplayableSphere(Displayable):
         self.color = color
         pi = math.pi
 
-        self.vertices = np.zeros([6*(slices)*(stacks-1), 11])
+        self.vertices = np.zeros([4*(slices)*(stacks-1), 11])
         self.vtxCoord = np.zeros([stacks,slices,3])
+        self.indices = np.zeros([2*(stacks-1)*slices,3])
         for i in range(stacks):
             phi = i / (stacks - 1) * pi - pi/2
             for j in range(slices):
@@ -84,42 +85,24 @@ class DisplayableSphere(Displayable):
         for i in range(stacks-1):
             for j in range(slices):
                 gridN = i * slices + j
-                self.vertices[6*gridN+0, 0:3] = self.vtxCoord[i,j,:]
-                self.vertices[6*gridN+1, 0:3] = self.vtxCoord[i,(j+1)% slices,:]
-                self.vertices[6*gridN+2, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
+                self.vertices[4*gridN+0, 0:3] = self.vtxCoord[i,j,:]
+                self.vertices[4*gridN+1, 0:3] = self.vtxCoord[i,(j+1)% slices,:]
+                self.vertices[4*gridN+2, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
+                self.vertices[4*gridN+3, 0:3] = self.vtxCoord[i+1,j,:]
+
+                self.vertices[4*gridN+0, 6:9] = [*color]
+                self.vertices[4*gridN+1, 6:9] = [*color]
+                self.vertices[4*gridN+2, 6:9] = [*color]
+                self.vertices[4*gridN+3, 6:9] = [*color]
+
+                self.indices[2*gridN+0] = [4*gridN+0,4*gridN+1,4*gridN+2]
+                self.indices[2*gridN+1] = [4*gridN+0,4*gridN+2,4*gridN+3]
                 
-                self.vertices[6*gridN+3, 0:3] = self.vtxCoord[i,j,:]
-                self.vertices[6*gridN+4, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
-                self.vertices[6*gridN+5, 0:3] = self.vtxCoord[i+1,j,:]
-
-                self.vertices[6*gridN+0:6*gridN+6, 6:9] = [*color]
-                self.vertices[6*gridN+2, 6:9] = [*color]
-                self.vertices[6*gridN+5, 6:9] = [*color]
-        
-        self.indices = np.array([
-            [0,1,2],
-            [0,2,3],
-
-            [4,5,6],
-            [4,6,7],
-            
-            [8,9,10],
-            [8,10,11],
-
-            [12,13,14],
-            [12,14,15],
-
-            [16,17,18],
-            [16,18,19],
-
-            [20,21,22],
-            [20,22,23]
-        ])
 
     def draw(self):
         self.vao.bind()
         # TODO 1.1 is at here, switch from vbo to ebo
-        self.vbo.draw()
+        self.ebo.draw()
         self.vao.unbind()
 
     def initialize(self):

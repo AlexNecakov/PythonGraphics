@@ -102,7 +102,7 @@ class DisplayableCube(Displayable):
             [length/2, -width/2, height/2, 0, -1, 0, *color],
             [-length/2, -width/2, height/2, 0, -1, 0, *color]
         ]).reshape((24,9))
-        self.vertices[0:36, 0:9] = vl
+        self.vertices[0:24, 0:9] = vl
 
         self.indices = np.array([
             [0,1,2],
