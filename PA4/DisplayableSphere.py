@@ -188,7 +188,7 @@ class DisplayableSphere(Displayable):
     def draw(self):
         self.vao.bind()
         # TODO 1.1 is at here, switch from vbo to ebo
-        self.vbo.draw()
+        self.ebo.draw()
         self.vao.unbind()
 
     def initialize(self):
