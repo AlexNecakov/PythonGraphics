@@ -222,7 +222,9 @@ void main()
                 vLight = normalize({self.attribs["light"]}[i].position - vPos);
             }}
             if ({self.attribs["light"]}[i].spotOn == true){{
-                
+                attenuation = {self.attribs["light"]}[i].spotRadialFactor * {self.attribs["light"]}[i].spotAngleLimit;
+            }}else{{
+                attenuation = vec3(1.0);
             }}
 
             vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));

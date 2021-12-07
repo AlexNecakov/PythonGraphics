@@ -43,21 +43,21 @@ class SceneThree(Component, Animation):
         self.lRadius = 3
         self.lAngles = [0, 0, 0]
 
-        sphere = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0, 256, 256))
+        sphere = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0, 64, 64))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         sphere.setMaterial(m1)
         sphere.renderingRouting = "lighting"
         self.addChild(sphere)
 
-        cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 256))
+        cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 64))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         cylinder.setMaterial(m2)
         cylinder.renderingRouting = "lighting"
         self.addChild(cylinder)
 
-        torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 256, 256))
+        torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 64, 64))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         torus.setMaterial(m2)
