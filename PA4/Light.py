@@ -23,7 +23,9 @@ class Light:
     spotRadialFactor = None
     spotAngleLimit = None
 
-    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0):
+    a_l = 0.0
+
+    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0, a_l=0.0):
         # set basic light
         if position is not None:
             self.setPosition(position)
@@ -33,6 +35,10 @@ class Light:
             self.setColor(color)
         else:
             self.color = np.array((0, 0, 0, 0))
+        if a_l is not 0.0:
+            self.setA_l(a_l)
+        else:
+            self.a_l = 0.0
 
         # init radial attenuation parameters
         if infiniteDirection is not None:
@@ -55,7 +61,8 @@ class Light:
     def __repr__(self):
         return f"pos: {self.position}, color:{self.color},\
         {self.infiniteOn},{self.infiniteDirection},\
-        {self.spotOn},{self.spotDirection}, {self.spotRadialFactor},{self.spotAngleLimit}"
+        {self.spotOn},{self.spotDirection}, {self.spotRadialFactor},{self.spotAngleLimit},\
+        {self.a_l}"
 
     def setColor(self, color):
         if (not isinstance(color, np.ndarray)) or color.size != 4:
@@ -107,3 +114,8 @@ class Light:
             if spotDirection.coords.size != 3:
                 raise TypeError("spotDirection must be a size 3 Point")
             self.spotDirection = spotDirection.coords
+    
+    def setA_l(self, a_l):
+        if type(a_l) != (int or float):
+            raise TypeError("a_l must be a int/float")
+        self.a_l = a_l

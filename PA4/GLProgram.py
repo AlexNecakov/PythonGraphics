@@ -255,7 +255,7 @@ void main()
         //   vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the 
         //   range 0 to 1.
         
-        //results[ri] = ; // you need to use vec4() and normalize() here
+        results[ri] = vec4(normalize(vNormal), 1.0); // you need to use vec4() and normalize() here
 
         ri+=1;
     }}
