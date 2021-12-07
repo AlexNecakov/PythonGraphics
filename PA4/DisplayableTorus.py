@@ -77,7 +77,7 @@ class DisplayableTorus(Displayable):
         self.vtxCoord = np.zeros([stacks,slices,3])
         self.indices = np.zeros([2*(stacks-1)*slices,3])
         for i in range(stacks):
-            phi = i / (stacks - 1) * pi - pi/2
+            phi = i / (stacks - 1) * 2 * pi
             for j in range(slices):
                 theta = j / (slices) * 2 * pi
                 self.vtxCoord[i,j,:] = [(radiusMajor + (radiusMinor * math.cos(theta))) * math.cos(phi),
@@ -85,7 +85,7 @@ class DisplayableTorus(Displayable):
                                         radiusMinor * math.sin(theta)]
         
         for i in range(stacks-1):
-            phi = i / (stacks) * pi - pi/2
+            phi = i / (stacks) * 2 * pi
             for j in range(slices):
                 theta = j / (slices) * 2 * pi
                 gridN = i * slices + j
