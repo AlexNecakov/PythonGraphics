@@ -71,10 +71,12 @@ class DisplayableCylinder(Displayable):
         self.color = color
         pi = math.pi
 
-        self.vertices = np.zeros([4*(slices), 11])
-        self.vtxCoordTop = np.zeros([slices,3])
-        self.vtxCoordBot = np.zeros([slices,3])
-        self.indices = np.zeros([2*slices,3])
+        self.vertices = np.zeros([4*(slices) + 6*slices, 11])
+        self.vtxCoordTop = np.zeros([slices+1,3])
+        self.vtxCoordBot = np.zeros([slices+1,3])
+        self.indices = np.zeros([4*slices,3])
+        self.vtxCoordTop[slices,:] = [0,0,height]
+        self.vtxCoordBot[slices,:] = [0,0,0]
         for i in range(slices):
             theta = i / (slices) * 2 * pi
             self.vtxCoordTop[i,:] = [self.radius * math.cos(theta),
@@ -83,13 +85,13 @@ class DisplayableCylinder(Displayable):
             self.vtxCoordBot[i,:] = [self.radius * math.cos(theta),
                                     self.radius * math.sin(theta),
                                     0]
-    
+        #tube
         for i in range(slices):
             theta = i / (slices) * 2 * pi
-            self.vertices[4*i+0, 0:3] = self.vtxCoordTop[(2*i+0)%slices,:]
-            self.vertices[4*i+1, 0:3] = self.vtxCoordTop[(2*i+1)%slices,:]
-            self.vertices[4*i+2, 0:3] = self.vtxCoordBot[(2*i+0)%slices,:]
-            self.vertices[4*i+3, 0:3] = self.vtxCoordBot[(2*i+1)%slices,:]
+            self.vertices[4*i+0, 0:3] = self.vtxCoordTop[(i+0)%slices,:]
+            self.vertices[4*i+1, 0:3] = self.vtxCoordTop[(i+1)%slices,:]
+            self.vertices[4*i+2, 0:3] = self.vtxCoordBot[(i+0)%slices,:]
+            self.vertices[4*i+3, 0:3] = self.vtxCoordBot[(i+1)%slices,:]
 
             self.vertices[4*i+0, 3:6] = [math.cos(theta), math.sin(theta), 0]
             self.vertices[4*i+1, 3:6] = [math.cos(theta), math.sin(theta), 0]
@@ -103,6 +105,34 @@ class DisplayableCylinder(Displayable):
 
             self.indices[2*i+0] = [4*i+0,4*i+1,4*i+2]
             self.indices[2*i+1] = [4*i+1,4*i+2,4*i+3]
+        #caps
+        for i in range(slices):
+            self.vertices[3*i+0+(4*slices), 0:3] = self.vtxCoordTop[(i+0)%slices,:]
+            self.vertices[3*i+1+(4*slices), 0:3] = self.vtxCoordTop[(i+1)%slices,:]
+            self.vertices[3*i+2+(4*slices), 0:3] = self.vtxCoordTop[slices,:]
+            
+            self.vertices[3*i+0+(5*slices), 0:3] = self.vtxCoordBot[(i+0)%slices,:]
+            self.vertices[3*i+1+(5*slices), 0:3] = self.vtxCoordBot[(i+1)%slices,:]
+            self.vertices[3*i+2+(5*slices), 0:3] = self.vtxCoordBot[slices,:]
+
+            self.vertices[3*i+0+(4*slices), 3:6] = [0, 0, 1]
+            self.vertices[3*i+1+(4*slices), 3:6] = [0, 0, 1]
+            self.vertices[3*i+2+(4*slices), 3:6] = [0, 0, 1]
+
+            self.vertices[3*i+0+(5*slices), 3:6] = [0, 0, -1]
+            self.vertices[3*i+1+(5*slices), 3:6] = [0, 0, -1]
+            self.vertices[3*i+2+(5*slices), 3:6] = [0, 0, -1]
+
+            self.vertices[3*i+0+(4*slices), 6:9] = [*color]
+            self.vertices[3*i+1+(4*slices), 6:9] = [*color]
+            self.vertices[3*i+2+(4*slices), 6:9] = [*color]
+
+            self.vertices[3*i+0+(5*slices), 6:9] = [*color]
+            self.vertices[3*i+1+(5*slices), 6:9] = [*color]
+            self.vertices[3*i+2+(5*slices), 6:9] = [*color]
+
+            self.indices[2*i+0+(2*slices)] = [3*i+0+(4*slices),3*i+1+(4*slices),3*i+2+(4*slices)]
+            self.indices[2*i+1+(2*slices)] = [3*i+0+(5*slices),3*i+1+(5*slices),3*i+2+(5*slices)]
             
 
     def draw(self):
