@@ -93,6 +93,7 @@ class GLProgram:
             self.attribs[f"light[{i}].spotOn"] = f"{self.attribs['light']}[{i}].spotOn"
             self.attribs[f"light[{i}].spotDirection"] = f"{self.attribs['light']}[{i}].spotDirection"
             self.attribs[f"light[{i}].spotAngleLimit"] = f"{self.attribs['light']}[{i}].spotAngleLimit"
+            self.attribs[f"light[{i}].a_l"] = f"{self.attribs['light']}[{i}].a_l"
 
         self.vertexShaderSource = self.genVertexShaderSource()
         self.fragmentShaderSource = self.genFragShaderSource()
@@ -215,7 +216,8 @@ void main()
 
         for(int i=0; i<MAX_LIGHT_NUM; i++){{
             result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
-            
+            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(vNormal, {self.attribs["light"]}[i].position);
+            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * dot(viewPosition, reflect({self.attribs["light"]}[i].position, vNormal));//^{self.attribs["material"]}.highlight;
             
         }}
         result = clamp(result, vec4(0), vec4(1));

@@ -35,7 +35,7 @@ class Light:
             self.setColor(color)
         else:
             self.color = np.array((0, 0, 0, 0))
-        if a_l is not 0.0:
+        if a_l != 0.0:
             self.setA_l(a_l)
         else:
             self.a_l = 0.0

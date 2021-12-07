@@ -127,7 +127,7 @@ class Sketch(CanvasBase):
         self.last_mouse_leftPosition = [0, 0]
         self.last_mouse_middlePosition = [0, 0]
         self.components = []
-        self.backgroundColor = ColorType.BLUEGREEN
+        self.backgroundColor = ColorType.BLACK
 
         # add components to top level
         self.resetView()
@@ -364,8 +364,10 @@ class Sketch(CanvasBase):
         if keycode in [wx.WXK_RETURN]:
             self.update()
         if keycode in [wx.WXK_LEFT]:
+            self.switchScene(SceneOne(self.shaderProg))
             self.update()
         if keycode in [wx.WXK_RIGHT]:
+            self.switchScene(SceneTwo(self.shaderProg))
             self.update()
         if keycode in [wx.WXK_UP]:
             self.Interrupt_Scroll(1)

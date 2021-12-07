@@ -43,29 +43,29 @@ class SceneOne(Component, Animation):
         self.lRadius = 3
         self.lAngles = [0, 0, 0]
 
-        cube = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0))
+        sphere = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
-        cube.setMaterial(m1)
-        cube.renderingRouting = "normal"
-        self.addChild(cube)
+        sphere.setMaterial(m1)
+        sphere.renderingRouting = "lighting"
+        self.addChild(sphere)
 
         cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
-                      np.array((0, 0, 0, 1.0)), 64)
+                      np.array((0.4, 0.4, 0.4, 0.1)), 64)
         cylinder.setMaterial(m2)
-        cylinder.renderingRouting = "normal"
+        cylinder.renderingRouting = "lighting"
         self.addChild(cylinder)
 
         torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 36, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
-                      np.array((0, 0, 0, 1.0)), 64)
+                      np.array((0.4, 0.4, 0.4, 0.1)), 64)
         torus.setMaterial(m2)
-        torus.renderingRouting = "normal"
+        torus.renderingRouting = "lighting"
         self.addChild(torus)
 
         l0 = Light(self.lightPos(self.lRadius, self.lAngles[0], self.lTransformations[0]),
-                   np.array((*ColorType.SOFTRED, 1.0)))
+                   np.array((*ColorType.SOFTRED, 1.0)), np.array((1,0,0)), None, None, 0, 1)
         lightCube0 = Component(Point((0, 0, 0)), DisplayableCube(shaderProg, 0.1, 0.1, 0.1, ColorType.SOFTRED))
         lightCube0.renderingRouting = "vertex"
         l1 = Light(self.lightPos(self.lRadius, self.lAngles[1], self.lTransformations[1]),
