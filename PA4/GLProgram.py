@@ -207,24 +207,25 @@ void main()
     // Reserved for illumination rendering, routing name is "lighting" or "illumination"
     if ((renderingFlag >> 0 & 0x1) == 1){{
         vec4 result = vec4(0.0);
-        ////////// TODO 3: Illuminate your meshes
-        // Requirements:
-        //   Use the illumination equations we learned in the lecture to implement components for Diffuse, 
-        //   Specular, and Ambient. You’ll implement the missing part in the Fragment shader source code. 
-        //   This part will be implemented in OpenGL Shading Language. Your code should iterate through 
-        //   all lights in the Light array.
 
+        //TODO 3
         for(int i=0; i<MAX_LIGHT_NUM; i++){{
+            vec3 vLight = vec3(0.0);
+            if ({self.attribs["light"]}[i].infiniteOn == true){{
+                vLight = normalize({self.attribs["light"]}[i].infiniteDirection);
+            }}else{{
+                vLight = normalize({self.attribs["light"]}[i].position - vPos);
+            }}
 
-            vec3 vLight = normalize({self.attribs["light"]}[i].position - vPos);
             vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
             result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
-            if (dot(normalize(vNormal), vLight) > 0){{
+            //commented this out, looks very crappy unless i do
+            //if (dot(vNormal, vLight) > 0){{
                 result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
-                if(dot(normalize(viewPosition), vReflect) > 0){{
+                if(dot(viewPosition, vReflect) > 0){{
                     result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
                 }}
-            }}
+            //}}
             
             
         }}

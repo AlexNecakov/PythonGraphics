@@ -75,7 +75,7 @@ class SceneTwo(Component):
         self.addChild(cube)
 
         l0 = Light(Point([0.0, 1.5, 0.0]),
-                   np.array((*ColorType.WHITE, 1.0)))
+                   np.array((*ColorType.WHITE, 1.0)), None, None, None, 0, 1)
         lightCube0 = Component(Point((0.0, 1.5, 0.0)), DisplayableCube(shaderProg, 0.1, 0.1, 0.1, ColorType.WHITE))
         lightCube0.renderingRouting = "vertex"
 
