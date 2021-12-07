@@ -55,7 +55,7 @@ from DisplayableSphere import DisplayableSphere
 #   Hit 1, 2, 3, 4, etc. to identify which light to toggle.
 
 
-class SceneTwo(Component):
+class SceneFour(Component):
     shaderProg = None
     glutility = None
 

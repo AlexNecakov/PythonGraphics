@@ -22,6 +22,7 @@ import GLUtility
 from SceneOne import SceneOne
 from SceneTwo import SceneTwo
 from SceneThree import SceneThree
+from SceneFour import SceneFour
 
 try:
     import wx

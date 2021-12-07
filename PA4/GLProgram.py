@@ -222,10 +222,14 @@ void main()
                 vLight = normalize({self.attribs["light"]}[i].position - vPos);
             }}
             if ({self.attribs["light"]}[i].spotOn == true){{
-                attenuation = pow(dot(vLight,{self.attribs["light"]}[i].spotDirection),{self.attribs["light"]}[i].spotAngleLimit)\
-                    /({self.attribs["light"]}[i].spotRadialFactor[0]\
-                    + {self.attribs["light"]}[i].spotRadialFactor[1] * length({self.attribs["light"]}[i].position - vPos)\
-                    + {self.attribs["light"]}[i].spotRadialFactor[2] * pow(length({self.attribs["light"]}[i].position - vPos),2));
+                if (dot(vLight,{self.attribs["light"]}[i].spotDirection) < {self.attribs["light"]}[i].spotAngleLimit){{
+                    attenuation = 0.0;
+                }}else{{
+                    attenuation = pow(dot(vLight,{self.attribs["light"]}[i].spotDirection),{self.attribs["light"]}[i].spotAngleLimit);
+                    attenuation *= 1/({self.attribs["light"]}[i].spotRadialFactor[0]\
+                        + {self.attribs["light"]}[i].spotRadialFactor[1] * length({self.attribs["light"]}[i].position - vPos)\
+                        + {self.attribs["light"]}[i].spotRadialFactor[2] * pow(length({self.attribs["light"]}[i].position - vPos),2));
+                }}   
             }}else{{
                 attenuation = 1.0;
             }}
