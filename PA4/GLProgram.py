@@ -215,9 +215,12 @@ void main()
         //   all lights in the Light array.
 
         for(int i=0; i<MAX_LIGHT_NUM; i++){{
+
+            vec3 vLight = normalize({self.attribs["light"]}[i].position - vPos);
+            vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
             result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
-            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(vNormal, {self.attribs["light"]}[i].position);
-            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * dot(viewPosition, reflect({self.attribs["light"]}[i].position, vNormal));//^{self.attribs["material"]}.highlight;
+            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
+            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
             
         }}
         result = clamp(result, vec4(0), vec4(1));
