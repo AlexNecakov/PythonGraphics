@@ -20,6 +20,7 @@ import GLUtility
 from DisplayableCube import DisplayableCube
 from DisplayableSphere import DisplayableSphere
 from DisplayableTorus import DisplayableTorus
+from DisplayableCylinder import DisplayableCylinder
 
 class SceneOne(Component, Animation):
     lights = None
@@ -48,6 +49,14 @@ class SceneOne(Component, Animation):
         cube.setMaterial(m1)
         cube.renderingRouting = "lighting"
         self.addChild(cube)
+
+        cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 36))
+        m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+                      np.array((0, 0, 0, 1.0)), 64)
+        cylinder.setMaterial(m2)
+        cylinder.renderingRouting = "lighting"
+        cylinder.rotate(90, cylinder.uAxis)
+        self.addChild(cylinder)
 
         torus = Component(Point((1, 0, 0)), DisplayableTorus(shaderProg, 0.25, 0.5, 36, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),

@@ -38,7 +38,7 @@ except ImportError:
     raise ImportError("Required dependency PyOpenGL not present")
 
 
-class DisplayableSphere(Displayable):
+class DisplayableCylinder(Displayable):
     vao = None
     vbo = None
     ebo = None
@@ -49,12 +49,12 @@ class DisplayableSphere(Displayable):
 
     # stores current cube's information, read-only
     radius = None
-    stacks = None
+    height = None
     slices = None
     color = None
 
-    def __init__(self, shaderProg, radius=1, stacks=18, slices=36, color=ColorType.BLUE):
-        super(DisplayableSphere, self).__init__()
+    def __init__(self, shaderProg, radius=1, height = 1, slices=36, color=ColorType.BLUE):
+        super(DisplayableCylinder, self).__init__()
         self.shaderProg = shaderProg
         self.shaderProg.use()
 
@@ -62,49 +62,48 @@ class DisplayableSphere(Displayable):
         self.vbo = VBO()  # vbo can only be initiate with glProgram activated
         self.ebo = EBO()
 
-        self.generate(radius, stacks, slices, color)
+        self.generate(radius, height, slices, color)
 
-    def generate(self, radius=1, stacks=18, slices=36, color=None):
+    def generate(self, radius=1, height = 1, slices=36, color=None):
         self.radius = radius
-        self.stacks = stacks
+        self.height = height
         self.slices = slices
         self.color = color
         pi = math.pi
 
-        self.vertices = np.zeros([4*(slices)*(stacks-1), 11])
-        self.vtxCoord = np.zeros([stacks,slices,3])
-        self.indices = np.zeros([2*(stacks-1)*slices,3])
-        for i in range(stacks):
-            phi = i / (stacks - 1) * pi - pi/2
-            for j in range(slices):
-                theta = j / (slices) * 2 * pi
-                self.vtxCoord[i,j,:] = [self.radius * math.cos(phi) * math.cos(theta),
-                                        self.radius * math.cos(phi) * math.sin(theta),
-                                        self.radius * math.sin(phi)]
-        
-        for i in range(stacks-1):
-            phi = i / (stacks) * pi - pi/2
-            for j in range(slices):
-                theta = j / (slices) * 2 * pi
-                gridN = i * slices + j
-                self.vertices[4*gridN+0, 0:3] = self.vtxCoord[i,j,:]
-                self.vertices[4*gridN+1, 0:3] = self.vtxCoord[i,(j+1)% slices,:]
-                self.vertices[4*gridN+2, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
-                self.vertices[4*gridN+3, 0:3] = self.vtxCoord[i+1,j,:]
+        self.vertices = np.zeros([4*(slices), 11])
+        self.vtxCoordTop = np.zeros([slices,3])
+        self.vtxCoordBot = np.zeros([slices,3])
+        self.indices = np.zeros([2*slices,3])
+        for i in range(slices):
+            theta = i / (slices) * 2 * pi
+            self.vtxCoordTop[i,:] = [self.radius * math.cos(theta),
+                                    self.radius * math.sin(theta),
+                                    height]
+            self.vtxCoordBot[i,:] = [self.radius * math.cos(theta),
+                                    self.radius * math.sin(theta),
+                                    0]
+    
+        for i in range(slices):
+            theta = i / (slices) * 2 * pi
+            self.vertices[4*i+0, 0:3] = self.vtxCoordTop[(2*i+0)%slices,:]
+            self.vertices[4*i+1, 0:3] = self.vtxCoordTop[(2*i+1)%slices,:]
+            self.vertices[4*i+2, 0:3] = self.vtxCoordBot[(2*i+0)%slices,:]
+            self.vertices[4*i+3, 0:3] = self.vtxCoordBot[(2*i+1)%slices,:]
 
-                self.vertices[4*gridN+0, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
-                self.vertices[4*gridN+1, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
-                self.vertices[4*gridN+2, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
-                self.vertices[4*gridN+3, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
+            self.vertices[4*i+0, 3:6] = [math.cos(theta), math.sin(theta), 0]
+            self.vertices[4*i+1, 3:6] = [math.cos(theta), math.sin(theta), 0]
+            self.vertices[4*i+2, 3:6] = [math.cos(theta), math.sin(theta), 0]
+            self.vertices[4*i+3, 3:6] = [math.cos(theta), math.sin(theta), 0]
 
-                self.vertices[4*gridN+0, 6:9] = [*color]
-                self.vertices[4*gridN+1, 6:9] = [*color]
-                self.vertices[4*gridN+2, 6:9] = [*color]
-                self.vertices[4*gridN+3, 6:9] = [*color]
+            self.vertices[4*i+0, 6:9] = [*color]
+            self.vertices[4*i+1, 6:9] = [*color]
+            self.vertices[4*i+2, 6:9] = [*color]
+            self.vertices[4*i+3, 6:9] = [*color]
 
-                self.indices[2*gridN+0] = [4*gridN+0,4*gridN+1,4*gridN+2]
-                self.indices[2*gridN+1] = [4*gridN+0,4*gridN+2,4*gridN+3]
-                
+            self.indices[2*i+0] = [4*i+0,4*i+1,4*i+2]
+            self.indices[2*i+1] = [4*i+1,4*i+2,4*i+3]
+            
 
     def draw(self):
         self.vao.bind()
