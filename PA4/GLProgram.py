@@ -77,7 +77,11 @@ class GLProgram:
             "light": "light",
 
             "maxLightsNum": "20",
-            "maxMaterialNum": "20"
+            "maxMaterialNum": "20",
+
+            "ambientOn": "ambientOn",
+            "diffuseOn": "diffuseOn",
+            "specularOn": "specularOn",
         }
         self.attribs["diffuse"] = self.attribs["material"] + ".diffuse"
         self.attribs["specular"] = self.attribs["material"] + ".specular"
@@ -210,14 +214,19 @@ void main()
 
         //TODO 3
         for(int i=0; i<MAX_LIGHT_NUM; i++){{
-            vec3 vLight = vec3(0.0);
+            vec3 vLight = vec3(0.0);            
+            vec3 attenuation = vec3(0.0);
             if ({self.attribs["light"]}[i].infiniteOn == true){{
                 vLight = normalize({self.attribs["light"]}[i].infiniteDirection);
             }}else{{
                 vLight = normalize({self.attribs["light"]}[i].position - vPos);
             }}
+            if ({self.attribs["light"]}[i].spotOn == true){{
+                
+            }}
 
             vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
+
             result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
             //commented this out, looks very crappy unless i do
             //if (dot(vNormal, vLight) > 0){{

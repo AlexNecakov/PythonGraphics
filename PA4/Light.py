@@ -45,7 +45,7 @@ class Light:
             self.infiniteOn = True
             self.setInfiniteDirection(infiniteDirection)
         else:
-            self.radialOn = False
+            self.infiniteOn = False
             self.infiniteDirection = np.array((0, 0, 0))
 
         # init spot light parameters

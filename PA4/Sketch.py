@@ -21,6 +21,7 @@ from GLBuffer import VAO, VBO, EBO, Texture
 import GLUtility
 from SceneOne import SceneOne
 from SceneTwo import SceneTwo
+from SceneThree import SceneThree
 
 try:
     import wx
@@ -114,6 +115,11 @@ class Sketch(CanvasBase):
     basisAxes = None
     scene = None
 
+    # light toggles
+    ambientOn = False
+    diffuseOn = False
+    specularOn = False
+
     def __init__(self, parent):
         """
         Init everything. You should set your model here.
@@ -129,6 +135,10 @@ class Sketch(CanvasBase):
         self.components = []
         self.backgroundColor = ColorType.BLACK
 
+        self.ambientOn = True
+        self.diffuseOn = True
+        self.specularOn = True
+
         # add components to top level
         self.resetView()
 
@@ -140,6 +150,9 @@ class Sketch(CanvasBase):
         self.cameraDis = 6
         self.cameraPhi = math.pi / 6
         self.cameraTheta = math.pi / 2
+        self.ambientOn = True
+        self.diffuseOn = True
+        self.specularOn = True
 
     def switchScene(self, scene):
         self.scene = scene
@@ -364,7 +377,7 @@ class Sketch(CanvasBase):
         if keycode in [wx.WXK_RETURN]:
             self.update()
         if keycode in [wx.WXK_LEFT]:
-            self.switchScene(SceneOne(self.shaderProg))
+            self.switchScene(SceneThree(self.shaderProg))
             self.update()
         if keycode in [wx.WXK_RIGHT]:
             self.switchScene(SceneTwo(self.shaderProg))
@@ -380,6 +393,12 @@ class Sketch(CanvasBase):
             self.resetView()
         if chr(keycode) in "pP":
             self.pauseScene = not self.pauseScene
+        if chr(keycode) in "aA":
+            self.ambientOn = not self.ambientOn
+        if chr(keycode) in "dD":
+            self.diffuseOn = not self.diffuseOn
+        if chr(keycode) in "sS":
+            self.specularOn = not self.specularOn
 
         # TODO 4.2 is at here
         # TODO 5.3 is at here
