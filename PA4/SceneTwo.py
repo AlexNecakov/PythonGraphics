@@ -67,7 +67,7 @@ class SceneTwo(Component):
         self.shaderProg = shaderProg
         self.glutility = GLUtility.GLUtility()
 
-        cube = Component(Point((0, 0, 0)), DisplayableSphere(shaderProg, 1.0, 128, 128))
+        cube = Component(Point((0, 0, 0)), DisplayableSphere(shaderProg, 1.0, 64, 64))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         cube.setMaterial(m1)
@@ -81,10 +81,10 @@ class SceneTwo(Component):
         l1 = Light(None,
                    np.array((*ColorType.RED, 1.0)), np.array((1,0,0)), None, None, 0, 1)
         l2 = Light(Point([0.0,-1.5,0.0]),
-                   np.array((*ColorType.GREEN, 1.0)), None, None, None, 0, 1)
+                   np.array((*ColorType.GREEN, 1.0)), None, np.array((0,-1.5,0)), np.array((0.2,0.2,0.2)), 0, 1)
 
         self.addChild(lightCube0)
-        self.lights = [l0,l1 ]
+        self.lights = [l0,l1,l2 ]
         self.lightCubes = [lightCube0, ]
 
     def initialize(self):

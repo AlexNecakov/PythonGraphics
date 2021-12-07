@@ -215,16 +215,19 @@ void main()
         //TODO 3
         for(int i=0; i<MAX_LIGHT_NUM; i++){{
             vec3 vLight = vec3(0.0);            
-            vec3 attenuation = vec3(0.0);
+            float attenuation = 0.0;
             if ({self.attribs["light"]}[i].infiniteOn == true){{
                 vLight = normalize({self.attribs["light"]}[i].infiniteDirection);
             }}else{{
                 vLight = normalize({self.attribs["light"]}[i].position - vPos);
             }}
             if ({self.attribs["light"]}[i].spotOn == true){{
-                attenuation = {self.attribs["light"]}[i].spotRadialFactor * {self.attribs["light"]}[i].spotAngleLimit;
+                attenuation = pow(dot(vLight,{self.attribs["light"]}[i].spotDirection),{self.attribs["light"]}[i].spotAngleLimit)\
+                    /({self.attribs["light"]}[i].spotRadialFactor[0]\
+                    + {self.attribs["light"]}[i].spotRadialFactor[1] * length({self.attribs["light"]}[i].position - vPos)\
+                    + {self.attribs["light"]}[i].spotRadialFactor[2] * pow(length({self.attribs["light"]}[i].position - vPos),2));
             }}else{{
-                attenuation = vec3(1.0);
+                attenuation = 1.0;
             }}
 
             vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
@@ -232,9 +235,9 @@ void main()
             result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
             //commented this out, looks very crappy unless i do
             //if (dot(vNormal, vLight) > 0){{
-                result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
+                result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
                 if(dot(viewPosition, vReflect) > 0){{
-                    result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
+                    result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
                 }}
             //}}
             
