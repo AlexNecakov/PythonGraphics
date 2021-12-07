@@ -18,92 +18,53 @@ from Point import Point
 import GLUtility
 
 from DisplayableCube import DisplayableCube
-from DisplayableSphere import DisplayableSphere
 from DisplayableTorus import DisplayableTorus
+from DisplayableSphere import DisplayableSphere
 from DisplayableCylinder import DisplayableCylinder
 
-class SceneThree(Component, Animation):
-    lights = None
-    lightCubes = None
+class SceneThree(Component):
     shaderProg = None
     glutility = None
 
-    lRadius = None
-    lAngles = None
-    lTransformations = None
+    lights = None
+    lightCubes = None
 
     def __init__(self, shaderProg):
         super().__init__(Point((0, 0, 0)))
         self.shaderProg = shaderProg
         self.glutility = GLUtility.GLUtility()
 
-        self.lTransformations = [self.glutility.translate(0, 2, 0, False),
-                                 self.glutility.rotate(60, [0, 0, 1], False),
-                                 self.glutility.rotate(120, [0, 0, 1], False)]
-        self.lRadius = 3
-        self.lAngles = [0, 0, 0]
-
-        sphere = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0, 64, 64))
+        sphere = Component(Point((-1, 0, 0)), DisplayableSphere(shaderProg, 1.0, 10, 6))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         sphere.setMaterial(m1)
         sphere.renderingRouting = "lighting"
         self.addChild(sphere)
 
-        cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 64))
-        m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
-                      np.array((0.4, 0.4, 0.4, 0.1)), 64)
+        cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 20))
+        m2 = Material(np.array((0.31, 0.31, 0.31, 0.31)), np.array((0.52, 0.52, 0.52, 1)),
+                      np.array((0.84, 0.84, 0.84, 0.81)), 64)
         cylinder.setMaterial(m2)
         cylinder.renderingRouting = "lighting"
         self.addChild(cylinder)
 
-        torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 64, 64))
-        m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
-                      np.array((0.4, 0.4, 0.4, 0.1)), 64)
-        torus.setMaterial(m2)
+        torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 40, 10))
+        m3 = Material(np.array((0.51, 0.51, 0.51, 0.51)), np.array((0.12, 0.12, 0.12, 1)),
+                      np.array((0.34, 0.34, 0.34, 0.31)), 64)
+        torus.setMaterial(m3)
         torus.renderingRouting = "lighting"
         self.addChild(torus)
 
-        l0 = Light(self.lightPos(self.lRadius, self.lAngles[0], self.lTransformations[0]),
+        l0 = Light(Point([0.0,-1.25,0.0]),
                    np.array((*ColorType.SOFTRED, 1.0)), np.array((1,0,0)), None, None, 0, 1)
-        lightCube0 = Component(Point((0, 0, 0)), DisplayableCube(shaderProg, 0.1, 0.1, 0.1, ColorType.SOFTRED))
-        lightCube0.renderingRouting = "vertex"
-        l1 = Light(self.lightPos(self.lRadius, self.lAngles[1], self.lTransformations[1]),
+        l1 = Light(Point([0.0,-1.25,0.0]),
                    np.array((*ColorType.SOFTBLUE, 1.0)))
-        lightCube1 = Component(Point((0, 0, 0)), DisplayableCube(shaderProg, 0.1, 0.1, 0.1, ColorType.SOFTBLUE))
-        lightCube1.renderingRouting = "vertex"
-        l2 = Light(self.lightPos(self.lRadius, self.lAngles[2], self.lTransformations[2]),
+        l2 = Light(Point([0.0,-1.25,0.0]),
                    np.array((*ColorType.SOFTGREEN, 1.0)))
-        lightCube2 = Component(Point((0, 0, 0)), DisplayableCube(shaderProg, 0.1, 0.1, 0.1, ColorType.SOFTGREEN))
-        lightCube2.renderingRouting = "vertex"
+        l3 = Light(Point([0.0,-1.25,0.0]),
+                   np.array((*ColorType.GREEN, 1.0)), None, np.array((0,1,0)), np.array((0.2,0.2,0.2)), 10, 1)
 
-        self.addChild(lightCube0)
-        self.addChild(lightCube1)
-        self.addChild(lightCube2)
-        self.lights = [l0, l1, l2]
-        self.lightCubes = [lightCube0, lightCube1, lightCube2]
-
-    def lightPos(self, radius, thetaAng, transformationMatrix):
-        r = np.zeros(4)
-        r[0] = radius * math.cos(thetaAng / 180 * math.pi)
-        r[2] = radius * math.sin(thetaAng / 180 * math.pi)
-        r[3] = 1
-        r = transformationMatrix @ r
-        return r[0:3]
-
-    def animationUpdate(self):
-        self.lAngles[0] = (self.lAngles[0] + 0.5) % 360
-        self.lAngles[1] = (self.lAngles[1] + 0.7) % 360
-        self.lAngles[2] = (self.lAngles[2] + 1.0) % 360
-        for i, v in enumerate(self.lights):
-            lPos = self.lightPos(self.lRadius, self.lAngles[i], self.lTransformations[i])
-            self.lightCubes[i].setCurrentPosition(Point(lPos))
-            self.lights[i].setPosition(lPos)
-            self.shaderProg.setLight(i, v)
-
-        for c in self.children:
-            if isinstance(c, Animation):
-                c.animationUpdate()
+        self.lights = [l0, l1, l2, l3]
 
     def initialize(self):
         self.shaderProg.clearAllLights()
