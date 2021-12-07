@@ -47,23 +47,21 @@ class SceneOne(Component, Animation):
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.4, 0.4, 0.1)), 64)
         cube.setMaterial(m1)
-        cube.renderingRouting = "lighting"
+        cube.renderingRouting = "normal"
         self.addChild(cube)
 
         cylinder = Component(Point((1, 0, 0)), DisplayableCylinder(shaderProg, 0.25, 0.5, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0, 0, 0, 1.0)), 64)
         cylinder.setMaterial(m2)
-        cylinder.renderingRouting = "lighting"
-        cylinder.rotate(90, cylinder.uAxis)
+        cylinder.renderingRouting = "normal"
         self.addChild(cylinder)
 
         torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 36, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0, 0, 0, 1.0)), 64)
         torus.setMaterial(m2)
-        torus.renderingRouting = "lighting"
-        torus.rotate(90, torus.uAxis)
+        torus.renderingRouting = "normal"
         self.addChild(torus)
 
         l0 = Light(self.lightPos(self.lRadius, self.lAngles[0], self.lTransformations[0]),

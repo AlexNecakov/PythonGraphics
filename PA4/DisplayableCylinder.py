@@ -107,32 +107,32 @@ class DisplayableCylinder(Displayable):
             self.indices[2*i+1] = [4*i+1,4*i+2,4*i+3]
         #caps
         for i in range(slices):
-            self.vertices[3*i+0+(4*slices), 0:3] = self.vtxCoordTop[(i+0)%slices,:]
-            self.vertices[3*i+1+(4*slices), 0:3] = self.vtxCoordTop[(i+1)%slices,:]
-            self.vertices[3*i+2+(4*slices), 0:3] = self.vtxCoordTop[slices,:]
+            self.vertices[6*i+0+(4*slices), 0:3] = self.vtxCoordTop[(i+0)%slices,:]
+            self.vertices[6*i+1+(4*slices), 0:3] = self.vtxCoordTop[(i+1)%slices,:]
+            self.vertices[6*i+2+(4*slices), 0:3] = self.vtxCoordTop[slices,:]
             
-            self.vertices[3*i+0+(5*slices), 0:3] = self.vtxCoordBot[(i+0)%slices,:]
-            self.vertices[3*i+1+(5*slices), 0:3] = self.vtxCoordBot[(i+1)%slices,:]
-            self.vertices[3*i+2+(5*slices), 0:3] = self.vtxCoordBot[slices,:]
+            self.vertices[6*i+3+(4*slices), 0:3] = self.vtxCoordBot[(i+0)%slices,:]
+            self.vertices[6*i+4+(4*slices), 0:3] = self.vtxCoordBot[(i+1)%slices,:]
+            self.vertices[6*i+5+(4*slices), 0:3] = self.vtxCoordBot[slices,:]
 
-            self.vertices[3*i+0+(4*slices), 3:6] = [0, 0, 1]
-            self.vertices[3*i+1+(4*slices), 3:6] = [0, 0, 1]
-            self.vertices[3*i+2+(4*slices), 3:6] = [0, 0, 1]
+            self.vertices[6*i+0+(4*slices), 3:6] = [0, 0, 1]
+            self.vertices[6*i+1+(4*slices), 3:6] = [0, 0, 1]
+            self.vertices[6*i+2+(4*slices), 3:6] = [0, 0, 1]
 
-            self.vertices[3*i+0+(5*slices), 3:6] = [0, 0, -1]
-            self.vertices[3*i+1+(5*slices), 3:6] = [0, 0, -1]
-            self.vertices[3*i+2+(5*slices), 3:6] = [0, 0, -1]
+            self.vertices[6*i+3+(4*slices), 3:6] = [0, 0, -1]
+            self.vertices[6*i+4+(4*slices), 3:6] = [0, 0, -1]
+            self.vertices[6*i+5+(4*slices), 3:6] = [0, 0, -1]
 
-            self.vertices[3*i+0+(4*slices), 6:9] = [*color]
-            self.vertices[3*i+1+(4*slices), 6:9] = [*color]
-            self.vertices[3*i+2+(4*slices), 6:9] = [*color]
+            self.vertices[6*i+0+(4*slices), 6:9] = [*color]
+            self.vertices[6*i+1+(4*slices), 6:9] = [*color]
+            self.vertices[6*i+2+(4*slices), 6:9] = [*color]
 
-            self.vertices[3*i+0+(5*slices), 6:9] = [*color]
-            self.vertices[3*i+1+(5*slices), 6:9] = [*color]
-            self.vertices[3*i+2+(5*slices), 6:9] = [*color]
+            self.vertices[6*i+3+(4*slices), 6:9] = [*color]
+            self.vertices[6*i+4+(4*slices), 6:9] = [*color]
+            self.vertices[6*i+5+(4*slices), 6:9] = [*color]
 
-            self.indices[2*i+0+(2*slices)] = [3*i+0+(4*slices),3*i+1+(4*slices),3*i+2+(4*slices)]
-            self.indices[2*i+1+(2*slices)] = [3*i+0+(5*slices),3*i+1+(5*slices),3*i+2+(5*slices)]
+            self.indices[2*i+0+(2*slices)] = [6*i+0+(4*slices),6*i+1+(4*slices),6*i+2+(4*slices)]
+            self.indices[2*i+1+(2*slices)] = [6*i+3+(4*slices),6*i+4+(4*slices),6*i+5+(4*slices)]
             
 
     def draw(self):
