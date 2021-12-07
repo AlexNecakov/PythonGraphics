@@ -117,175 +117,182 @@ class GLProgram:
 
     def genVertexShaderSource(self):
         vss = f'''
-        #version 330 core
-        in vec3 {self.attribs["vertexPos"]};
-        in vec3 {self.attribs["vertexNormal"]};
-        in vec3 {self.attribs["vertexColor"]};
-        in vec2 {self.attribs["vertexTexture"]};
-        
-        out vec3 vPos;
-        out vec3 vColor;
-        smooth out vec3 vNormal;
-        out vec2 vTexture;
-        out int materialIndex;
-        
-        uniform mat4 {self.attribs["projectionMat"]};
-        uniform mat4 {self.attribs["viewMat"]};
-        uniform mat4 {self.attribs["modelMat"]};
-        
-        void main()
-        {{
-            gl_Position = {self.attribs["projectionMat"]} * {self.attribs["viewMat"]} * {self.attribs["modelMat"]} * vec4({self.attribs["vertexPos"]}, 1.0);
-            vPos = vec3(model * vec4({self.attribs["vertexPos"]}, 1.0));
-            vColor = {self.attribs["vertexColor"]};
-            vNormal = normalize(transpose(inverse({self.attribs["modelMat"]})) * vec4({self.attribs["vertexNormal"]}, 0.0) ).xyz;
-            vTexture = {self.attribs["vertexTexture"]};
-        }}
+#version 330 core
+in vec3 {self.attribs["vertexPos"]};
+in vec3 {self.attribs["vertexNormal"]};
+in vec3 {self.attribs["vertexColor"]};
+in vec2 {self.attribs["vertexTexture"]};
+
+out vec3 vPos;
+out vec3 vColor;
+smooth out vec3 vNormal;
+out vec2 vTexture;
+out int materialIndex;
+
+uniform mat4 {self.attribs["projectionMat"]};
+uniform mat4 {self.attribs["viewMat"]};
+uniform mat4 {self.attribs["modelMat"]};
+
+void main()
+{{
+    gl_Position = {self.attribs["projectionMat"]} * {self.attribs["viewMat"]} * {self.attribs["modelMat"]} * vec4({self.attribs["vertexPos"]}, 1.0);
+    vPos = vec3(model * vec4({self.attribs["vertexPos"]}, 1.0));
+    vColor = {self.attribs["vertexColor"]};
+    vNormal = normalize(transpose(inverse({self.attribs["modelMat"]})) * vec4({self.attribs["vertexNormal"]}, 0.0) ).xyz;
+    vTexture = {self.attribs["vertexTexture"]};
+}}
         '''
         return vss
 
     def genFragShaderSource(self):
         fss = f"""
-        #version 330 core
-        #define MAX_LIGHT_NUM {self.attribs["maxLightsNum"]}
-        #define MAX_MATERIAL_NUM {self.attribs["maxMaterialNum"]}
-        struct Material{{
-            vec4 ambient;
-            vec4 diffuse;
-            vec4 specular;
-            float highlight;
-        }};
-        
-        struct Light{{
-            vec3 position;
-            vec4 color;
-            
-            bool infiniteOn;
-            vec3 infiniteDirection;
-            
-            bool spotOn;
-            vec3 spotDirection;
-            vec3 spotRadialFactor;
-            float spotAngleLimit;
-        }};
-        
-        in vec3 vPos;
-        in vec3 vColor;
-        smooth in vec3 vNormal;
-        in vec2 vTexture;
-        
-        uniform int renderingFlag;
-        uniform sampler2D {self.attribs["textureImage"]};
-        
-        uniform vec3 {self.attribs["viewPosition"]};
-        uniform Material {self.attribs["material"]};
-        uniform Light {self.attribs["light"]}[MAX_LIGHT_NUM];
-        
-        out vec4 FragColor;
-        void main()
-        {{
-            // These three lines are meaningless, they only works as attributes placeholder! 
-            // Otherwise glsl will optimize out our attributes
-            vec4 placeHolder = vec4(vPos+vColor+vNormal+vec3(vTexture, 1), 0);
-            FragColor = -1 * abs(placeHolder);
-            FragColor = clamp(FragColor, 0, 1);
-            
-            vec4 results[8];
-            for(int i=0; i<8; i+=1)
-                results[i]=vec4(0.0);
-            int ri=0;
-            
-            ////////// BONUS 7: Normal Mapping
-            // Requirements:
-            //   1. Perform the same steps as Texture Mapping above, except that instead of using the image for vertex 
-            //   color, the image is used to modify the normals.
-            //   2. Use the input normal map (“./assets/normalmap.jpg”) on both the sphere and the torus.
+#version 330 core
+#define MAX_LIGHT_NUM {self.attribs["maxLightsNum"]}
+#define MAX_MATERIAL_NUM {self.attribs["maxMaterialNum"]}
+struct Material{{
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    float highlight;
+}};
 
-            
-            // Reserved for illumination rendering, routing name is "lighting" or "illumination"
-            if ((renderingFlag >> 0 & 0x1) == 1){{
-                vec4 result = vec4(vColor, 1.0);
+struct Light{{
+    vec3 position;
+    vec4 color;
+    
+    bool infiniteOn;
+    vec3 infiniteDirection;
+    
+    bool spotOn;
+    vec3 spotDirection;
+    vec3 spotRadialFactor;
+    float spotAngleLimit;
+    float a_l;
+}};
 
-                ////////// TODO 3: Illuminate your meshes
-                // Requirements:
-                //   Use the illumination equations we learned in the lecture to implement components for Diffuse, 
-                //   Specular, and Ambient. You’ll implement the missing part in the Fragment shader source code. 
-                //   This part will be implemented in OpenGL Shading Language. Your code should iterate through 
-                //   all lights in the Light array.
+in vec3 vPos;
+in vec3 vColor;
+smooth in vec3 vNormal;
+in vec2 vTexture;
 
-                
-                ////////// TODO 4: Set up lights
-                // Requirements:
-                //   * Use the Light struct which is defined above and the provided Light class to implement 
-                //   illumination equations for 3 different light sources: Point light, Infinite light, 
-                //   Spotlight with radial and angular attenuation
-                //   * In the Sketch.py file Interrupt_keyboard method, bind keyboard interfaces that allows 
-                //   the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
+uniform int renderingFlag;
+uniform sampler2D {self.attribs["textureImage"]};
 
-                results[ri] = result;
-                ri+=1;
-            }}
-            
-            // Reserved for rendering with vertex color, routing name is "vertex"
-            if ((renderingFlag >> 1 & 0x1) == 1){{
-                results[ri] = vec4(vColor, 1.0);
-                ri+=1;
-            }}
-            
-            // Reserved for rendering with fixed color, routing name is "pure"
-            if ((renderingFlag >> 2 & 0x1) == 1){{
-                results[ri] = vec4(0.5, 0.5, 0.5, 1.0);
-                ri+=1;
-            }}
-            
-            // Reserved for normal rendering, routing name is "normal"
-            if ((renderingFlag >> 3 & 0x1) == 1){{
-            
-                ////////// TODO 2: Set Normal Rendering
-                // Requirements:
-                //   As a visual debugging mode, you’ll implement a rendering mode that visualizes the vertex normals 
-                //   with color information. In Fragment Shader, use the vertex normal as the vertex color 
-                //   (i.e. the rgb values come from the xyz components of the normal). The value for each dimension in 
-                //   vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the 
-                //   range 0 to 1.
-                
-                results[ri] = vec4(vNormal, 1.0);
-                ri+=1;
-            }}
-            
-            // Reserved for artist rendering, routing name is "artist"
-            if ((renderingFlag >> 5 & 0x1) == 1){{
-            
-                ////////// BONUS 8: Artist Rendering (advanced)
-                // Requirements:
-                //   Look at Section 10.3, “Artistic Shading” in Shirley/Marschner (4th ed.).
-                //        Implement line drawing in shader code
-                //        Implement cool-to-warm shader code
+uniform vec3 {self.attribs["viewPosition"]};
+uniform Material {self.attribs["material"]};
+uniform Light {self.attribs["light"]}[MAX_LIGHT_NUM];
 
-                results[ri] = vec4(0.5, 0.5, 0.5, 1.0);
-                ri+=1;
-            }}
+out vec4 FragColor;
+void main()
+{{
+    // These three lines are meaningless, they only works as attributes placeholder! 
+    // Otherwise glsl will optimize out our attributes
+    vec4 placeHolder = vec4(vPos+vColor+vNormal+vec3(vTexture, 1), 0);
+    FragColor = -1 * abs(placeHolder);
+    FragColor = clamp(FragColor, 0, 1);
+    
+    vec4 results[8];
+    for(int i=0; i<8; i+=1)
+        results[i]=vec4(0.0);
+    int ri=0;
+    
+    ////////// BONUS 7: Normal Mapping
+    // Requirements:
+    //   1. Perform the same steps as Texture Mapping above, except that instead of using the image for vertex 
+    //   color, the image is used to modify the normals.
+    //   2. Use the input normal map (“./assets/normalmap.jpg”) on both the sphere and the torus.
+
+    
+    // Reserved for illumination rendering, routing name is "lighting" or "illumination"
+    if ((renderingFlag >> 0 & 0x1) == 1){{
+        vec4 result = vec4(0.0);
+        ////////// TODO 3: Illuminate your meshes
+        // Requirements:
+        //   Use the illumination equations we learned in the lecture to implement components for Diffuse, 
+        //   Specular, and Ambient. You’ll implement the missing part in the Fragment shader source code. 
+        //   This part will be implemented in OpenGL Shading Language. Your code should iterate through 
+        //   all lights in the Light array.
+
+        for(int i=0; i<MAX_LIGHT_NUM; i++){{
+            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
             
-            // Reserved for some customized rendering, routing name is "custom"
-            if ((renderingFlag >> 6 & 0x1) == 1){{
-                results[ri] = vec4(0.5, 0.5, 0.5, 1.0);
-                ri+=1;
-            }}
             
-            // Reserved for texture mapping, get point color from texture image and texture coordinates
-            // Routing name is "texture"
-            if ((renderingFlag >> 8 & 0x1) == 1){{
-                results[ri] = texture({self.attribs["textureImage"]}, vTexture);
-                ri+=1;
-            }}
-            
-            // Mix all result in results array
-            vec4 outputResult=vec4(0.0);
-            for(int i=0; i<ri; i++){{
-                outputResult += results[i]/ri;
-            }}
-            FragColor = outputResult;
         }}
+        result = clamp(result, vec4(0), vec4(1));
+        
+        ////////// TODO 4: Set up lights
+        // Requirements:
+        //   * Use the Light struct which is defined above and the provided Light class to implement 
+        //   illumination equations for 3 different light sources: Point light, Infinite light, 
+        //   Spotlight with radial and angular attenuation
+        //   * In the Sketch.py file Interrupt_keyboard method, bind keyboard interfaces that allows 
+        //   the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
+
+        results[ri] = result;
+        ri+=1;
+    }}
+    
+    // Reserved for rendering with vertex color, routing name is "vertex"
+    if ((renderingFlag >> 1 & 0x1) == 1){{
+        results[ri] = vec4(vColor, 1.0);
+        ri+=1;
+    }}
+    
+    // Reserved for rendering with fixed color, routing name is "pure"
+    if ((renderingFlag >> 2 & 0x1) == 1){{
+        results[ri] = vec4(0.5, 0.5, 0.5, 1.0);
+        ri+=1;
+    }}
+    
+    // Reserved for normal rendering, routing name is "normal"
+    if ((renderingFlag >> 3 & 0x1) == 1){{
+    
+        ////////// TODO 2: Set Normal Rendering
+        // Requirements:
+        //   As a visual debugging mode, you’ll implement a rendering mode that visualizes the vertex normals 
+        //   with color information. In Fragment Shader, use the vertex normal as the vertex color 
+        //   (i.e. the rgb values come from the xyz components of the normal). The value for each dimension in 
+        //   vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the 
+        //   range 0 to 1.
+        
+        //results[ri] = ; // you need to use vec4() and normalize() here
+
+        ri+=1;
+    }}
+    
+    // Reserved for artist rendering, routing name is "artist"
+    if ((renderingFlag >> 5 & 0x1) == 1){{
+    
+        ////////// BONUS 8: Artist Rendering (advanced)
+        // Requirements:
+        //   Look at Section 10.3, “Artistic Shading” in Shirley/Marschner (4th ed.).
+        //        Implement line drawing in shader code
+        //        Implement cool-to-warm shader code
+
+        results[ri] = vec4(0.5, 0.5, 0.5, 1.0);
+        ri+=1;
+    }}
+    
+    // Reserved for some customized rendering, routing name is "custom"
+    if ((renderingFlag >> 6 & 0x1) == 1){{
+        results[ri] = vec4(0.5, 0.5, 0.5, 1.0);
+        ri+=1;
+    }}
+    
+    // Reserved for texture mapping, get point color from texture image and texture coordinates
+    // Routing name is "texture"
+    if ((renderingFlag >> 8 & 0x1) == 1){{
+        results[ri] = texture({self.attribs["textureImage"]}, vTexture);
+        ri+=1;
+    }}
+    
+    // Mix all result in results array
+    vec4 outputResult=vec4(0.0);
+    for(int i=0; i<ri; i++){{
+        outputResult += results[i]/ri;
+    }}
+    FragColor = outputResult;
+}}
         """
         return fss
 
@@ -398,6 +405,9 @@ class GLProgram:
 
         self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].position""", light.position, False)
         self.setVec4(f"""{self.attribs["light"]}[{lightIndex}].color""", light.color, False)
+
+        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
+        self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].a_l""", light.a_l, False)
 
     def clearAllLights(self):
         maxLightsNum = int(self.attribs["maxLightsNum"])

@@ -36,7 +36,7 @@ class Light:
 
         # init radial attenuation parameters
         if infiniteDirection is not None:
-            self.radialOn = True
+            self.infiniteOn = True
             self.setInfiniteDirection(infiniteDirection)
         else:
             self.radialOn = False
