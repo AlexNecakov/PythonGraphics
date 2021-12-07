@@ -10,50 +10,17 @@ In this assignment you will use OpenGL Shading Language(GLSL) to write your own 
 
 
 
-1. **Generate Triangle Meshes (TODO 1):**
-    1. Use Element Buffer Object (EBO) to draw the cube. The cube provided in the start code is drawn with Vertex Buffer Object (VBO). In the DisplayableCube class draw method, you should switch from VBO draw to EBO draw. To achieve this, please first read through VBO and EBO classes in GLBuffer. Then you rewrite the self.vertices and self.indices in the DisplayableCube class. Once you have all these down, then switch the line vbo.draw() to ebo.draw().
-    2. Generate Displayable classes for an ellipsoid, torus, and cylinder with end caps. These classes should be like the DisplayableCube class and they should all use EBO in the draw method. \
-PS: You must use the ellipsoid formula to generate it, scaling the Displayable sphere doesn't count
-2. **Set Normal Rendering (TODO 2):** As a visual debugging mode, you’ll implement a rendering mode that visualizes the vertex normals with color information. In Fragment Shader, use the vertex normal as the vertex color (i.e. the rgb values come from the xyz components of the normal). The value for each dimension in vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the range 0 to 1.
-3. **Illuminate your meshes (TODO 3):** Use the illumination equations we learned in the lecture to implement components for 
-    1. Diffuse
-    2. Specular
-    3. Ambient
-
-    You’ll implement the missing part in the Fragment shader source code. This part will be implemented in OpenGL Shading Language. Your code should iterate through all lights in the Light array.
 
 4. **Set up lights (TODO 4):** Set up lights:
-    1. Use the Light struct which is defined above and the provided Light class to implement illumination equations for 3 different light sources.
-        * Point light
-        * Infinite light
-        * Spotlight with radial and angular attenuation
+   
     2. In the Sketch file Interrupt_keyboard method, bind keyboard interfaces that allow the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
 5. **Create your scenes (TODO 5):**
-    1. We provide a fixed scene for you with preset lights, material, and model parameters. This scene will be used to examine your illumination implementation, and you should not modify it. 
     2. Create 3 new scenes (can be static scenes). Each of your scenes must have
         * at least 3 differently shaped solid objects
         * each object should have a different material
         * at least 2 lights
         * All types of lights should be used
     3. Provide a keyboard interface that allows the user to toggle on/off each of the lights in your scene model: Hit 1, 2, 3, 4, etc. to identify which light to toggle.
-6. **Texture Mapping (BONUS FOR 480, 10 extra credits) (TODO 6/BONUS 6)**
-    1. Set up each object's vertex texture coordinates(2D) to the self.vertices 9:11 columns (i.e. the last two columns). Tell OpenGL how to interpret these two columns: you need to set up attribPointer in the Displayable object's initialize method.
-    2. Generate texture coordinates for the torus and sphere. Use “./assets/marble.jpg” for the torus and “./assets/earth.jpg” for the sphere as the texture image. There should be no seams in the resulting texture-mapped model. 
-
-
-### Extra Credit (10 points each, you may only receive up to 10 pts extra)
-
-
-
-7. **Normal Mapping (BONUS 7)**
-    1. Perform the same steps as Texture Mapping above, except that instead of using the image for vertex color, the image is used to modify the normals.
-    2. Use the input normal map (“./assets/normalmap.jpg”) on both the sphere and the torus.
-8. **Artist Rendering (advanced) (BONUS 8)**
-
-    Look at Section 10.3, “Artistic Shading” in Shirley/Marschner (4th ed.).
-
-    1. Implement line drawing in shader code
-    2. Implement cool-to-warm shader code
 
 
 ### Programming Style

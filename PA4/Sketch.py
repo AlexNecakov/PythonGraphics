@@ -115,6 +115,7 @@ class Sketch(CanvasBase):
     # models
     basisAxes = None
     scene = None
+    sceneNum = 0
 
     # light toggles
     ambientOn = False
@@ -378,10 +379,32 @@ class Sketch(CanvasBase):
         if keycode in [wx.WXK_RETURN]:
             self.update()
         if keycode in [wx.WXK_LEFT]:
-            self.switchScene(SceneThree(self.shaderProg))
+            self.sceneNum = (self.sceneNum-1)%4
+            if self.sceneNum == 0:
+                self.switchScene(SceneOne(self.shaderProg))
+            elif self.sceneNum == 1:
+                self.switchScene(SceneTwo(self.shaderProg))
+            elif self.sceneNum == 2:
+                self.switchScene(SceneThree(self.shaderProg))
+            elif self.sceneNum == 3:
+                self.switchScene(SceneFour(self.shaderProg))
+            else:
+                self.sceneNum = 0
+                self.switchScene(SceneOne(self.shaderProg))
             self.update()
         if keycode in [wx.WXK_RIGHT]:
-            self.switchScene(SceneTwo(self.shaderProg))
+            self.sceneNum = (self.sceneNum+1)%4
+            if self.sceneNum == 0:
+                self.switchScene(SceneOne(self.shaderProg))
+            elif self.sceneNum == 1:
+                self.switchScene(SceneTwo(self.shaderProg))
+            elif self.sceneNum == 2:
+                self.switchScene(SceneThree(self.shaderProg))
+            elif self.sceneNum == 3:
+                self.switchScene(SceneFour(self.shaderProg))
+            else:
+                self.sceneNum = 0
+                self.switchScene(SceneOne(self.shaderProg))
             self.update()
         if keycode in [wx.WXK_UP]:
             self.Interrupt_Scroll(1)
