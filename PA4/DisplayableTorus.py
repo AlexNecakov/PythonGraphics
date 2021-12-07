@@ -1,6 +1,6 @@
 """
-Define Torus here.
-First version in 11/01/2021
+Define displayable cube here. Current version only use VBO
+First version in 10/20/2021
 
 :author: micou(Zezhou Sun)
 :version: 2021.1.1
@@ -8,10 +8,10 @@ First version in 11/01/2021
 
 from Displayable import Displayable
 from GLBuffer import VAO, VBO, EBO
-from Point import Point
 import numpy as np
 import ColorType
 import math
+
 try:
     import OpenGL
 
@@ -37,14 +37,6 @@ try:
 except ImportError:
     raise ImportError("Required dependency PyOpenGL not present")
 
-##### TODO 6/BONUS 6: Texture Mapping
-# Requirements:
-#   1. Set up each object's vertex texture coordinates(2D) to the self.vertices 9:11 columns
-#   (i.e. the last two columns). Tell OpenGL how to interpret these two columns:
-#   you need to set up attribPointer in the Displayable object's initialize method.
-#   2. Generate texture coordinates for the torus and sphere. Use “./assets/marble.jpg” for the torus and
-#   “./assets/earth.jpg” for the sphere as the texture image.
-#   There should be no seams in the resulting texture-mapped model.
 
 class DisplayableTorus(Displayable):
     vao = None
@@ -52,17 +44,17 @@ class DisplayableTorus(Displayable):
     ebo = None
     shaderProg = None
 
-    # stores current torus's information, read-only
-    nsides = 0
-    rings = 0
-    innerRadius = 0
-    outerRadius = 0
+    vertices = None  # array to store vertices information
+    indices = None  # stores triangle indices to vertices
+
+    # stores current cube's information, read-only
+    radiusMajor = None
+    radiusMinor = None
+    stacks = None
+    slices = None
     color = None
 
-    vertices = None
-    indices = None
-
-    def __init__(self, shaderProg, innerRadius=0.25, outerRadius=0.5, nsides=36, rings=36, color=ColorType.SOFTBLUE):
+    def __init__(self, shaderProg, radiusMajor=1, radiusMinor=1, stacks=18, slices=36, color=ColorType.BLUE):
         super(DisplayableTorus, self).__init__()
         self.shaderProg = shaderProg
         self.shaderProg.use()
@@ -71,29 +63,61 @@ class DisplayableTorus(Displayable):
         self.vbo = VBO()  # vbo can only be initiate with glProgram activated
         self.ebo = EBO()
 
-        self.generate(innerRadius, outerRadius, nsides, rings, color)
+        self.generate(radiusMajor, radiusMinor, stacks, slices, color)
 
-    def generate(self, innerRadius=0.25, outerRadius=0.5, nsides=36, rings=36, color=ColorType.SOFTBLUE):
-        self.innerRadius = innerRadius
-        self.outerRadius = outerRadius
-        self.nsides = nsides
-        self.rings = rings
+    def generate(self, radiusMajor=1, radiusMinor=1, stacks=18, slices=36, color=None):
+        self.radiusMajor = radiusMajor
+        self.radiusMinor = radiusMinor
+        self.stacks = stacks
+        self.slices = slices
         self.color = color
+        pi = math.pi
 
-        # we need to pad one more row for both nsides and rings, to assign correct texture coord to them
-        self.vertices = np.zeros([(nsides) * (rings), 11])
+        self.vertices = np.zeros([4*(slices)*(stacks-1), 11])
+        self.vtxCoord = np.zeros([stacks,slices,3])
+        self.indices = np.zeros([2*(stacks-1)*slices,3])
+        for i in range(stacks):
+            phi = i / (stacks - 1) * pi - pi/2
+            for j in range(slices):
+                theta = j / (slices) * 2 * pi
+                self.vtxCoord[i,j,:] = [(radiusMajor + (radiusMinor * math.cos(theta))) * math.cos(phi),
+                                        (radiusMajor + (radiusMinor * math.cos(theta))) * math.sin(phi),
+                                        radiusMinor * math.sin(theta)]
+        
+        for i in range(stacks-1):
+            phi = i / (stacks) * pi - pi/2
+            for j in range(slices):
+                theta = j / (slices) * 2 * pi
+                gridN = i * slices + j
+                self.vertices[4*gridN+0, 0:3] = self.vtxCoord[i,j,:]
+                self.vertices[4*gridN+1, 0:3] = self.vtxCoord[i,(j+1)% slices,:]
+                self.vertices[4*gridN+2, 0:3] = self.vtxCoord[i+1,(j+1)% slices,:]
+                self.vertices[4*gridN+3, 0:3] = self.vtxCoord[i+1,j,:]
 
-        self.indices = np.zeros(0)
+                self.vertices[4*gridN+0, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
+                self.vertices[4*gridN+1, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
+                self.vertices[4*gridN+2, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
+                self.vertices[4*gridN+3, 3:6] = [math.cos(phi) * math.cos(theta), math.cos(phi) * math.sin(theta), math.sin(phi)]
+
+                self.vertices[4*gridN+0, 6:9] = [*color]
+                self.vertices[4*gridN+1, 6:9] = [*color]
+                self.vertices[4*gridN+2, 6:9] = [*color]
+                self.vertices[4*gridN+3, 6:9] = [*color]
+
+                self.indices[2*gridN+0] = [4*gridN+0,4*gridN+1,4*gridN+2]
+                self.indices[2*gridN+1] = [4*gridN+0,4*gridN+2,4*gridN+3]
+                
 
     def draw(self):
         self.vao.bind()
-        self.vbo.draw()
+        # TODO 1.1 is at here, switch from vbo to ebo
+        self.ebo.draw()
         self.vao.unbind()
 
     def initialize(self):
         """
         Remember to bind VAO before this initialization. If VAO is not bind, program might throw an error
-        in systems which don't enable a default VAO after GLProgram compilation
+        in systems that don't enable a default VAO after GLProgram compilation
         """
         self.vao.bind()
         self.vbo.setBuffer(self.vertices, 11)
@@ -105,5 +129,7 @@ class DisplayableTorus(Displayable):
                                   stride=11, offset=3, attribSize=3)
         self.vbo.setAttribPointer(self.shaderProg.getAttribLocation("vertexColor"),
                                   stride=11, offset=6, attribSize=3)
-
+        # TODO/BONUS 6.1 is at here, you need to set attribPointer for texture coordinates
+        # you should check the corresponding variable name in GLProgram and set the pointer
         self.vao.unbind()
+

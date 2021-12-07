@@ -58,7 +58,7 @@ class SceneOne(Component, Animation):
         cylinder.rotate(90, cylinder.uAxis)
         self.addChild(cylinder)
 
-        torus = Component(Point((1, 0, 0)), DisplayableTorus(shaderProg, 0.25, 0.5, 36, 36))
+        torus = Component(Point((2, 0, 0)), DisplayableTorus(shaderProg, 0.5, 0.25, 36, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0, 0, 0, 1.0)), 64)
         torus.setMaterial(m2)
