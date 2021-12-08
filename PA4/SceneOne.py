@@ -30,6 +30,10 @@ class SceneOne(Component, Animation):
     lAngles = None
     lTransformations = None
 
+    lightOneOn = True
+    lightTwoOn = True
+    lightThreeOn = True
+
     ambientOn = True
     diffuseOn = True
     specularOn = True
@@ -48,6 +52,10 @@ class SceneOne(Component, Animation):
         self.ambientOn = True
         self.diffuseOn = True
         self.specularOn = True
+        
+        self.lightOneOn = True
+        self.lightTwoOn = True
+        self.lightThreeOn = True
 
         cube = Component(Point((-1, 0, 0)), DisplayableCube(shaderProg, 1.5, 1, 1.5))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
@@ -95,6 +103,11 @@ class SceneOne(Component, Animation):
         self.lAngles[0] = (self.lAngles[0] + 0.5) % 360
         self.lAngles[1] = (self.lAngles[1] + 0.7) % 360
         self.lAngles[2] = (self.lAngles[2] + 1.0) % 360
+        
+        self.lights[0].lightOn = self.lightOneOn
+        self.lights[1].lightOn = self.lightTwoOn
+        self.lights[2].lightOn = self.lightThreeOn
+        
         for i, v in enumerate(self.lights):
             lPos = self.lightPos(self.lRadius, self.lAngles[i], self.lTransformations[i])
             self.lightCubes[i].setCurrentPosition(Point(lPos))

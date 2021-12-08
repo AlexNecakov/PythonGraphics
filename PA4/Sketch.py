@@ -222,7 +222,8 @@ class Sketch(CanvasBase):
         self.shaderProg.setMat4("viewMat", self.viewMat)
         self.shaderProg.setVec3("viewPosition", np.array(self.getCameraPos()))
 
-        if not self.pauseScene and isinstance(self.scene, Animation):
+        #modified to call every non paused frame, needed for toggles
+        if not self.pauseScene:
             self.scene.animationUpdate()
         self.topLevelComponent.update(np.identity(4))
         self.topLevelComponent.draw(self.shaderProg)
@@ -417,6 +418,15 @@ class Sketch(CanvasBase):
             self.update()
         if chr(keycode) in "sS":
             self.scene.specularOn = not self.scene.specularOn
+            self.update()
+        if chr(keycode) in "1":
+            self.scene.lightOneOn = not self.scene.lightOneOn
+            self.update()
+        if chr(keycode) in "2":
+            self.scene.lightTwoOn = not self.scene.lightTwoOn
+            self.update()
+        if chr(keycode) in "3":
+            self.scene.lightThreeOn = not self.scene.lightThreeOn
             self.update()
 
         # TODO 4.2 is at here

@@ -28,6 +28,10 @@ class SceneFour(Component):
 
     lights = None
     lightCubes = None
+
+    lightOneOn = True
+    lightTwoOn = True
+    lightThreeOn = True
     
     ambientOn = True
     diffuseOn = True
@@ -41,6 +45,10 @@ class SceneFour(Component):
         self.ambientOn = True
         self.diffuseOn = True
         self.specularOn = True
+
+        self.lightOneOn = True
+        self.lightTwoOn = True
+        self.lightThreeOn = True
 
         sphere = Component(Point((-1, 0, 0)), DisplayableCube(shaderProg, 1.0, 0.4, 0.2))
         m1 = Material(np.array((0.15, 0.12, 0.21, 0.14)), np.array((0.12, 0.62, 0.82, 1)),
@@ -66,15 +74,16 @@ class SceneFour(Component):
         l0 = Light(None,
                    np.array((*ColorType.SOFTRED, 1.0)), np.array((1,0,0)), None, None, 0, 1)
         l1 = Light(Point([0.0,-1.25,0.0]),
-                   np.array((*ColorType.SOFTBLUE, 1.0)))
-        l2 = Light(Point([0.0,-1.25,0.0]),
                    np.array((*ColorType.SOFTGREEN, 1.0)))
-        l3 = Light(Point([0.0,-1.25,0.0]),
+        l2 = Light(Point([0.0,-1.25,0.0]),
                    np.array((*ColorType.GREEN, 1.0)), None, np.array((0,1,0)), np.array((0.2,0.2,0.2)), 10, 1)
 
-        self.lights = [l0, l1, l2, l3]
+        self.lights = [l0, l1, l2]
     
     def animationUpdate(self):
+        self.lights[0].lightOn = self.lightOneOn
+        self.lights[1].lightOn = self.lightTwoOn
+        self.lights[2].lightOn = self.lightThreeOn
         for i, v in enumerate(self.lights):
             self.lights[i].ambientOn = self.ambientOn
             self.lights[i].diffuseOn = self.diffuseOn

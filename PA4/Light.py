@@ -25,11 +25,12 @@ class Light:
 
     a_l = 0.0
 
+    lightOn = True
     ambientOn = True
     diffuseOn = True
     specularOn = True
 
-    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0, a_l=0.0, ambientOn=True, diffuseOn=True, specularOn=True):
+    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0, a_l=0.0, lightOn=True, ambientOn=True, diffuseOn=True, specularOn=True):
         # set basic light
         if position is not None:
             self.setPosition(position)
@@ -62,6 +63,7 @@ class Light:
             self.spotDirection = np.array((0, 0, 0))
         self.setSpotAngleLimit(spotAngleLimit)
 
+        self.lightOn = True
         self.ambientOn = True
         self.diffuseOn = True
         self.specularOn = True

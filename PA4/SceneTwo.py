@@ -30,6 +30,11 @@ class SceneTwo(Component):
     lights = None
     lightCubes = None
 
+    lightOneOn = True
+    lightTwoOn = True
+    lightThreeOn = True
+    lightFourOn = True
+
     ambientOn = True
     diffuseOn = True
     specularOn = True
@@ -42,6 +47,10 @@ class SceneTwo(Component):
         self.ambientOn = True
         self.diffuseOn = True
         self.specularOn = True
+
+        self.lightOneOn = True
+        self.lightTwoOn = True
+        self.lightThreeOn = True
 
         sphere = Component(Point((0, 0, 0)), DisplayableSphere(shaderProg, 1.0, 64, 64))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
@@ -78,9 +87,11 @@ class SceneTwo(Component):
         self.lightCubes = [lightCube0, ]
     
     def animationUpdate(self):
+        self.lights[0].lightOn = self.lightOneOn
+        self.lights[1].lightOn = self.lightTwoOn
+        self.lights[2].lightOn = self.lightThreeOn
         for i, v in enumerate(self.lights):
             self.lights[i].ambientOn = self.ambientOn
-            print(self.lights[i].ambientOn)
             self.lights[i].diffuseOn = self.diffuseOn
             self.lights[i].specularOn = self.specularOn
             self.shaderProg.setLight(i, v)

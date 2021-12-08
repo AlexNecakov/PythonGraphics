@@ -94,6 +94,7 @@ class GLProgram:
             self.attribs[f"light[{i}].spotDirection"] = f"{self.attribs['light']}[{i}].spotDirection"
             self.attribs[f"light[{i}].spotAngleLimit"] = f"{self.attribs['light']}[{i}].spotAngleLimit"
             self.attribs[f"light[{i}].a_l"] = f"{self.attribs['light']}[{i}].a_l"
+            self.attribs[f"light[{i}].lightOn"] = f"{self.attribs['light']}[{i}].lightOn"
             self.attribs[f"light[{i}].ambientOn"] = f"{self.attribs['light']}[{i}].ambientOn"
             self.attribs[f"light[{i}].diffuseOn"] = f"{self.attribs['light']}[{i}].diffuseOn"
             self.attribs[f"light[{i}].specularOn"] = f"{self.attribs['light']}[{i}].specularOn"
@@ -173,6 +174,7 @@ struct Light{{
     float spotAngleLimit;
     float a_l;
 
+    bool lightOn;
     bool ambientOn;
     bool diffuseOn;
     bool specularOn;
@@ -217,43 +219,43 @@ void main()
 
         //TODO 3
         for(int i=0; i<MAX_LIGHT_NUM; i++){{
-            vec3 vLight = vec3(0.0);            
-            float attenuation = 0.0;
-            if ({self.attribs["light"]}[i].infiniteOn == true){{
-                vLight = normalize({self.attribs["light"]}[i].infiniteDirection);
-            }}else{{
-                vLight = normalize({self.attribs["light"]}[i].position - vPos);
-            }}
-            if ({self.attribs["light"]}[i].spotOn == true){{
-                if (dot(vLight,{self.attribs["light"]}[i].spotDirection) < {self.attribs["light"]}[i].spotAngleLimit){{
-                    attenuation = 0.0;
+            if({self.attribs["light"]}[i].lightOn == true){{
+                vec3 vLight = vec3(0.0);            
+                float attenuation = 0.0;
+                if ({self.attribs["light"]}[i].infiniteOn == true){{
+                    vLight = normalize({self.attribs["light"]}[i].infiniteDirection);
                 }}else{{
-                    attenuation = pow(dot(vLight,{self.attribs["light"]}[i].spotDirection),{self.attribs["light"]}[i].spotAngleLimit);
-                    attenuation *= 1/({self.attribs["light"]}[i].spotRadialFactor[0]\
-                        + {self.attribs["light"]}[i].spotRadialFactor[1] * length({self.attribs["light"]}[i].position - vPos)\
-                        + {self.attribs["light"]}[i].spotRadialFactor[2] * pow(length({self.attribs["light"]}[i].position - vPos),2));
-                }}   
-            }}else{{
-                attenuation = 1.0;
-            }}
+                    vLight = normalize({self.attribs["light"]}[i].position - vPos);
+                }}
+                if ({self.attribs["light"]}[i].spotOn == true){{
+                    if (dot(vLight,{self.attribs["light"]}[i].spotDirection) < {self.attribs["light"]}[i].spotAngleLimit){{
+                        attenuation = 0.0;
+                    }}else{{
+                        attenuation = pow(dot(vLight,{self.attribs["light"]}[i].spotDirection),{self.attribs["light"]}[i].spotAngleLimit);
+                        attenuation *= 1/({self.attribs["light"]}[i].spotRadialFactor[0]\
+                            + {self.attribs["light"]}[i].spotRadialFactor[1] * length({self.attribs["light"]}[i].position - vPos)\
+                            + {self.attribs["light"]}[i].spotRadialFactor[2] * pow(length({self.attribs["light"]}[i].position - vPos),2));
+                    }}   
+                }}else{{
+                    attenuation = 1.0;
+                }}
 
-            vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
-            if({self.attribs["light"]}[i].ambientOn == true){{
-                result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
-            }}
-            //commented this out, looks very crappy unless i do
-            //if (dot(vNormal, vLight) > 0){{
-                if({self.attribs["light"]}[i].diffuseOn == true){{
-                    result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
+                vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
+                if({self.attribs["light"]}[i].ambientOn == true){{
+                    result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
                 }}
-                if(dot(viewPosition, vReflect) > 0){{
-                    if({self.attribs["light"]}[i].specularOn == true){{
-                        result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
+                //commented this out, looks very crappy unless i do
+                //if (dot(vNormal, vLight) > 0){{
+                    if({self.attribs["light"]}[i].diffuseOn == true){{
+                        result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
                     }}
-                }}
-            //}}
-            
-            
+                    if(dot(viewPosition, vReflect) > 0){{
+                        if({self.attribs["light"]}[i].specularOn == true){{
+                            result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
+                        }}
+                    }}
+                //}}
+            }}          
         }}
         result = clamp(result, vec4(0), vec4(1));
         
@@ -438,6 +440,7 @@ void main()
         self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
         self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].a_l""", light.a_l, False)
 
+        self.setBool(f"""{self.attribs["light"]}[{lightIndex}].lightOn""", light.lightOn, False)
         self.setBool(f"""{self.attribs["light"]}[{lightIndex}].ambientOn""", light.ambientOn, False)
         self.setBool(f"""{self.attribs["light"]}[{lightIndex}].diffuseOn""", light.diffuseOn, False)
         self.setBool(f"""{self.attribs["light"]}[{lightIndex}].specularOn""", light.specularOn, False)
