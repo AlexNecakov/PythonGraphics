@@ -30,6 +30,10 @@ class SceneOne(Component, Animation):
     lAngles = None
     lTransformations = None
 
+    ambientOn = True
+    diffuseOn = True
+    specularOn = True
+
     def __init__(self, shaderProg):
         super().__init__(Point((0, 0, 0)))
         self.shaderProg = shaderProg
@@ -40,6 +44,10 @@ class SceneOne(Component, Animation):
                                  self.glutility.rotate(120, [0, 0, 1], False)]
         self.lRadius = 3
         self.lAngles = [0, 0, 0]
+
+        self.ambientOn = True
+        self.diffuseOn = True
+        self.specularOn = True
 
         cube = Component(Point((-1, 0, 0)), DisplayableCube(shaderProg, 1.5, 1, 1.5))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
@@ -91,6 +99,9 @@ class SceneOne(Component, Animation):
             lPos = self.lightPos(self.lRadius, self.lAngles[i], self.lTransformations[i])
             self.lightCubes[i].setCurrentPosition(Point(lPos))
             self.lights[i].setPosition(lPos)
+            self.lights[i].ambientOn = self.ambientOn
+            self.lights[i].diffuseOn = self.diffuseOn
+            self.lights[i].specularOn = self.specularOn
             self.shaderProg.setLight(i, v)
 
         for c in self.children:

@@ -117,11 +117,6 @@ class Sketch(CanvasBase):
     scene = None
     sceneNum = 0
 
-    # light toggles
-    ambientOn = False
-    diffuseOn = False
-    specularOn = False
-
     def __init__(self, parent):
         """
         Init everything. You should set your model here.
@@ -135,7 +130,7 @@ class Sketch(CanvasBase):
         self.last_mouse_leftPosition = [0, 0]
         self.last_mouse_middlePosition = [0, 0]
         self.components = []
-        self.backgroundColor = ColorType.BLACK
+        self.backgroundColor = ColorType.BLUEGREEN
 
         self.ambientOn = True
         self.diffuseOn = True
@@ -152,9 +147,6 @@ class Sketch(CanvasBase):
         self.cameraDis = 6
         self.cameraPhi = math.pi / 6
         self.cameraTheta = math.pi / 2
-        self.ambientOn = True
-        self.diffuseOn = True
-        self.specularOn = True
 
     def switchScene(self, scene):
         self.scene = scene
@@ -418,11 +410,14 @@ class Sketch(CanvasBase):
         if chr(keycode) in "pP":
             self.pauseScene = not self.pauseScene
         if chr(keycode) in "aA":
-            self.ambientOn = not self.ambientOn
+            self.scene.ambientOn = not self.scene.ambientOn
+            self.update()
         if chr(keycode) in "dD":
-            self.diffuseOn = not self.diffuseOn
+            self.scene.diffuseOn = not self.scene.diffuseOn
+            self.update()
         if chr(keycode) in "sS":
-            self.specularOn = not self.specularOn
+            self.scene.specularOn = not self.scene.specularOn
+            self.update()
 
         # TODO 4.2 is at here
         # TODO 5.3 is at here

@@ -77,11 +77,7 @@ class GLProgram:
             "light": "light",
 
             "maxLightsNum": "20",
-            "maxMaterialNum": "20",
-
-            "ambientOn": "ambientOn",
-            "diffuseOn": "diffuseOn",
-            "specularOn": "specularOn",
+            "maxMaterialNum": "20"
         }
         self.attribs["diffuse"] = self.attribs["material"] + ".diffuse"
         self.attribs["specular"] = self.attribs["material"] + ".specular"
@@ -98,6 +94,9 @@ class GLProgram:
             self.attribs[f"light[{i}].spotDirection"] = f"{self.attribs['light']}[{i}].spotDirection"
             self.attribs[f"light[{i}].spotAngleLimit"] = f"{self.attribs['light']}[{i}].spotAngleLimit"
             self.attribs[f"light[{i}].a_l"] = f"{self.attribs['light']}[{i}].a_l"
+            self.attribs[f"light[{i}].ambientOn"] = f"{self.attribs['light']}[{i}].ambientOn"
+            self.attribs[f"light[{i}].diffuseOn"] = f"{self.attribs['light']}[{i}].diffuseOn"
+            self.attribs[f"light[{i}].specularOn"] = f"{self.attribs['light']}[{i}].specularOn"
 
         self.vertexShaderSource = self.genVertexShaderSource()
         self.fragmentShaderSource = self.genFragShaderSource()
@@ -173,6 +172,10 @@ struct Light{{
     vec3 spotRadialFactor;
     float spotAngleLimit;
     float a_l;
+
+    bool ambientOn;
+    bool diffuseOn;
+    bool specularOn;
 }};
 
 in vec3 vPos;
@@ -235,13 +238,18 @@ void main()
             }}
 
             vec3 vReflect = normalize(reflect(normalize(vNormal), vLight));
-
-            result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
+            if({self.attribs["light"]}[i].ambientOn == true){{
+                result += {self.attribs["light"]}[i].color * {self.attribs["material"]}.ambient;
+            }}
             //commented this out, looks very crappy unless i do
             //if (dot(vNormal, vLight) > 0){{
-                result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
+                if({self.attribs["light"]}[i].diffuseOn == true){{
+                    result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.diffuse * dot(normalize(vNormal), vLight);
+                }}
                 if(dot(viewPosition, vReflect) > 0){{
-                    result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
+                    if({self.attribs["light"]}[i].specularOn == true){{
+                        result += attenuation * {self.attribs["light"]}[i].color * {self.attribs["material"]}.specular * pow(dot(normalize(viewPosition), vReflect),{self.attribs["material"]}.highlight);
+                    }}
                 }}
             //}}
             
@@ -249,14 +257,6 @@ void main()
         }}
         result = clamp(result, vec4(0), vec4(1));
         
-        ////////// TODO 4: Set up lights
-        // Requirements:
-        //   * Use the Light struct which is defined above and the provided Light class to implement 
-        //   illumination equations for 3 different light sources: Point light, Infinite light, 
-        //   Spotlight with radial and angular attenuation
-        //   * In the Sketch.py file Interrupt_keyboard method, bind keyboard interfaces that allows 
-        //   the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
-
         results[ri] = result;
         ri+=1;
     }}
@@ -437,6 +437,10 @@ void main()
 
         self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
         self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].a_l""", light.a_l, False)
+
+        self.setBool(f"""{self.attribs["light"]}[{lightIndex}].ambientOn""", light.ambientOn, False)
+        self.setBool(f"""{self.attribs["light"]}[{lightIndex}].diffuseOn""", light.diffuseOn, False)
+        self.setBool(f"""{self.attribs["light"]}[{lightIndex}].specularOn""", light.specularOn, False)
 
     def clearAllLights(self):
         maxLightsNum = int(self.attribs["maxLightsNum"])

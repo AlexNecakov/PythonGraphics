@@ -15,11 +15,7 @@ In this assignment you will use OpenGL Shading Language(GLSL) to write your own 
    
     2. In the Sketch file Interrupt_keyboard method, bind keyboard interfaces that allow the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
 5. **Create your scenes (TODO 5):**
-    2. Create 3 new scenes (can be static scenes). Each of your scenes must have
-        * at least 3 differently shaped solid objects
-        * each object should have a different material
-        * at least 2 lights
-        * All types of lights should be used
+
     3. Provide a keyboard interface that allows the user to toggle on/off each of the lights in your scene model: Hit 1, 2, 3, 4, etc. to identify which light to toggle.
 
 

@@ -25,7 +25,11 @@ class Light:
 
     a_l = 0.0
 
-    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0, a_l=0.0):
+    ambientOn = True
+    diffuseOn = True
+    specularOn = True
+
+    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0, a_l=0.0, ambientOn=True, diffuseOn=True, specularOn=True):
         # set basic light
         if position is not None:
             self.setPosition(position)
@@ -58,11 +62,15 @@ class Light:
             self.spotDirection = np.array((0, 0, 0))
         self.setSpotAngleLimit(spotAngleLimit)
 
+        self.ambientOn = True
+        self.diffuseOn = True
+        self.specularOn = True
+
     def __repr__(self):
         return f"pos: {self.position}, color:{self.color},\
         {self.infiniteOn},{self.infiniteDirection},\
         {self.spotOn},{self.spotDirection}, {self.spotRadialFactor},{self.spotAngleLimit},\
-        {self.a_l}"
+        {self.a_l}, ambientOn:{self.ambientOn}, diffuseOn:{self.diffuseOn}, specularOn:{self.specularOn}"
 
     def setColor(self, color):
         if (not isinstance(color, np.ndarray)) or color.size != 4:

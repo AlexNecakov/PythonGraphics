@@ -28,11 +28,19 @@ class SceneFour(Component):
 
     lights = None
     lightCubes = None
+    
+    ambientOn = True
+    diffuseOn = True
+    specularOn = True
 
     def __init__(self, shaderProg):
         super().__init__(Point((0, 0, 0)))
         self.shaderProg = shaderProg
         self.glutility = GLUtility.GLUtility()
+
+        self.ambientOn = True
+        self.diffuseOn = True
+        self.specularOn = True
 
         sphere = Component(Point((-1, 0, 0)), DisplayableCube(shaderProg, 1.0, 0.4, 0.2))
         m1 = Material(np.array((0.15, 0.12, 0.21, 0.14)), np.array((0.12, 0.62, 0.82, 1)),
@@ -65,6 +73,17 @@ class SceneFour(Component):
                    np.array((*ColorType.GREEN, 1.0)), None, np.array((0,1,0)), np.array((0.2,0.2,0.2)), 10, 1)
 
         self.lights = [l0, l1, l2, l3]
+    
+    def animationUpdate(self):
+        for i, v in enumerate(self.lights):
+            self.lights[i].ambientOn = self.ambientOn
+            self.lights[i].diffuseOn = self.diffuseOn
+            self.lights[i].specularOn = self.specularOn
+            self.shaderProg.setLight(i, v)
+
+        for c in self.children:
+            if isinstance(c, Animation):
+                c.animationUpdate()
 
     def initialize(self):
         self.shaderProg.clearAllLights()
